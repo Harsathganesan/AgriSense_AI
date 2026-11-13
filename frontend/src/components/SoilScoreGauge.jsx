@@ -70,3 +70,4 @@ export default function SoilScoreGauge({ score = 75, grade = "Good", gradeTamil 
     </div>
   );
 }
+

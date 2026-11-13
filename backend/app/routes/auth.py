@@ -127,3 +127,4 @@ async def update_profile(updates: UserProfileUpdate, current_user: dict = Depend
         "priorities": current_user.get("priorities", {}),
         "created_at": current_user.get("created_at")
     }
+

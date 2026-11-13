@@ -225,3 +225,4 @@ async def get_latest_rotation(
     # If none yet, trigger generation
     req = RotationAnalysisRequest(farm_id=farm_id)
     return await generate_crop_rotation(req, current_user)
+

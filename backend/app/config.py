@@ -28,3 +28,4 @@ class Settings:
     NASA_EARTHDATA_PASSWORD: str = os.getenv("NASA_EARTHDATA_PASSWORD", "")
 
 settings = Settings()
+

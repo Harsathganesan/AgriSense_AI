@@ -66,3 +66,4 @@ class RotationComparisonResponse(BaseModel):
     comparison_matrix: List[Dict[str, Any]]
     agronomic_advisory: str
     agronomic_advisory_tamil: str
+

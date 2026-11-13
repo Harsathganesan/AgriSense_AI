@@ -108,3 +108,4 @@ async def get_suggested_prompts(language: str = "en"):
         {"id": "p4", "text": "How can I improve my soil organic carbon from 0.58% to over 0.75%?"},
         {"id": "p5", "text": "Compare the water savings of millets versus conventional double-crop rice."}
     ]
+

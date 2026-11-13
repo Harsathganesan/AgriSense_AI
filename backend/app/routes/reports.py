@@ -138,3 +138,4 @@ async def list_reports(current_user: dict = Depends(get_current_user)):
     reports_col = get_collection("reports")
     cursor = reports_col.find({"user_id": current_user["_id"]})
     return list(cursor)
+

@@ -34,3 +34,4 @@ class CropCreate(CropBase):
 
 class CropResponse(CropBase):
     id: str
+

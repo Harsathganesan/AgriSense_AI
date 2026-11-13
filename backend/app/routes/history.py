@@ -81,3 +81,4 @@ async def delete_history_item(
     if res.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Item not found")
     return {"status": "success", "message": "History entry deleted"}
+

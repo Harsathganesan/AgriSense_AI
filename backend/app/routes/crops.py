@@ -69,3 +69,4 @@ async def get_crop(crop_id: str):
         if c["id"] == crop_id or c["name"].lower().replace(" ", "-") == crop_id.lower():
             return c
     raise HTTPException(status_code=404, detail="Crop not found in database")
+

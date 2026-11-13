@@ -191,3 +191,4 @@ class SoilService:
             "recommendations": guidelines,
             "recommendations_tamil": guidelines_ta
         }
+

@@ -21,3 +21,4 @@ class SoilRecordResponse(SoilRecordCreate):
     created_at: str
     health_score: float
     status_summary: Dict[str, Any]
+

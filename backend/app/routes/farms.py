@@ -164,3 +164,4 @@ async def delete_farm(farm_id: str, current_user: dict = Depends(get_current_use
     if res.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Farm not found or unauthorized")
     return {"status": "success", "message": "Farm removed"}
+

@@ -59,3 +59,4 @@ export const historyApi = {
   list: (farmId) => axios.get(`/api/history${farmId ? `?farm_id=${farmId}` : ''}`),
   delete: (id) => axios.delete(`/api/history/${id}`),
 };
+

@@ -172,3 +172,4 @@ async def analyze_soil_parameters(params: dict):
         organic_carbon_pct=oc,
         soil_moisture_pct=moisture
     )
+
