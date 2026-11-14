@@ -199,9 +199,9 @@ class DatabaseManager:
                 uri = "mongodb+srv://harsath137_db_user:9jsMz0qF10EJLDwJ@cluster0.eqwgeh8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
             client_kwargs = {
-                "serverSelectionTimeoutMS": 4000,
-                "connectTimeoutMS": 4000,
-                "socketTimeoutMS": 8000,
+                "serverSelectionTimeoutMS": 2500,
+                "connectTimeoutMS": 2500,
+                "socketTimeoutMS": 5000,
                 "retryWrites": True,
             }
             try:
