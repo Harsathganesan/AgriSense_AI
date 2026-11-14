@@ -13,8 +13,27 @@ if backend_dir not in sys.path:
 os.environ.setdefault("VERCEL", "1")
 
 # Import the FastAPI application
-from app.main import app
+from app.main import app as fastapi_app
 
-# Export app for Vercel Python runtime
+# Vercel ASGI path normalizer wrapper
+class VercelPathMiddleware:
+    def __init__(self, asgi_app):
+        self.asgi_app = asgi_app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            headers = dict(scope.get("headers", []))
+            matched_path = headers.get(b"x-matched-path", b"").decode("utf-8")
+            if matched_path:
+                scope["path"] = matched_path.split("?")[0]
+
+            path = scope.get("path", "")
+            if path in ("/api/index.py", "/api/index", "/index.py", "/api/index.py/"):
+                scope["path"] = "/"
+            elif path.startswith("/api/index.py/"):
+                scope["path"] = path[len("/api/index.py"):]
+
+        await self.asgi_app(scope, receive, send)
+
+app = VercelPathMiddleware(fastapi_app)
 __all__ = ["app"]
-

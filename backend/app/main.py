@@ -52,7 +52,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register API Routers
+# Register API Routers with /api prefix
 app.include_router(auth.router, prefix=settings.API_PREFIX)
 app.include_router(farms.router, prefix=settings.API_PREFIX)
 app.include_router(nasa.router, prefix=settings.API_PREFIX)
@@ -66,9 +66,26 @@ app.include_router(location.router, prefix=settings.API_PREFIX)
 app.include_router(analysis.router, prefix=settings.API_PREFIX)
 app.include_router(district.router, prefix=settings.API_PREFIX)
 
+# Also register without prefix so endpoints work whether requested as /api/crops or /crops
+app.include_router(auth.router)
+app.include_router(farms.router)
+app.include_router(nasa.router)
+app.include_router(soil.router)
+app.include_router(crops.router)
+app.include_router(rotation.router)
+app.include_router(assistant.router)
+app.include_router(reports.router)
+app.include_router(history.router)
+app.include_router(location.router)
+app.include_router(analysis.router)
+app.include_router(district.router)
+
 @app.get("/")
 @app.get("/api")
 @app.get("/api/")
+@app.get("/api/index")
+@app.get("/api/index.py")
+@app.get("/index.py")
 async def root():
     return {
         "platform": settings.PROJECT_NAME,
@@ -78,7 +95,9 @@ async def root():
         "api_docs": "/docs"
     }
 
+@app.get("/health")
 @app.get("/api/health")
+@app.get("/api/health/")
 async def health_check():
     return {
         "status": "healthy",
