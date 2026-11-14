@@ -120,13 +120,23 @@ async def root():
 @app.get("/api/health")
 @app.get("/api/health/")
 async def health_check():
+    from app.database import db_manager
+    db_info = db_manager.check_connection()
     return {
         "status": "healthy",
         "version": settings.VERSION,
-        "database": "Active",
+        "database": db_info.get("database_type", "Active"),
+        "database_connected": db_info.get("connected", False),
         "nasa_services": "Operational",
         "gemini_assistant": "Available" if settings.GEMINI_API_KEY else "Agronomy Mode"
     }
+
+@app.get("/db-status")
+@app.get("/api/db-status")
+@app.get("/api/db-status/")
+async def db_status():
+    from app.database import db_manager
+    return db_manager.check_connection()
 
 if __name__ == "__main__":
     import uvicorn

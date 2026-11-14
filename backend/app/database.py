@@ -2,20 +2,13 @@ import os
 import json
 import uuid
 import copy
+import time
 import tempfile
 from pathlib import Path
 from datetime import datetime
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 from app.config import settings
-
-try:
-    import dns.resolver
-    _r = dns.resolver.get_default_resolver()
-    _r.lifetime = 1.0
-    _r.timeout = 1.0
-except Exception:
-    pass
 
 # Serverless environment (e.g. Vercel) has a read-only root; use system tempdir for fallback storage
 is_serverless = bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
@@ -193,47 +186,114 @@ class DatabaseManager:
         self.db = None
         self.is_connected_to_mongo = False
         self._fallback_collections = {}
+        self._last_error = None
+        self._last_attempt_time = 0
         self._init_connection()
 
     def _init_connection(self):
+        self._last_attempt_time = time.time()
         try:
+            import certifi
+            uri = settings.MONGODB_URI
+            if not uri or uri.strip() == "mongodb://localhost:27017":
+                uri = "mongodb+srv://harsath137_db_user:9jsMz0qF10EJLDwJ@cluster0.eqwgeh8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+            client_kwargs = {
+                "serverSelectionTimeoutMS": 4000,
+                "connectTimeoutMS": 4000,
+                "socketTimeoutMS": 8000,
+                "retryWrites": True,
+            }
             try:
-                import dns.resolver
-                r = dns.resolver.get_default_resolver()
-                r.lifetime = 1.0
-                r.timeout = 1.0
+                client_kwargs["tlsCAFile"] = certifi.where()
             except Exception:
                 pass
 
-            import certifi
-            is_srv = "mongodb+srv" in settings.MONGODB_URI
-            timeout_ms = 1500 if is_srv else 800
-            client_kwargs = {
-                "serverSelectionTimeoutMS": timeout_ms,
-                "connectTimeoutMS": timeout_ms,
-                "socketTimeoutMS": timeout_ms
-            }
-            if is_srv:
-                try:
-                    client_kwargs["tlsCAFile"] = certifi.where()
-                except Exception:
-                    pass
-
-            self.client = MongoClient(settings.MONGODB_URI, **client_kwargs)
-            self.client.admin.command('ping')
-            self.db = self.client[settings.DATABASE_NAME]
+            client = MongoClient(uri, **client_kwargs)
+            client.admin.command('ping')
+            self.client = client
+            self.db = client[settings.DATABASE_NAME]
             self.is_connected_to_mongo = True
+            self._last_error = None
             print(f"[AgriSense AI] Successfully connected to MongoDB Atlas: {settings.DATABASE_NAME}")
+
+            # Migrate any local fallback records to MongoDB Atlas
+            self._sync_fallback_to_mongo()
         except Exception as e:
             self.is_connected_to_mongo = False
+            self._last_error = str(e)
             print(f"[AgriSense AI] MongoDB Atlas connection note: ({e}). Using embedded persistent JSON data store.")
 
+    def _sync_fallback_to_mongo(self):
+        if not self.is_connected_to_mongo or self.db is None:
+            return
+        try:
+            fallback_users = FallbackCollection("users")._read_data()
+            if fallback_users:
+                atlas_users = self.db["users"]
+                for u in fallback_users:
+                    if not atlas_users.find_one({"email": u.get("email")}):
+                        atlas_users.insert_one(u)
+                        print(f"[AgriSense AI] Synced user to MongoDB Atlas: {u.get('email')}")
+            
+            fallback_farms = FallbackCollection("farms")._read_data()
+            if fallback_farms:
+                atlas_farms = self.db["farms"]
+                for f in fallback_farms:
+                    if not atlas_farms.find_one({"_id": f.get("_id")}):
+                        atlas_farms.insert_one(f)
+                        print(f"[AgriSense AI] Synced farm to MongoDB Atlas: {f.get('name')}")
+        except Exception as e:
+            print(f"[AgriSense AI] Data sync note: {e}")
+
     def get_collection(self, name: str):
+        # Re-attempt MongoDB Atlas connection if disconnected (debounce by 10s)
+        if not self.is_connected_to_mongo and (time.time() - self._last_attempt_time > 10):
+            self._init_connection()
+
         if self.is_connected_to_mongo and self.db is not None:
             return self.db[name]
         if name not in self._fallback_collections:
             self._fallback_collections[name] = FallbackCollection(name)
         return self._fallback_collections[name]
+
+    def check_connection(self):
+        if not self.is_connected_to_mongo:
+            self._init_connection()
+        else:
+            try:
+                self.client.admin.command('ping')
+            except Exception as e:
+                self.is_connected_to_mongo = False
+                self._last_error = str(e)
+
+        if self.is_connected_to_mongo and self.db is not None:
+            try:
+                users_count = self.db["users"].count_documents({})
+                farms_count = self.db["farms"].count_documents({})
+                return {
+                    "connected": True,
+                    "database_type": "MongoDB Atlas",
+                    "database_name": settings.DATABASE_NAME,
+                    "total_users": users_count,
+                    "total_farms": farms_count,
+                    "status": "healthy"
+                }
+            except Exception as e:
+                return {
+                    "connected": False,
+                    "database_type": "MongoDB Atlas",
+                    "error": str(e),
+                    "status": "query_error"
+                }
+        else:
+            return {
+                "connected": False,
+                "database_type": "Fallback Local Store",
+                "last_error": self._last_error,
+                "status": "atlas_disconnected",
+                "action_required": "Please add 0.0.0.0/0 (Allow Access from Anywhere) in MongoDB Atlas Network Access."
+            }
 
 db_manager = DatabaseManager()
 
