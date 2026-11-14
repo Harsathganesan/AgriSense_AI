@@ -4,12 +4,12 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
-      "source": "/api/:match*",
-      "destination": "/api/index.py?path=/api/:match*"
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
     },
     {
       "source": "/api",
-      "destination": "/api/index.py?path=/api"
+      "destination": "/api/index.py"
     },
     {
       "source": "/(.*)",
@@ -17,4 +17,3 @@
     }
   ]
 }
-

@@ -4,13 +4,8 @@
   "buildCommand": "echo 'AgriSense FastAPI backend ready'",
   "rewrites": [
     {
-      "source": "/api/:match*",
-      "destination": "/api/index.py?path=/api/:match*"
-    },
-    {
-      "source": "/:match*",
-      "destination": "/api/index.py?path=/:match*"
+      "source": "/(.*)",
+      "destination": "/api/index.py"
     }
   ]
 }
-
