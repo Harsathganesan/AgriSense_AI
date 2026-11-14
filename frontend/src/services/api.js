@@ -3,7 +3,10 @@ import axios from 'axios';
 // Configure Axios baseURL from Vite environment variables or localStorage
 const savedApiUrl = typeof window !== 'undefined' ? localStorage.getItem('agrisense_api_base_url') : null;
 const envApiUrl = import.meta.env.VITE_API_BASE_URL;
-const apiBase = envApiUrl || savedApiUrl;
+const isVercelHost = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+const defaultProductionBackend = 'https://agri-sense-ai-theta-two.vercel.app';
+
+const apiBase = savedApiUrl || envApiUrl || (isVercelHost ? defaultProductionBackend : '');
 if (apiBase) {
   axios.defaults.baseURL = apiBase.replace(/\/+$/, '');
 }

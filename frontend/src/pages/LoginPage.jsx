@@ -32,7 +32,7 @@ export default function LoginPage() {
     return false;
   });
   const [serverUrl, setServerUrl] = useState(() => {
-    return localStorage.getItem('agrisense_api_base_url') || import.meta.env.VITE_API_BASE_URL || '';
+    return localStorage.getItem('agrisense_api_base_url') || import.meta.env.VITE_API_BASE_URL || 'https://agri-sense-ai-theta-two.vercel.app';
   });
   const [serverSavedMsg, setServerSavedMsg] = useState('');
 
