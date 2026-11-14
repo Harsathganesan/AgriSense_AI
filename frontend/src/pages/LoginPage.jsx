@@ -7,7 +7,7 @@ import { getCountries, getStates, getDistricts } from '../data/locationHierarchy
 
 export default function LoginPage() {
   const { login, register } = useAuth();
-  const { t, lang } = useLanguage();
+  const { lang } = useLanguage();
   const navigate = useNavigate();
 
   const [isRegister, setIsRegister] = useState(false);
@@ -105,17 +105,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-200 animate-in zoom-in-95 space-y-6">
+    <div
+      className="min-h-screen relative flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat selection:bg-emerald-500 selection:text-white"
+      style={{ backgroundImage: "url('/farm-bg.jpg')" }}
+    >
+      {/* Cinematic Ambient Dark Green Overlay for High Contrast & Depth */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/75 via-slate-950/45 to-emerald-950/60 backdrop-blur-[1.5px]" />
+
+      {/* Glassmorphic Attractive Transparent Card */}
+      <div className="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] border border-white/70 ring-1 ring-black/5 animate-in zoom-in-95 space-y-6">
         {/* Brand Header */}
         <div className="text-center">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#238636] to-emerald-700 flex items-center justify-center text-white mx-auto shadow-lg shadow-emerald-700/25 mb-3">
-            <Leaf className="w-7 h-7 stroke-[2.2]" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#238636] to-emerald-700 flex items-center justify-center text-white mx-auto shadow-xl shadow-emerald-700/35 ring-4 ring-white/60 mb-3 group hover:scale-105 transition-transform">
+            <Leaf className="w-8 h-8 stroke-[2.2]" />
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">
             AgriSense <span className="text-[#238636]">AI</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-600 font-semibold mt-1">
             {lang === 'ta'
               ? 'விவசாயிகளுக்கான மண் வளம் மற்றும் பயிர் சுழற்சி வழிகாட்டி'
               : 'Smart Crop Rotation & Soil Health Decision Platform'}
@@ -124,16 +131,16 @@ export default function LoginPage() {
 
         {/* Error Alert */}
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold animate-in fade-in">
+          <div className="p-3.5 rounded-xl bg-rose-50/90 border border-rose-200 text-rose-700 text-xs font-semibold animate-in fade-in backdrop-blur-xs">
             {error}
           </div>
         )}
 
         {/* Stepper Header for Registration */}
         {isRegister && (
-          <div className="flex items-center justify-between px-2 pt-1 pb-2">
+          <div className="flex items-center justify-between px-3 py-2 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/60">
             <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center font-bold text-xs shadow-sm">
+              <span className="w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                 1
               </span>
               <span className="font-bold text-slate-800 text-xs">
@@ -151,7 +158,7 @@ export default function LoginPage() {
               <span
                 className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs transition-colors ${
                   registerStep === 2
-                    ? 'bg-[#238636] text-white shadow-sm'
+                    ? 'bg-[#238636] text-white shadow-xs'
                     : 'bg-slate-200 text-slate-500'
                 }`}
               >
@@ -186,7 +193,7 @@ export default function LoginPage() {
                       placeholder={lang === 'ta' ? 'எ.கா. கந்தசாமி முத்துசாமி' : 'e.g. Kandasamy Muthusamy'}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-white/70 backdrop-blur-xs focus:bg-white focus:outline-none focus:border-[#238636] focus:ring-2 focus:ring-[#238636]/20 text-sm transition"
                     />
                   </div>
                 </div>
@@ -204,7 +211,7 @@ export default function LoginPage() {
                     placeholder="farmer@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-white/70 backdrop-blur-xs focus:bg-white focus:outline-none focus:border-[#238636] focus:ring-2 focus:ring-[#238636]/20 text-sm transition"
                   />
                 </div>
               </div>
@@ -221,7 +228,7 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-white/70 backdrop-blur-xs focus:bg-white focus:outline-none focus:border-[#238636] focus:ring-2 focus:ring-[#238636]/20 text-sm transition"
                   />
                 </div>
               </div>
@@ -230,7 +237,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="w-full py-3 rounded-xl bg-[#238636] hover:bg-emerald-700 text-white font-black text-sm transition shadow-md flex items-center justify-center gap-2 cursor-pointer mt-4"
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#238636] to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white font-black text-sm transition-all duration-200 shadow-lg shadow-emerald-700/30 hover:shadow-xl hover:shadow-emerald-700/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer mt-5"
                 >
                   <span>{lang === 'ta' ? 'அடுத்து (இருப்பிடம்)' : 'Next (Location)'}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -239,7 +246,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 rounded-xl bg-[#238636] hover:bg-emerald-700 text-white font-black text-sm transition shadow-md flex items-center justify-center gap-2 cursor-pointer mt-4"
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#238636] to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white font-black text-sm transition-all duration-200 shadow-lg shadow-emerald-700/30 hover:shadow-xl hover:shadow-emerald-700/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer mt-5"
                 >
                   <span>
                     {loading
@@ -270,7 +277,7 @@ export default function LoginPage() {
                   <select
                     value={country}
                     onChange={handleCountryChange}
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-[#238636] text-sm appearance-none font-medium cursor-pointer"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-white/70 backdrop-blur-xs focus:bg-white focus:outline-none focus:border-[#238636] text-sm appearance-none font-medium cursor-pointer"
                   >
                     {countries.map((c) => (
                       <option key={c} value={c}>
@@ -291,7 +298,7 @@ export default function LoginPage() {
                   <select
                     value={state}
                     onChange={handleStateChange}
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-[#238636] text-sm appearance-none font-medium cursor-pointer"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-white/70 backdrop-blur-xs focus:bg-white focus:outline-none focus:border-[#238636] text-sm appearance-none font-medium cursor-pointer"
                   >
                     {states.map((s) => (
                       <option key={s} value={s}>
@@ -312,7 +319,7 @@ export default function LoginPage() {
                   <select
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-[#238636] text-sm appearance-none font-semibold cursor-pointer"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-white/70 backdrop-blur-xs focus:bg-white focus:outline-none focus:border-[#238636] text-sm appearance-none font-semibold cursor-pointer"
                   >
                     {districts.map((d) => (
                       <option key={d} value={d}>
@@ -331,7 +338,7 @@ export default function LoginPage() {
                     setError('');
                     setRegisterStep(1);
                   }}
-                  className="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="px-4 py-3.5 rounded-xl bg-white/70 hover:bg-white text-slate-700 font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer border border-slate-200/80"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>{lang === 'ta' ? 'பின்செல்' : 'Back'}</span>
@@ -340,7 +347,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 py-3 rounded-xl bg-[#238636] hover:bg-emerald-700 text-white font-black text-sm transition shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[#238636] to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white font-black text-sm transition-all duration-200 shadow-lg shadow-emerald-700/30 hover:shadow-xl hover:shadow-emerald-700/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>
                     {loading
@@ -355,14 +362,14 @@ export default function LoginPage() {
         </form>
 
         {/* Toggle Login / Register */}
-        <div className="text-center text-xs text-slate-500 pt-1 border-t border-slate-100">
+        <div className="text-center text-xs text-slate-600 pt-1 border-t border-slate-200/60 font-medium">
           {isRegister ? (
             <p>
               {lang === 'ta' ? 'ஏற்கனவே கணக்கு உள்ளதா?' : 'Already have an account?'}{' '}
               <button
                 type="button"
                 onClick={() => handleToggleMode(false)}
-                className="font-bold text-[#238636] hover:underline cursor-pointer"
+                className="font-black text-[#238636] hover:underline cursor-pointer"
               >
                 {lang === 'ta' ? 'உள்நுழைக (Sign In)' : 'Sign In'}
               </button>
@@ -373,7 +380,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => handleToggleMode(true)}
-                className="font-bold text-[#238636] hover:underline cursor-pointer"
+                className="font-black text-[#238636] hover:underline cursor-pointer"
               >
                 {lang === 'ta' ? 'புதிய கணக்கு பதிவு செய்' : 'Register Farm Profile'}
               </button>
@@ -381,10 +388,10 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* Clean Cloud Backend Status Footer */}
+        {/* Clean Glass Cloud Backend Status Badge */}
         <div className="text-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-semibold border border-emerald-200/60">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/70 backdrop-blur-md text-emerald-200 text-[11px] font-semibold border border-emerald-400/30 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>AgriSense AI Cloud Connected</span>
           </div>
         </div>
