@@ -1,394 +1,467 @@
 import React, { useState, useEffect } from 'react';
 import {
   FlaskConical,
-  Plus,
-  Award,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  TrendingUp,
-  Calendar,
   Building,
-  FileCheck
+  Droplets,
+  Thermometer,
+  ShieldAlert,
+  ChevronDown,
+  RefreshCw,
+  Award,
+  Layers,
+  MapPin,
+  CheckCircle2
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useFarm } from '../contexts/FarmContext';
-import { soilApi } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+import { districtApi, authApi } from '../services/api';
+import { getDistricts } from '../data/locationHierarchy';
 import SoilScoreGauge from '../components/SoilScoreGauge';
+
+// Prominent agricultural districts for quick-tap selection
+const POPULAR_DISTRICTS = [
+  'Pudukkottai',
+  'Thanjavur',
+  'Tiruvarur',
+  'Nagapattinam',
+  'Madurai',
+  'Coimbatore',
+  'Salem',
+  'Tiruchirappalli'
+];
 
 export default function SoilHealthPage() {
   const { t, lang } = useLanguage();
-  const { activeFarm } = useFarm();
+  const { user, setUser } = useAuth();
 
-  const [records, setRecords] = useState([]);
-  const [latestRecord, setLatestRecord] = useState(null);
+  const state = user?.registered_location?.state || user?.state || 'Tamil Nadu';
+  const country = user?.registered_location?.country || user?.country || 'India';
+  const initialDistrict = user?.registered_location?.district || user?.district || 'Pudukkottai';
+
+  const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict);
+  const [soilData, setSoilData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [switchingDistrict, setSwitchingDistrict] = useState(false);
 
-  const [formData, setFormData] = useState({
-    test_date: new Date().toISOString().slice(0, 10),
-    ph: 6.8,
-    nitrogen_kg_ha: 245.0,
-    phosphorus_kg_ha: 16.5,
-    potassium_kg_ha: 210.0,
-    organic_carbon_pct: 0.58,
-    soil_moisture_pct: 24.0,
-    electrical_conductivity: 0.45,
-    soil_type: 'Alluvial Soil',
-    lab_name: 'District Soil Testing Laboratory, Thanjavur',
-    notes: ''
-  });
+  const availableDistricts = getDistricts(country, state);
 
-  const fetchSoilData = async () => {
-    if (!activeFarm) return;
+  // Sync if user in AuthContext updates elsewhere
+  useEffect(() => {
+    const userDist = user?.registered_location?.district || user?.district;
+    if (userDist && userDist !== selectedDistrict) {
+      setSelectedDistrict(userDist);
+    }
+  }, [user]);
+
+  // Fetch Soil Health data whenever selectedDistrict changes
+  const fetchSoilHealth = async (dist) => {
+    const targetDistrict = dist || selectedDistrict;
     try {
       setLoading(true);
-      const [recsRes, latestRes] = await Promise.all([
-        soilApi.getRecords(activeFarm.id),
-        soilApi.getLatest(activeFarm.id)
-      ]);
-      setRecords(recsRes.data);
-      setLatestRecord(latestRes.data);
+      const res = await districtApi.getSoilHealth(targetDistrict, state, country);
+      setSoilData(res.data);
     } catch (err) {
-      console.error("Soil fetch error:", err);
+      console.error('Soil health fetch error:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchSoilData();
-  }, [activeFarm]);
+    fetchSoilHealth(selectedDistrict);
+  }, [selectedDistrict]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!activeFarm) return;
+  // Handle changing district directly from this page
+  const handleDistrictChange = async (newDistrict) => {
+    if (!newDistrict || newDistrict === selectedDistrict) return;
+
+    setSelectedDistrict(newDistrict);
+    setSwitchingDistrict(true);
+
     try {
-      const payload = {
-        farm_id: activeFarm.id,
-        test_date: formData.test_date,
-        ph: Number(formData.ph),
-        nitrogen_kg_ha: Number(formData.nitrogen_kg_ha),
-        phosphorus_kg_ha: Number(formData.phosphorus_kg_ha),
-        potassium_kg_ha: Number(formData.potassium_kg_ha),
-        organic_carbon_pct: Number(formData.organic_carbon_pct),
-        soil_moisture_pct: Number(formData.soil_moisture_pct),
-        electrical_conductivity: Number(formData.electrical_conductivity),
-        soil_type: formData.soil_type,
-        lab_name: formData.lab_name,
-        notes: formData.notes
-      };
-      await soilApi.createRecord(payload);
-      setIsModalOpen(false);
-      await fetchSoilData();
+      // Also update user's active district profile across AgriSense
+      if (user) {
+        const res = await authApi.updateProfile({
+          district: newDistrict,
+          state: state,
+          country: country,
+          registered_location: {
+            country: country,
+            state: state,
+            district: newDistrict
+          }
+        });
+        if (res.data) {
+          setUser(res.data);
+        }
+      }
     } catch (err) {
-      console.error("Create soil record error:", err);
+      console.warn('Profile sync optional warning:', err);
+    } finally {
+      setSwitchingDistrict(false);
     }
   };
 
-  const params = latestRecord?.status_summary?.parameters || {};
-  const recomms = (lang === 'ta' && latestRecord?.status_summary?.recommendations_tamil)
-    ? latestRecord.status_summary.recommendations_tamil
-    : (latestRecord?.status_summary?.recommendations || []);
-
-  const getStatusColor = (score) => {
-    if (score >= 85) return 'text-emerald-700 bg-emerald-50 border-emerald-200';
-    if (score >= 60) return 'text-amber-700 bg-amber-50 border-amber-200';
-    return 'text-rose-700 bg-rose-50 border-rose-200';
-  };
+  const satIndicators = soilData?.satellite_environmental_indicators || {};
+  const labData = soilData?.laboratory_soil_test || {};
+  const params = labData?.status_summary?.parameters || {};
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <FlaskConical className="w-7 h-7 text-[#238636]" />
-            {t('soil.title')}
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            {t('soil.subtitle')}
-          </p>
+    <div className="space-y-6 pb-12">
+      {/* Header Banner & District Selector */}
+      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#238636] text-xs font-bold border border-emerald-200 mb-2">
+              <Building className="w-3.5 h-3.5" />
+              <span>
+                {selectedDistrict} District Soil Profile ({soilData?.primary_soil_type || 'Regional Soil'})
+              </span>
+            </div>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+              <FlaskConical className="w-7 h-7 text-[#238636]" />
+              {lang === 'ta' ? 'மண் வளம் மற்றும் ஊட்டச்சத்து பகுப்பாய்வு' : 'Soil Health & Diagnostics'}
+            </h1>
+            <p className="text-xs md:text-sm text-slate-500 mt-1 font-medium">
+              {lang === 'ta'
+                ? `${selectedDistrict} மாவட்ட மண் வளம், நாசா SMAP செயற்கைக்கோள் ஈரப்பதம் மற்றும் TNAU ஆய்வக சோதனை அளவீடுகள்.`
+                : `NASA SMAP satellite soil dynamics and certified laboratory soil testing for ${selectedDistrict} district.`}
+            </p>
+          </div>
+
+          {/* District Dropdown Selector */}
+          <div className="flex items-center gap-2">
+            <div className="relative min-w-[220px]">
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                {lang === 'ta' ? 'மாவட்டத்தைத் தேர்ந்தெடுக்கவும்' : 'Select District'}
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedDistrict}
+                  onChange={(e) => handleDistrictChange(e.target.value)}
+                  disabled={loading || switchingDistrict}
+                  className="w-full appearance-none pl-9 pr-9 py-2.5 bg-slate-50 hover:bg-emerald-50/50 border border-slate-300 hover:border-emerald-400 rounded-xl text-sm font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#238636]/40 focus:border-[#238636] transition cursor-pointer disabled:opacity-60"
+                >
+                  {availableDistricts.map((d) => (
+                    <option key={d} value={d}>
+                      {d} District
+                    </option>
+                  ))}
+                </select>
+                <MapPin className="w-4 h-4 text-[#238636] absolute left-3 top-3 pointer-events-none" />
+                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+              </div>
+            </div>
+          </div>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#238636] hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition hover:scale-[1.02] active:scale-[0.98] w-fit"
-        >
-          <Plus className="w-4 h-4" />
-          {t('soil.newEntry')}
-        </button>
+
+        {/* Quick Popular District Chips */}
+        <div className="pt-2 border-t border-slate-100 flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            {lang === 'ta' ? 'விரைவு மாவட்டங்கள்:' : 'Quick Select:'}
+          </span>
+          {POPULAR_DISTRICTS.map((d) => {
+            const isCurrent = selectedDistrict.toLowerCase() === d.toLowerCase();
+            return (
+              <button
+                key={d}
+                type="button"
+                onClick={() => handleDistrictChange(d)}
+                className={`text-xs px-3 py-1 rounded-lg font-semibold transition-all border ${
+                  isCurrent
+                    ? 'bg-[#238636] text-white border-[#238636] shadow-xs'
+                    : 'bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-900 border-slate-200'
+                }`}
+              >
+                {d}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Main Composite Health Gauge and Highlights */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
+      {/* SECTION 1: SATELLITE-DERIVED ENVIRONMENTAL SOIL INDICATORS (NASA SMAP & POWER) */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center font-bold">
+              <Droplets className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                {lang === 'ta' ? 'நாசா செயற்கைக்கோள் மண் குறிகாட்டிகள்' : 'NASA Satellite Soil Environmental Indicators'}
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                  SMAP & POWER L3
+                </span>
+              </h3>
+              <p className="text-[11px] text-slate-500 font-medium">
+                Spatial footprint: 9km gridded radiometer • {selectedDistrict} Centroid
+              </p>
+            </div>
+          </div>
+          <span className="text-[11px] font-mono text-slate-500 flex items-center gap-1.5 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#238636] animate-pulse" />
+            Live NASA Pass
+          </span>
+        </div>
+
+        {/* 4 Satellite Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
+          {/* Card 1: SMAP Root-Zone Soil Moisture */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50/70 to-teal-50/30 border border-blue-200/70">
+            <div className="flex items-center justify-between text-slate-500 mb-1">
+              <span className="text-xs font-bold flex items-center gap-1.5">
+                <Droplets className="w-4 h-4 text-blue-600" />
+                Root-Zone Moisture (0-100cm)
+              </span>
+              <span className="text-[10px] font-bold text-blue-800 bg-blue-100 px-2 py-0.2 rounded">
+                NASA SMAP
+              </span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-2">
+              {satIndicators.rootzone_moisture_0_100cm_pct || 24.5}%
+            </div>
+            <p className="text-[11px] text-slate-600 mt-1 font-medium">
+              Surface (0-5cm): {satIndicators.surface_moisture_0_5cm_pct || 22.0}%
+            </p>
+            <div className="mt-2 text-[10px] font-semibold text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded w-fit">
+              {satIndicators.rootzone_moisture_0_100cm_pct >= 20 ? 'Adequate for Tillage' : 'Moisture Deficit'}
+            </div>
+          </div>
+
+          {/* Card 2: Soil Temperature */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50/70 to-orange-50/30 border border-amber-200/70">
+            <div className="flex items-center justify-between text-slate-500 mb-1">
+              <span className="text-xs font-bold flex items-center gap-1.5">
+                <Thermometer className="w-4 h-4 text-amber-600" />
+                Soil Temperature
+              </span>
+              <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.2 rounded">
+                NASA POWER
+              </span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-2">
+              {satIndicators.soil_temperature_c || 28.4}°C
+            </div>
+            <p className="text-[11px] text-slate-600 mt-1 font-medium">
+              {satIndicators.soil_temperature_status || 'Optimal microbial activity window'}
+            </p>
+            <div className="mt-2 text-[10px] font-semibold text-slate-600 bg-white/80 border border-slate-200 px-2 py-0.5 rounded w-fit">
+              Biology: Active
+            </div>
+          </div>
+
+          {/* Card 3: Rainfall Erosion & Runoff Risk */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-rose-50/60 to-red-50/20 border border-rose-200/70">
+            <div className="flex items-center justify-between text-slate-500 mb-1">
+              <span className="text-xs font-bold flex items-center gap-1.5">
+                <ShieldAlert className="w-4 h-4 text-rose-600" />
+                Soil Erosion Risk
+              </span>
+              <span
+                className={`text-[10px] font-bold px-2 py-0.2 rounded ${
+                  satIndicators.rainfall_impact?.erosion_risk_level === 'High'
+                    ? 'bg-rose-100 text-rose-800'
+                    : 'bg-emerald-100 text-emerald-800'
+                }`}
+              >
+                {satIndicators.rainfall_impact?.erosion_risk_level || 'Low'}
+              </span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-2">
+              Index: {satIndicators.rainfall_impact?.erosion_index_score || 18}/100
+            </div>
+            <p className="text-[11px] text-slate-600 mt-1 line-clamp-2 font-medium">
+              {lang === 'ta'
+                ? satIndicators.rainfall_impact?.advice_ta
+                : satIndicators.rainfall_impact?.advice_en || 'Maintain crop cover on loose topsoil.'}
+            </p>
+          </div>
+
+          {/* Card 4: Soil Water Availability (Plant Available Water) */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50/70 to-teal-50/30 border border-emerald-200/70">
+            <div className="flex items-center justify-between text-slate-500 mb-1">
+              <span className="text-xs font-bold flex items-center gap-1.5">
+                <Droplets className="w-4 h-4 text-emerald-600" />
+                Plant Available Water (PAW)
+              </span>
+              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.2 rounded">
+                AWC Metric
+              </span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-2">
+              {satIndicators.water_availability?.plant_available_water_pct || 62.0}%
+            </div>
+            <p className="text-[11px] text-slate-600 mt-1 font-medium">
+              {lang === 'ta'
+                ? satIndicators.water_availability?.status_ta
+                : satIndicators.water_availability?.status_en || 'Optimal root zone reservoir'}
+            </p>
+            <div className="mt-2 text-[10px] font-mono text-slate-500">
+              FC: {satIndicators.water_availability?.field_capacity_pct}% | WP: {satIndicators.water_availability?.wilting_point_pct}%
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 2: LABORATORY CERTIFIED SOIL HEALTH PROFILE & SCORECARD */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* Soil Score Gauge (5 Cols) */}
+        <div className="md:col-span-5">
           <SoilScoreGauge
-            score={latestRecord?.health_score || 82}
-            grade={latestRecord?.status_summary?.grade || "Good"}
-            gradeTamil={latestRecord?.status_summary?.grade_tamil || "நன்று"}
+            score={labData.composite_health_score || 82}
+            grade={labData.status_summary?.grade || 'Good'}
+            gradeTamil={labData.status_summary?.grade_tamil || 'நன்று'}
           />
         </div>
 
-        {/* Advisory Box */}
-        <div className="lg:col-span-2 bg-gradient-to-br from-white to-emerald-50/30 rounded-3xl p-6 border border-slate-200/90 shadow-xs flex flex-col justify-between">
+        {/* Selected District Soil & Facility Profile (7 Cols) */}
+        <div className="md:col-span-7 bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-              <FileCheck className="w-4 h-4 text-[#238636]" />
-              {t('soil.guidelines')}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-[#238636]" />
+                {lang === 'ta' ? 'மாவட்ட மண் & ஆய்வுக்கூட விவரம்' : 'District Soil & Testing Laboratory Profile'}
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                ICAR & TNAU Standards
+              </span>
             </div>
-            <div className="space-y-2 mt-3">
-              {recomms.map((rec, i) => (
-                <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-100">
-                  <CheckCircle2 className="w-4 h-4 text-[#238636] shrink-0 mt-0.5" />
-                  <span className="leading-relaxed font-medium">{rec}</span>
-                </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-            <span>Last Lab Sample: {latestRecord?.test_date || "Recent"}</span>
-            <span>Testing Facility: {latestRecord?.lab_name || "Regional TNAU Center"}</span>
+            <div className="mt-3 space-y-2.5 text-xs">
+              <div className="flex justify-between py-1.5 border-b border-slate-100">
+                <span className="text-slate-500 font-semibold">{lang === 'ta' ? 'தேர்ந்தெடுக்கப்பட்ட மாவட்டம்:' : 'Selected District:'}</span>
+                <span className="font-extrabold text-slate-900">{selectedDistrict}, {state}</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-slate-100">
+                <span className="text-slate-500 font-semibold">{lang === 'ta' ? 'முக்கிய மண் வகை:' : 'Primary Soil Type:'}</span>
+                <span className="font-extrabold text-amber-800">
+                  {lang === 'ta' ? soilData?.primary_soil_type_tamil : soilData?.primary_soil_type}
+                </span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-slate-100">
+                <span className="text-slate-500 font-semibold">{lang === 'ta' ? 'அங்கீகரிக்கப்பட்ட ஆய்வுக்கூடம்:' : 'Testing Facility:'}</span>
+                <span className="font-extrabold text-slate-800 text-right">{labData.lab_name}</span>
+              </div>
+              <div className="flex justify-between py-1.5">
+                <span className="text-slate-500 font-semibold">{lang === 'ta' ? 'மாதிரி எடுக்கப்பட்ட தேதி:' : 'Sample / Reference Date:'}</span>
+                <span className="font-mono text-slate-700 font-bold">{labData.test_date || '2026-02-15'}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Nutrient Parameters Cards Grid */}
-      <div>
-        <h3 className="text-base font-extrabold text-slate-900 mb-3">
-          Essential Nutrient Indicators & Availability
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      {/* Nutrient Parameters Cards Grid (Chemical Laboratory Tested) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+            <FlaskConical className="w-4 h-4 text-[#238636]" />
+            {lang === 'ta' ? 'ஆய்வக ஊட்டச்சத்து அளவீடுகள்' : 'Laboratory Certified Nutrient Parameters'}
+          </h3>
+          <span className="text-xs font-mono text-slate-500 font-semibold">
+            {selectedDistrict} District Baseline
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {/* pH */}
-          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Reaction (pH)</span>
-            <div className="text-2xl font-black text-slate-900 my-1">{params.ph?.value || 6.8}</div>
-            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-xs">
-              <span className="text-slate-400">Opt: 6.5 - 7.5</span>
-              <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${getStatusColor(params.ph?.score || 95)}`}>
-                {lang === 'ta' ? params.ph?.status_tamil : params.ph?.status || 'Optimal'}
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">pH Level</span>
+              <div className="text-2xl font-black text-slate-900 mt-1">{labData.ph || 7.0}</div>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                {labData.ph < 6.5 ? 'Acidic' : labData.ph > 7.5 ? 'Alkaline' : 'Neutral Range'}
+              </p>
+            </div>
+            <div className="mt-3">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                {lang === 'ta' ? 'உகந்தது' : 'Optimal'}
               </span>
             </div>
           </div>
 
           {/* Nitrogen (N) */}
-          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Available Nitrogen (N)</span>
-            <div className="text-2xl font-black text-slate-900 my-1">{params.nitrogen?.value || 245} <span className="text-xs font-semibold text-slate-400">kg/ha</span></div>
-            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-xs">
-              <span className="text-slate-400">Opt: 280 - 560</span>
-              <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${getStatusColor(params.nitrogen?.score || 60)}`}>
-                {lang === 'ta' ? params.nitrogen?.status_tamil : params.nitrogen?.status || 'Low'}
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Available Nitrogen (N)</span>
+              <div className="text-2xl font-black text-slate-900 mt-1">
+                {labData.nitrogen_kg_ha || 235} <span className="text-xs font-normal text-slate-400">kg/ha</span>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-0.5">Primary vegetative driver</p>
+            </div>
+            <div className="mt-3">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                {params?.nitrogen?.status || 'Medium'}
               </span>
             </div>
           </div>
 
           {/* Phosphorus (P) */}
-          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Available Phosphorus (P)</span>
-            <div className="text-2xl font-black text-slate-900 my-1">{params.phosphorus?.value || 16.5} <span className="text-xs font-semibold text-slate-400">kg/ha</span></div>
-            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-xs">
-              <span className="text-slate-400">Opt: 11 - 22</span>
-              <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${getStatusColor(params.phosphorus?.score || 95)}`}>
-                {lang === 'ta' ? params.phosphorus?.status_tamil : params.phosphorus?.status || 'Optimal'}
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Phosphorus (P)</span>
+              <div className="text-2xl font-black text-slate-900 mt-1">
+                {labData.phosphorus_kg_ha || 16.5} <span className="text-xs font-normal text-slate-400">kg/ha</span>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-0.5">Root vigor & energy</p>
+            </div>
+            <div className="mt-3">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                {params?.phosphorus?.status || 'Optimal'}
               </span>
             </div>
           </div>
 
           {/* Potassium (K) */}
-          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Available Potassium (K)</span>
-            <div className="text-2xl font-black text-slate-900 my-1">{params.potassium?.value || 210} <span className="text-xs font-semibold text-slate-400">kg/ha</span></div>
-            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-xs">
-              <span className="text-slate-400">Opt: 118 - 280</span>
-              <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${getStatusColor(params.potassium?.score || 95)}`}>
-                {lang === 'ta' ? params.potassium?.status_tamil : params.potassium?.status || 'Optimal'}
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Potassium (K)</span>
+              <div className="text-2xl font-black text-slate-900 mt-1">
+                {labData.potassium_kg_ha || 215} <span className="text-xs font-normal text-slate-400">kg/ha</span>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-0.5">Disease resistance</p>
+            </div>
+            <div className="mt-3">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                {params?.potassium?.status || 'Optimal'}
               </span>
             </div>
           </div>
 
-          {/* Organic Carbon */}
-          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Organic Carbon (OC)</span>
-            <div className="text-2xl font-black text-slate-900 my-1">{params.organic_carbon?.value || 0.58}%</div>
-            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-xs">
-              <span className="text-slate-400">Target: {'>'}0.75%</span>
-              <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${getStatusColor(params.organic_carbon?.score || 88)}`}>
-                {lang === 'ta' ? params.organic_carbon?.status_tamil : params.organic_carbon?.status || 'Good'}
+          {/* Organic Carbon (OC) */}
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Organic Carbon</span>
+              <div className="text-2xl font-black text-slate-900 mt-1">
+                {labData.organic_carbon_pct || 0.55}%
+              </div>
+              <p className="text-[11px] text-slate-500 mt-0.5">Microbial health</p>
+            </div>
+            <div className="mt-3">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                {params?.organic_carbon?.status || 'Medium'}
+              </span>
+            </div>
+          </div>
+
+          {/* Electrical Conductivity (EC) */}
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Electrical Cond.</span>
+              <div className="text-2xl font-black text-slate-900 mt-1">
+                {labData.electrical_conductivity_ds_m || 0.42} <span className="text-xs font-normal text-slate-400">dS/m</span>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-0.5">Salinity indicator</p>
+            </div>
+            <div className="mt-3">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Non-Saline (Safe)
               </span>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Historical Soil Test Records Table */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs">
-        <h3 className="text-base font-extrabold text-slate-900 mb-4">
-          Historical Soil Test Archive
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead>
-              <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px] tracking-wider">
-                <th className="py-2.5 px-3">Test Date</th>
-                <th className="py-2.5 px-3">pH</th>
-                <th className="py-2.5 px-3">Nitrogen (N)</th>
-                <th className="py-2.5 px-3">Phosphorus (P)</th>
-                <th className="py-2.5 px-3">Potassium (K)</th>
-                <th className="py-2.5 px-3">Organic Carbon</th>
-                <th className="py-2.5 px-3">Score</th>
-                <th className="py-2.5 px-3">Testing Lab</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
-              {records.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50/70">
-                  <td className="py-2.5 px-3 font-bold text-slate-900">{r.test_date}</td>
-                  <td className="py-2.5 px-3">{r.ph}</td>
-                  <td className="py-2.5 px-3">{r.nitrogen_kg_ha} kg/ha</td>
-                  <td className="py-2.5 px-3">{r.phosphorus_kg_ha} kg/ha</td>
-                  <td className="py-2.5 px-3">{r.potassium_kg_ha} kg/ha</td>
-                  <td className="py-2.5 px-3 font-semibold text-emerald-800">{r.organic_carbon_pct}%</td>
-                  <td className="py-2.5 px-3 font-extrabold text-[#238636]">{Math.round(r.health_score)}/100</td>
-                  <td className="py-2.5 px-3 text-slate-500">{r.lab_name || "TNAU Lab"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Modal for New Entry */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-lg font-black text-slate-900 mb-1">
-              Enter Soil Test Results
-            </h3>
-            <p className="text-xs text-slate-500 mb-5">
-              Record laboratory parameters to calculate updated fertility score and rotation recommendations.
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Test Date</label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.test_date}
-                    onChange={(e) => setFormData({ ...formData, test_date: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Soil pH (3.0 - 10.0)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="3.0"
-                    max="10.0"
-                    required
-                    value={formData.ph}
-                    onChange={(e) => setFormData({ ...formData, ph: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Nitrogen (kg/ha)</label>
-                  <input
-                    type="number"
-                    step="1"
-                    required
-                    value={formData.nitrogen_kg_ha}
-                    onChange={(e) => setFormData({ ...formData, nitrogen_kg_ha: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Phosphorus (kg/ha)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    required
-                    value={formData.phosphorus_kg_ha}
-                    onChange={(e) => setFormData({ ...formData, phosphorus_kg_ha: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Potassium (kg/ha)</label>
-                  <input
-                    type="number"
-                    step="1"
-                    required
-                    value={formData.potassium_kg_ha}
-                    onChange={(e) => setFormData({ ...formData, potassium_kg_ha: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Organic Carbon (%)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="5.0"
-                    required
-                    value={formData.organic_carbon_pct}
-                    onChange={(e) => setFormData({ ...formData, organic_carbon_pct: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Soil Moisture (%)</label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={formData.soil_moisture_pct}
-                    onChange={(e) => setFormData({ ...formData, soil_moisture_pct: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 block mb-1">Testing Laboratory / Source</label>
-                <input
-                  type="text"
-                  value={formData.lab_name}
-                  onChange={(e) => setFormData({ ...formData, lab_name: e.target.value })}
-                  placeholder="e.g. TNAU Soil Science Laboratory"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-                />
-              </div>
-
-              <div className="pt-4 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-[#238636] hover:bg-emerald-700 text-white font-bold transition shadow-sm"
-                >
-                  Calculate & Save Score
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-

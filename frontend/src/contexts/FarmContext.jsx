@@ -21,6 +21,19 @@ export const FarmProvider = ({ children }) => {
         const savedId = localStorage.getItem('agrisense_active_farm_id');
         const found = data.find(f => f.id === savedId) || data[0];
         setActiveFarm(found);
+      } else {
+        const dist = user?.registered_location?.district || user?.district || 'Thanjavur';
+        const st = user?.registered_location?.state || user?.state || 'Tamil Nadu';
+        setActiveFarm({
+          id: 'district_baseline',
+          name: `${dist} Agricultural Land`,
+          district: dist,
+          state: st,
+          latitude: 10.7870,
+          longitude: 79.1378,
+          area_acres: 5.0,
+          soil_type: 'Alluvial Soil'
+        });
       }
     } catch (err) {
       console.error("Failed to load farms:", err);

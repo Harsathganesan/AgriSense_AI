@@ -3,17 +3,17 @@ import {
   Settings,
   User,
   Languages,
-  Sliders,
   LogOut,
   Save,
   CheckCircle2,
-  ShieldCheck,
-  Phone,
-  MapPin
+  MapPin,
+  Globe,
+  Building
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { authApi } from '../services/api';
+import { getCountries, getStates, getDistricts } from '../data/locationHierarchy';
 
 export default function SettingsPage() {
   const { t, lang, setLang } = useLanguage();
@@ -21,17 +21,31 @@ export default function SettingsPage() {
 
   const [name, setName] = useState(user?.name || 'Kandasamy Muthusamy (முத்துசாமி)');
   const [phone, setPhone] = useState(user?.phone || '+91 94431 82740');
-  const [district, setDistrict] = useState(user?.district || 'Thanjavur');
-  const [state, setState] = useState(user?.state || 'Tamil Nadu');
+  const [country, setCountry] = useState(user?.registered_location?.country || user?.country || 'India');
+  const [state, setState] = useState(user?.registered_location?.state || user?.state || 'Tamil Nadu');
+  const [district, setDistrict] = useState(user?.registered_location?.district || user?.district || 'Thanjavur');
 
-  // Farmer Priorities
-  const [soilRegen, setSoilRegen] = useState(user?.priorities?.soil_regeneration || 0.35);
-  const [waterCons, setWaterCons] = useState(user?.priorities?.water_conservation || 0.35);
-  const [profitability, setProfitability] = useState(user?.priorities?.market_profitability || 0.30);
-  const [riskTolerance, setRiskTolerance] = useState(user?.priorities?.risk_tolerance || 'medium');
+  const availableCountries = getCountries();
+  const availableStates = getStates(country);
+  const availableDistricts = getDistricts(country, state);
 
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  const handleCountryChange = (newCountry) => {
+    setCountry(newCountry);
+    const newStates = getStates(newCountry);
+    const defaultState = newStates[0] || '';
+    setState(defaultState);
+    const newDistricts = getDistricts(newCountry, defaultState);
+    setDistrict(newDistricts[0] || '');
+  };
+
+  const handleStateChange = (newState) => {
+    setState(newState);
+    const newDistricts = getDistricts(country, newState);
+    setDistrict(newDistricts[0] || '');
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -40,14 +54,15 @@ export default function SettingsPage() {
       const payload = {
         name,
         phone,
-        district,
+        country,
         state,
+        district,
         language: lang,
-        priorities: {
-          soil_regeneration: Number(soilRegen),
-          water_conservation: Number(waterCons),
-          market_profitability: Number(profitability),
-          risk_tolerance: riskTolerance
+        priorities: user?.priorities || {
+          soil_regeneration: 0.35,
+          water_conservation: 0.35,
+          market_profitability: 0.30,
+          risk_tolerance: 'medium'
         }
       };
       const res = await authApi.updateProfile(payload);
@@ -70,7 +85,9 @@ export default function SettingsPage() {
           {t('nav.settings')}
         </h1>
         <p className="text-xs text-slate-500 mt-1">
-          Farmer profile, language localization preferences, and algorithmic weighting priorities.
+          {lang === 'ta'
+            ? 'விவசாயி சுயவிவரம் மற்றும் மொழி விருப்பத்தேர்வுகள்.'
+            : 'Farmer profile and language localization preferences.'}
         </p>
       </div>
 
@@ -79,12 +96,14 @@ export default function SettingsPage() {
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-5">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
             <User className="w-4 h-4 text-[#238636]" />
-            Grower Profile & Identity
+            {lang === 'ta' ? 'விவசாயி சுயவிவரம்' : 'Grower Profile & Identity'}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div>
-              <label className="font-bold text-slate-700 block mb-1">Full Name</label>
+              <label className="font-bold text-slate-700 block mb-1">
+                {lang === 'ta' ? 'முழுப் பெயர்' : 'Full Name'}
+              </label>
               <input
                 type="text"
                 required
@@ -94,7 +113,9 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="font-bold text-slate-700 block mb-1">Mobile Phone (SMS Alerts)</label>
+              <label className="font-bold text-slate-700 block mb-1">
+                {lang === 'ta' ? 'கைபேசி எண் (SMS எச்சரிக்கைகள்)' : 'Mobile Phone (SMS Alerts)'}
+              </label>
               <input
                 type="text"
                 value={phone}
@@ -102,23 +123,59 @@ export default function SettingsPage() {
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm font-mono"
               />
             </div>
+
+            {/* Cascading Location Hierarchy: Country -> State -> District */}
             <div>
-              <label className="font-bold text-slate-700 block mb-1">District</label>
-              <input
-                type="text"
+              <label className="font-bold text-slate-700 flex items-center gap-1.5 mb-1">
+                <Globe className="w-3.5 h-3.5 text-slate-400" />
+                {lang === 'ta' ? 'நாடு' : 'Country'}
+              </label>
+              <select
+                value={country}
+                onChange={(e) => handleCountryChange(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white"
+              >
+                {availableCountries.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="font-bold text-slate-700 flex items-center gap-1.5 mb-1">
+                <Building className="w-3.5 h-3.5 text-slate-400" />
+                {lang === 'ta' ? 'மாநிலம்' : 'State / Province'}
+              </label>
+              <select
+                value={state}
+                onChange={(e) => handleStateChange(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white"
+              >
+                {availableStates.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="font-bold text-slate-700 flex items-center gap-1.5 mb-1">
+                <MapPin className="w-3.5 h-3.5 text-[#238636]" />
+                {lang === 'ta' ? 'மாவட்டம் (பதிவு செய்யப்பட்ட பண்ணை இருப்பிடம்)' : 'District (Registered Farm Location)'}
+              </label>
+              <select
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-              />
-            </div>
-            <div>
-              <label className="font-bold text-slate-700 block mb-1">State</label>
-              <input
-                type="text"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm"
-              />
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white font-medium"
+              >
+                {availableDistricts.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+              <p className="text-[11px] text-slate-500 mt-1">
+                {lang === 'ta'
+                  ? 'இது உங்கள் பண்ணை பகுதிக்கான அடிப்படை மண் மற்றும் நாசா காலநிலைக் குறிப்புகளை அமைக்கும்.'
+                  : 'This sets your baseline district, GeoJSON boundaries, and NASA agro-climatology references.'}
+              </p>
             </div>
           </div>
         </div>
@@ -127,11 +184,13 @@ export default function SettingsPage() {
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
             <Languages className="w-4 h-4 text-[#238636]" />
-            Language & Accessibility
+            {lang === 'ta' ? 'மொழி விருப்பங்கள்' : 'Language & Accessibility'}
           </div>
 
           <p className="text-xs text-slate-500">
-            Select your preferred display language for UI labels, charts, AI assistant interactions, and PDF reports.
+            {lang === 'ta'
+              ? 'பயன்பாட்டு இடைமுகம் மற்றும் தகவல்களுக்கான மொழியைத் தேர்வுசெய்யவும்.'
+              : 'Select your preferred display language for UI labels, charts, and AI assistant interactions.'}
           </p>
 
           <div className="grid grid-cols-2 gap-4 max-w-md pt-1">
@@ -169,87 +228,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Farmer Priorities & Algorithmic Tuning */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-5">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-            <Sliders className="w-4 h-4 text-[#238636]" />
-            Crop Rotation Strategy Priorities
-          </div>
-          <p className="text-xs text-slate-500">
-            Tune how the recommendation algorithm balances soil regeneration, water conservation, and cash returns for your land.
-          </p>
-
-          <div className="space-y-4 pt-1 text-xs">
-            <div>
-              <div className="flex justify-between font-bold mb-1">
-                <span className="text-slate-700">Soil Health & Carbon Building Weight:</span>
-                <span className="text-emerald-700 font-extrabold">{Math.round(soilRegen * 100)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0.1"
-                max="0.8"
-                step="0.05"
-                value={soilRegen}
-                onChange={(e) => setSoilRegen(parseFloat(e.target.value))}
-                className="w-full accent-[#238636]"
-              />
-            </div>
-
-            <div>
-              <div className="flex justify-between font-bold mb-1">
-                <span className="text-slate-700">Water Conservation Priority:</span>
-                <span className="text-teal-700 font-extrabold">{Math.round(waterCons * 100)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0.1"
-                max="0.8"
-                step="0.05"
-                value={waterCons}
-                onChange={(e) => setWaterCons(parseFloat(e.target.value))}
-                className="w-full accent-teal-600"
-              />
-            </div>
-
-            <div>
-              <div className="flex justify-between font-bold mb-1">
-                <span className="text-slate-700">Commercial Market Profitability:</span>
-                <span className="text-orange-700 font-extrabold">{Math.round(profitability * 100)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0.1"
-                max="0.8"
-                step="0.05"
-                value={profitability}
-                onChange={(e) => setProfitability(parseFloat(e.target.value))}
-                className="w-full accent-orange-500"
-              />
-            </div>
-
-            <div className="pt-2">
-              <label className="font-bold text-slate-700 block mb-1">Risk Tolerance Level</label>
-              <div className="grid grid-cols-3 gap-3">
-                {['low', 'medium', 'high'].map((level) => (
-                  <button
-                    key={level}
-                    type="button"
-                    onClick={() => setRiskTolerance(level)}
-                    className={`py-2 px-3 rounded-xl border text-xs font-bold uppercase transition ${
-                      riskTolerance === level
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    {level} Risk
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Save Bar */}
         <div className="flex items-center justify-between pt-2">
           <button
@@ -265,7 +243,7 @@ export default function SettingsPage() {
             {savedSuccess && (
               <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
                 <CheckCircle2 className="w-4 h-4" />
-                Settings Saved!
+                {lang === 'ta' ? 'அமைப்புகள் சேமிக்கப்பட்டன!' : 'Settings Saved!'}
               </span>
             )}
             <button
@@ -274,7 +252,7 @@ export default function SettingsPage() {
               className="flex items-center gap-2 px-6 py-2.5 bg-[#238636] hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition hover:scale-[1.02] active:scale-[0.98]"
             >
               <Save className="w-4 h-4" />
-              {saving ? "Saving..." : t('common.save')}
+              {saving ? (lang === 'ta' ? 'சேமிக்கிறது...' : 'Saving...') : t('common.save')}
             </button>
           </div>
         </div>

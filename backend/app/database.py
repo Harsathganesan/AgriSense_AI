@@ -2,14 +2,33 @@ import os
 import json
 import uuid
 import copy
+import tempfile
 from pathlib import Path
 from datetime import datetime
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 from app.config import settings
 
-DATA_STORE_DIR = Path(__file__).resolve().parent.parent / "data_store"
-DATA_STORE_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    import dns.resolver
+    _r = dns.resolver.get_default_resolver()
+    _r.lifetime = 1.0
+    _r.timeout = 1.0
+except Exception:
+    pass
+
+# Serverless environment (e.g. Vercel) has a read-only root; use system tempdir for fallback storage
+is_serverless = bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+if is_serverless:
+    DATA_STORE_DIR = Path(tempfile.gettempdir()) / "agrisense_data_store"
+else:
+    DATA_STORE_DIR = Path(__file__).resolve().parent.parent / "data_store"
+
+try:
+    DATA_STORE_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    DATA_STORE_DIR = Path(tempfile.gettempdir()) / "agrisense_data_store"
+    DATA_STORE_DIR.mkdir(parents=True, exist_ok=True)
 
 class FallbackCursor:
     def __init__(self, items):
@@ -178,20 +197,36 @@ class DatabaseManager:
 
     def _init_connection(self):
         try:
-            # Set short timeout to test MongoDB availability
-            self.client = MongoClient(
-                settings.MONGODB_URI, 
-                serverSelectionTimeoutMS=500,
-                connectTimeoutMS=500,
-                socketTimeoutMS=500
-            )
+            try:
+                import dns.resolver
+                r = dns.resolver.get_default_resolver()
+                r.lifetime = 1.0
+                r.timeout = 1.0
+            except Exception:
+                pass
+
+            import certifi
+            is_srv = "mongodb+srv" in settings.MONGODB_URI
+            timeout_ms = 1500 if is_srv else 800
+            client_kwargs = {
+                "serverSelectionTimeoutMS": timeout_ms,
+                "connectTimeoutMS": timeout_ms,
+                "socketTimeoutMS": timeout_ms
+            }
+            if is_srv:
+                try:
+                    client_kwargs["tlsCAFile"] = certifi.where()
+                except Exception:
+                    pass
+
+            self.client = MongoClient(settings.MONGODB_URI, **client_kwargs)
             self.client.admin.command('ping')
             self.db = self.client[settings.DATABASE_NAME]
             self.is_connected_to_mongo = True
-            print(f"[AgriSense AI] Successfully connected to MongoDB: {settings.DATABASE_NAME}")
+            print(f"[AgriSense AI] Successfully connected to MongoDB Atlas: {settings.DATABASE_NAME}")
         except Exception as e:
             self.is_connected_to_mongo = False
-            print(f"[AgriSense AI] MongoDB not reachable ({e}). Using embedded persistent JSON data store.")
+            print(f"[AgriSense AI] MongoDB Atlas connection note: ({e}). Using embedded persistent JSON data store.")
 
     def get_collection(self, name: str):
         if self.is_connected_to_mongo and self.db is not None:

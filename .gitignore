@@ -3,7 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 backend/venv/
+# Environment Variables
 .env
+.env.*
+*.env
+!.env.example
+!*/.env.example
 data_store/
 generated_reports/
 

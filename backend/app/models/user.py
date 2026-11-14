@@ -8,8 +8,10 @@ class UserRegister(BaseModel):
     password: str = Field(..., min_length=6)
     language: str = "en"  # "en" or "ta"
     phone: Optional[str] = None
-    district: Optional[str] = "Thanjavur"
+    country: Optional[str] = "India"
     state: Optional[str] = "Tamil Nadu"
+    district: Optional[str] = "Thanjavur"
+    registered_location: Optional[Dict[str, Any]] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -25,8 +27,11 @@ class UserProfileUpdate(BaseModel):
     name: Optional[str] = None
     language: Optional[str] = None
     phone: Optional[str] = None
-    district: Optional[str] = None
+    country: Optional[str] = None
     state: Optional[str] = None
+    district: Optional[str] = None
+    registered_location: Optional[Dict[str, Any]] = None
+    current_gps_location: Optional[Dict[str, Any]] = None
     priorities: Optional[UserPriorities] = None
 
 class UserResponse(BaseModel):
@@ -35,8 +40,11 @@ class UserResponse(BaseModel):
     email: str
     language: str
     phone: Optional[str] = None
-    district: Optional[str] = None
-    state: Optional[str] = None
+    country: Optional[str] = "India"
+    state: Optional[str] = "Tamil Nadu"
+    district: Optional[str] = "Thanjavur"
+    registered_location: Optional[Dict[str, Any]] = None
+    current_gps_location: Optional[Dict[str, Any]] = None
     priorities: Optional[Dict[str, Any]] = None
     created_at: Optional[str] = None
 

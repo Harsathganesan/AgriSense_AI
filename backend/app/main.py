@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import get_collection
 from app.services.auth_service import AuthService
-from app.routes import auth, farms, nasa, soil, crops, rotation, assistant, reports, history
+from app.routes import auth, farms, nasa, soil, crops, rotation, assistant, reports, history, location, analysis, district
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,6 +39,7 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="Smart Crop Rotation & Soil Health Decision Platform powered by NASA Earth Observations and Gemini AI",
+    redirect_slashes=False,
     lifespan=lifespan
 )
 
@@ -61,8 +62,13 @@ app.include_router(rotation.router, prefix=settings.API_PREFIX)
 app.include_router(assistant.router, prefix=settings.API_PREFIX)
 app.include_router(reports.router, prefix=settings.API_PREFIX)
 app.include_router(history.router, prefix=settings.API_PREFIX)
+app.include_router(location.router, prefix=settings.API_PREFIX)
+app.include_router(analysis.router, prefix=settings.API_PREFIX)
+app.include_router(district.router, prefix=settings.API_PREFIX)
 
 @app.get("/")
+@app.get("/api")
+@app.get("/api/")
 async def root():
     return {
         "platform": settings.PROJECT_NAME,

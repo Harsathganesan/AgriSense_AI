@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+// Configure Axios baseURL from Vite environment variables
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+if (apiBase) {
+  axios.defaults.baseURL = apiBase.replace(/\/+$/, '');
+}
+
 export const authApi = {
   login: (email, password) => axios.post('/api/auth/login', { email, password }),
   register: (data) => axios.post('/api/auth/register', data),
@@ -15,6 +21,16 @@ export const farmsApi = {
   delete: (id) => axios.delete(`/api/farms/${id}`),
 };
 
+export const locationApi = {
+  save: (data) => axios.post('/api/location/save', data),
+  recordGps: (data) => axios.post('/api/location/gps', data),
+  getCurrent: () => axios.get('/api/location/current'),
+  getStatus: () => axios.get('/api/location/status'),
+  getDistrictBoundary: (district, state = 'Tamil Nadu', country = 'India') =>
+    axios.get(`/api/location/district-boundary?district=${encodeURIComponent(district)}&state=${encodeURIComponent(state)}&country=${encodeURIComponent(country)}`),
+  reverseGeocode: (lat, lon) => axios.get(`/api/location/reverse-geocode?latitude=${lat}&longitude=${lon}`),
+};
+
 export const nasaApi = {
   getSummary: (lat, lon, start, end) => {
     let url = `/api/nasa/summary?latitude=${lat}&longitude=${lon}`;
@@ -23,6 +39,24 @@ export const nasaApi = {
     return axios.get(url);
   },
   getLayers: (lat, lon) => axios.get(`/api/nasa/layers?latitude=${lat}&longitude=${lon}`),
+  getEarthdataStatus: () => axios.get('/api/nasa/earthdata/status'),
+  getWeather: (lat, lon, start, end) => {
+    let url = `/api/nasa/weather?latitude=${lat}&longitude=${lon}`;
+    if (start) url += `&start_date=${start}`;
+    if (end) url += `&end_date=${end}`;
+    return axios.get(url);
+  },
+  getRainfall: (lat, lon) => axios.get(`/api/nasa/rainfall?latitude=${lat}&longitude=${lon}`),
+};
+
+export const analysisApi = {
+  getLocationBased: (lat, lon) => {
+    let url = '/api/analysis/location-based';
+    if (lat !== undefined && lon !== undefined && lat !== null && lon !== null) {
+      url += `?latitude=${lat}&longitude=${lon}`;
+    }
+    return axios.get(url);
+  },
 };
 
 export const soilApi = {
@@ -45,8 +79,8 @@ export const rotationApi = {
 };
 
 export const assistantApi = {
-  chat: (message, farmId, language) => axios.post('/api/assistant/chat', { message, farm_id: farmId, language }),
-  getPrompts: (language) => axios.get(`/api/assistant/prompts?language=${language}`),
+  chat: (message, district, language) => axios.post('/api/assistant/chat', { message, district, language }),
+  getPrompts: (language, district) => axios.get(`/api/assistant/prompts?language=${language}${district ? `&district=${encodeURIComponent(district)}` : ''}`),
 };
 
 export const reportsApi = {
@@ -58,5 +92,23 @@ export const reportsApi = {
 export const historyApi = {
   list: (farmId) => axios.get(`/api/history${farmId ? `?farm_id=${farmId}` : ''}`),
   delete: (id) => axios.delete(`/api/history/${id}`),
+};
+
+export const districtApi = {
+  getProfile: (district, state = 'Tamil Nadu', country = 'India') =>
+    axios.get(`/api/district/profile?district=${encodeURIComponent(district)}&state=${encodeURIComponent(state)}&country=${encodeURIComponent(country)}`),
+  getEnvironment: (district, state = 'Tamil Nadu', country = 'India') =>
+    axios.get(`/api/district/environment?district=${encodeURIComponent(district)}&state=${encodeURIComponent(state)}&country=${encodeURIComponent(country)}`),
+  getSoilHealth: (district, state = 'Tamil Nadu', country = 'India') =>
+    axios.get(`/api/district/soil-health?district=${encodeURIComponent(district)}&state=${encodeURIComponent(state)}&country=${encodeURIComponent(country)}`),
+  saveSoilRecord: (data) => axios.post('/api/district/soil-health/record', data),
+  getCrops: (district, category = 'All', search = '', state = 'Tamil Nadu', country = 'India') => {
+    let url = `/api/district/crops?district=${encodeURIComponent(district)}&category=${encodeURIComponent(category)}&state=${encodeURIComponent(state)}&country=${encodeURIComponent(country)}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    return axios.get(url);
+  },
+  getRotation: (district, state = 'Tamil Nadu', country = 'India') =>
+    axios.get(`/api/district/rotation?district=${encodeURIComponent(district)}&state=${encodeURIComponent(state)}&country=${encodeURIComponent(country)}`),
+  whatIf: (data) => axios.post('/api/district/rotation/what-if', data),
 };
 

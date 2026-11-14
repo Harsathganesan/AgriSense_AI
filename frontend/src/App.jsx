@@ -7,13 +7,11 @@ import { FarmProvider } from './contexts/FarmContext';
 import Layout from './components/Layout';
 import DashboardPage from './pages/DashboardPage';
 import MyFarmPage from './pages/MyFarmPage';
-import NasaExplorerPage from './pages/NasaExplorerPage';
 import SoilHealthPage from './pages/SoilHealthPage';
 import CropExplorerPage from './pages/CropExplorerPage';
+import AgriTrackerPage from './pages/AgriTrackerPage';
 import CropRotationPlannerPage from './pages/CropRotationPlannerPage';
 import AiAssistantPage from './pages/AiAssistantPage';
-import FarmMapPage from './pages/FarmMapPage';
-import ReportsPage from './pages/ReportsPage';
 import HistoryPage from './pages/HistoryPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
@@ -42,7 +40,7 @@ export default function App() {
     <LanguageProvider>
       <AuthProvider>
         <FarmProvider>
-          <BrowserRouter>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               
@@ -56,14 +54,12 @@ export default function App() {
                 }
               >
                 <Route index element={<DashboardPage />} />
-                <Route path="farms" element={<MyFarmPage />} />
-                <Route path="nasa-explorer" element={<NasaExplorerPage />} />
+                <Route path="my-farm" element={<MyFarmPage />} />
                 <Route path="soil-health" element={<SoilHealthPage />} />
                 <Route path="crop-explorer" element={<CropExplorerPage />} />
+                <Route path="agri-tracker" element={<AgriTrackerPage />} />
                 <Route path="rotation-planner" element={<CropRotationPlannerPage />} />
                 <Route path="ai-assistant" element={<AiAssistantPage />} />
-                <Route path="map" element={<FarmMapPage />} />
-                <Route path="reports" element={<ReportsPage />} />
                 <Route path="history" element={<HistoryPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>

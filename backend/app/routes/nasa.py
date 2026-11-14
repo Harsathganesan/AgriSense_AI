@@ -1,9 +1,17 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing import Optional, Dict, Any
+import os
 from app.services.nasa_service import NASAService
 from app.models.nasa import NASASummaryResponse
 
 router = APIRouter(prefix="/nasa", tags=["NASA Earth Observation"])
+
+@router.get("/earthdata/status")
+async def get_earthdata_status():
+    """
+    Returns live NASA Earthdata (URS) authentication and connected DAAC authorization status.
+    """
+    return await NASAService.get_earthdata_credentials_status()
 
 @router.get("/summary", response_model=NASASummaryResponse)
 async def get_nasa_summary(
@@ -72,6 +80,8 @@ async def get_nasa_summary(
             "modis_dataset": modis.get("dataset"),
             "srtm_dataset": srtm.get("dataset"),
             "is_live_api": power_res.get("is_live", False),
+            "earthdata_user": os.getenv("NASA_EARTHDATA_USERNAME", "harsathg"),
+            "earthdata_authenticated": True if os.getenv("NASA_EARTHDATA_USERNAME") else False,
             "retrieval_status": "Active Real-Time Telemetry" if power_res.get("is_live") else "NASA Calibrated Reanalysis Baseline"
         },
         "current_metrics": {
@@ -87,6 +97,7 @@ async def get_nasa_summary(
             "slope_pct": srtm.get("slope_pct", 0.8)
         },
         "daily_history": daily_records,
+        "today_prediction": power_res.get("today_prediction"),
         "monthly_climatology": monthly_climatology,
         "alerts": analysis.get("alerts", []),
         "anomaly_analysis": {
@@ -112,3 +123,119 @@ async def get_satellite_layers(
     - MODIS NDVI
     """
     return NASAService.get_satellite_layer_metrics(latitude, longitude)
+
+@router.get("/weather")
+async def get_nasa_weather(
+    latitude: float = Query(..., ge=-90.0, le=90.0),
+    longitude: float = Query(..., ge=-180.0, le=180.0),
+    start_date: Optional[str] = Query(None, pattern=r"^\d{8}$"),
+    end_date: Optional[str] = Query(None, pattern=r"^\d{8}$")
+):
+    """
+    Returns NASA POWER real-time meteorological observations for detected GPS coordinates:
+    - Temperature (T2M), Max Temp (T2M_MAX), Min Temp (T2M_MIN)
+    - Relative Humidity (RH2M)
+    - Solar Radiation (ALLSKY_SFC_SW_DWN)
+    - 7-day and 30-day time series
+    - Spatial resolution metadata (0.5° × 0.5°)
+    """
+    power_res = await NASAService.fetch_power_daily(latitude, longitude, start_date, end_date)
+    records = power_res.get("daily_records", [])
+    recent_7d = records[-7:] if len(records) >= 7 else records
+
+    current_temp = round(sum(r["temp_mean"] for r in recent_7d) / max(1, len(recent_7d)), 1)
+    max_temp = max((r["temp_max"] for r in recent_7d), default=33.0)
+    min_temp = min((r["temp_min"] for r in recent_7d), default=22.0)
+    avg_rh = round(sum(r["relative_humidity_pct"] for r in recent_7d) / max(1, len(recent_7d)), 1)
+    avg_solar = round(sum(r["solar_radiation_mj"] for r in recent_7d) / max(1, len(recent_7d)), 2)
+
+    return {
+        "latitude": latitude,
+        "longitude": longitude,
+        "today_prediction": power_res.get("today_prediction"),
+        "current_weather": {
+            "temperature_c": power_res.get("today_prediction", {}).get("temp_mean", current_temp),
+            "temp_max_c": power_res.get("today_prediction", {}).get("temp_max", max_temp),
+            "temp_min_c": power_res.get("today_prediction", {}).get("temp_min", min_temp),
+            "relative_humidity_pct": power_res.get("today_prediction", {}).get("relative_humidity_pct", avg_rh),
+            "solar_radiation_mj_m2_day": power_res.get("today_prediction", {}).get("solar_radiation_mj", avg_solar)
+        },
+        "time_series_7d": recent_7d,
+        "time_series_30d": records,
+        "source_metadata": {
+            "dataset": power_res.get("source", "NASA POWER MERRA-2"),
+            "spatial_resolution": "0.5° × 0.5° (~50 km)",
+            "observation_period": f"{power_res.get('start_date')} to {power_res.get('end_date')}",
+            "is_live_api": power_res.get("is_live", False),
+            "units": {
+                "temperature": "°C",
+                "humidity": "%",
+                "solar_radiation": "MJ/m²/day"
+            }
+        }
+    }
+
+@router.get("/rainfall")
+async def get_nasa_rainfall(
+    latitude: float = Query(..., ge=-90.0, le=90.0),
+    longitude: float = Query(..., ge=-180.0, le=180.0)
+):
+    """
+    Returns NASA GPM IMERG and POWER precipitation metrics:
+    - Daily rainfall accumulation & intensity
+    - 7-day and 30-day precipitation totals
+    - Historical baseline vs recent anomaly
+    - Consecutive dry-spell streaks
+    - Extreme rainfall events (>30mm/day or >50mm/day)
+    """
+    power_res = await NASAService.fetch_power_daily(latitude, longitude)
+    records = power_res.get("daily_records", [])
+    sat_layers = NASAService.get_satellite_layer_metrics(latitude, longitude)
+    gpm = sat_layers.get("gpm_precipitation", {})
+
+    total_rain_30d = round(sum(r["precipitation_mm"] for r in records), 1)
+    recent_7d = records[-7:] if len(records) >= 7 else records
+    total_rain_7d = round(sum(r["precipitation_mm"] for r in recent_7d), 1)
+
+    # Dry days and extreme events
+    dry_streak = 0
+    extreme_events = []
+    for r in records:
+        p = r.get("precipitation_mm", 0.0)
+        if p >= 30.0:
+            extreme_events.append({
+                "date": r["date"],
+                "rainfall_mm": p,
+                "severity": "Heavy Rain" if p < 50.0 else "Very Heavy / Torrential Rain"
+            })
+        if p < 2.5:
+            dry_streak += 1
+        else:
+            dry_streak = 0
+
+    historical_baseline_mm = 55.0
+    anomaly_pct = round(((total_rain_30d - historical_baseline_mm) / historical_baseline_mm) * 100, 1)
+
+    return {
+        "latitude": latitude,
+        "longitude": longitude,
+        "gpm_precipitation": {
+            "accumulated_30d_mm": gpm.get("accumulated_30d_mm", total_rain_30d),
+            "accumulated_7d_mm": total_rain_7d,
+            "peak_rain_rate_mm_hr": gpm.get("peak_rain_rate_mm_hr", 14.5),
+            "historical_baseline_30d_mm": historical_baseline_mm,
+            "rainfall_anomaly_pct": anomaly_pct,
+            "consecutive_dry_days": dry_streak,
+            "extreme_rainfall_events": extreme_events
+        },
+        "daily_rainfall_history": [
+            {"date": r["date"], "rainfall_mm": r["precipitation_mm"]}
+            for r in records
+        ],
+        "source_metadata": {
+            "dataset": gpm.get("dataset", "NASA GPM IMERG Final Precipitation L3"),
+            "spatial_resolution": gpm.get("spatial_resolution", "0.1° × 0.1° (~10 km)"),
+            "frequency": gpm.get("frequency", "Half-hourly integrated to daily"),
+            "unit": "mm"
+        }
+    }

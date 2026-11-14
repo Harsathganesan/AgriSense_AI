@@ -118,15 +118,32 @@ uvicorn app.main:app --reload --port 8000
 ```bash
 # Navigate to frontend directory
 cd frontend
-
-# Install node dependencies
 npm install
 
-# Start Vite development server (runs at http://localhost:5173)
+# Configure environment variables (optional: defaults work out of the box)
+cp .env.example .env
+```
+
+### Option A: One-Command Startup (Frontend Auto-Starts Backend)
+
+Simply start the frontend dev server, and **AgriSense AI will automatically detect and launch the FastAPI backend**:
+
+```bash
+# From the project root:
+npm run dev
+
+# Or from the frontend directory:
+cd frontend
 npm run dev
 ```
 
-Open your browser at **`http://localhost:5173`**.
+*The Vite development server will check port 8000. If the backend is not already running, it automatically spawns the FastAPI server, connects to MongoDB Atlas, authenticates with NASA Earthdata, and sets up reverse proxying seamlessly!*
+
+### Option B: Windows Launcher Scripts
+
+Double-click either launcher script in the project root:
+- **`start-frontend.bat`**: Launches frontend on `http://localhost:5173` and automatically starts backend if not already active.
+- **`start-all.bat`**: Explicitly launches both backend and frontend in dedicated console windows.
 
 ---
 
@@ -166,13 +183,29 @@ ALL 11 BACKEND API MODULES & INTEGRATIONS PASSED 100%!
 
 ---
 
-## Production Deployment
+## Production Deployment on Vercel (Full-Stack Monorepo)
 
-### Vercel (Frontend)
-Deploy `frontend/` directory directly to Vercel. `vercel.json` provides API proxy rewrites to your backend service.
+AgriSense AI is fully pre-configured for **single-project full-stack deployment on Vercel** (both Vite React frontend & FastAPI Python backend running together on one domain):
 
-### Render (Full-Stack)
-Connect your GitHub repository to Render using `render.yaml` for automatic provisioning of the FastAPI backend and static Vite frontend.
+### Deploying to Vercel in 3 Steps:
+
+1. **Push your repository to GitHub.**
+2. **Go to [Vercel](https://vercel.com/new) and Import your GitHub repository:**
+   - **Framework Preset:** Vite (or Other)
+   - **Root Directory:** `./` (Leave as root)
+   - **Build Command:** `npm --prefix frontend install && npm --prefix frontend run build` (configured automatically via `vercel.json`)
+   - **Output Directory:** `frontend/dist` (configured automatically via `vercel.json`)
+3. **Add Environment Variables in Vercel Settings:**
+   In your Vercel Project -> **Settings** -> **Environment Variables**, add:
+   - `MONGODB_URI`: Your MongoDB Atlas connection string (e.g. `mongodb+srv://...`)
+   - `DATABASE_NAME`: `agrisense_ai`
+   - `JWT_SECRET`: A strong secret key (e.g. `agrisense_super_secret_jwt_key_2026`)
+   - `GEMINI_API_KEY`: Your Google Gemini API key
+   - `NASA_EARTHDATA_USERNAME`: Your NASA Earthdata username (optional)
+   - `NASA_EARTHDATA_PASSWORD`: Your NASA Earthdata password (optional)
+   - *(Note: `VITE_API_BASE_URL` should be left empty or omitted so the frontend automatically calls `/api` on the same Vercel domain!)*
+
+Click **Deploy**! Vercel will build the frontend assets, compile the Python serverless function at `/api/index.py`, and launch your full-stack platform live on `https://your-project.vercel.app`!
 
 ---
 

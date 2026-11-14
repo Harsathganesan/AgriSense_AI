@@ -33,4 +33,5 @@ class NASASummaryResponse(BaseModel):
     alerts: List[EnvironmentalAlert]
     anomaly_analysis: Dict[str, Any]
     dry_spell_analysis: Dict[str, Any]
+    today_prediction: Optional[Dict[str, Any]] = None
 

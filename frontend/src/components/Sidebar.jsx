@@ -2,17 +2,15 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
-  Tractor,
-  Satellite,
   FlaskConical,
   Sprout,
+  CalendarCheck2,
   RotateCcw,
   Sparkles,
-  Map,
-  FileText,
   History,
   Settings,
   Leaf,
+  MapPin,
   X
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -22,14 +20,12 @@ export default function Sidebar({ isOpen, onClose }) {
 
   const navItems = [
     { to: '/', label: t('nav.dashboard'), icon: LayoutDashboard },
-    { to: '/farms', label: t('nav.myFarm'), icon: Tractor },
-    { to: '/nasa-explorer', label: t('nav.nasaExplorer'), icon: Satellite, badge: 'Live' },
+    { to: '/my-farm', label: t('nav.myFarm'), icon: MapPin, highlight: true },
     { to: '/soil-health', label: t('nav.soilHealth'), icon: FlaskConical },
     { to: '/crop-explorer', label: t('nav.cropExplorer'), icon: Sprout },
-    { to: '/rotation-planner', label: t('nav.rotationPlanner'), icon: RotateCcw, highlight: true },
+    { to: '/agri-tracker', label: t('nav.agriTracker'), icon: CalendarCheck2, badge: 'Track', highlight: true },
+    { to: '/rotation-planner', label: t('nav.rotationPlanner'), icon: RotateCcw },
     { to: '/ai-assistant', label: t('nav.aiAssistant'), icon: Sparkles, badge: 'AI' },
-    { to: '/map', label: t('nav.farmMap'), icon: Map },
-    { to: '/reports', label: t('nav.reports'), icon: FileText },
     { to: '/history', label: t('nav.history'), icon: History },
     { to: '/settings', label: t('nav.settings'), icon: Settings },
   ];
@@ -77,6 +73,7 @@ export default function Sidebar({ isOpen, onClose }) {
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
+
             return (
               <NavLink
                 key={item.to}
@@ -143,4 +140,3 @@ export default function Sidebar({ isOpen, onClose }) {
     </>
   );
 }
-

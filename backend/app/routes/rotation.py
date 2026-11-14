@@ -28,7 +28,16 @@ async def generate_crop_rotation(
         # Check if default farm can be used
         farm = farms_col.find_one({"user_id": current_user["_id"]})
         if not farm:
-            raise HTTPException(status_code=404, detail="Farm not found")
+            district = current_user.get("district") or "Thanjavur"
+            farm = {
+                "_id": request.farm_id or "default_farm",
+                "name": f"{district} Agriculture Zone",
+                "user_id": current_user["_id"],
+                "district": district,
+                "state": current_user.get("state", "Tamil Nadu"),
+                "latitude": 10.7870,
+                "longitude": 79.1378
+            }
 
     lat = float(farm.get("latitude", 10.7870))
     lon = float(farm.get("longitude", 79.1378))
@@ -145,8 +154,21 @@ async def generate_crop_rotation(
         "agronomic_advisory_tamil": advisory_ta
     }
 
-    # Store analysis record
-    rotation_col.insert_one(response_data)
+    # Store analysis record safely serialized for MongoDB
+    db_doc = {
+        "_id": analysis_id,
+        "farm_id": farm["_id"],
+        "farm_name": farm.get("name", "Farm"),
+        "created_at": now,
+        "weights_used": weights.dict() if hasattr(weights, "dict") else weights,
+        "environmental_context": response_data["environmental_context"],
+        "strategies": [s.dict() if hasattr(s, "dict") else s for s in strategies],
+        "recommended_strategy_id": recommended.id,
+        "comparison_matrix": comparison_matrix,
+        "agronomic_advisory": advisory_en,
+        "agronomic_advisory_tamil": advisory_ta
+    }
+    rotation_col.insert_one(db_doc)
     # Log to analysis history
     history_col.insert_one({
         "_id": str(uuid.uuid4()),
@@ -173,7 +195,16 @@ async def run_what_if_scenario(
     if not farm:
         farm = farms_col.find_one({"user_id": current_user["_id"]})
         if not farm:
-            raise HTTPException(status_code=404, detail="Farm not found")
+            district = current_user.get("district") or "Thanjavur"
+            farm = {
+                "_id": request.farm_id or "default_farm",
+                "name": f"{district} Agriculture Zone",
+                "user_id": current_user["_id"],
+                "district": district,
+                "state": current_user.get("state", "Tamil Nadu"),
+                "latitude": 10.7870,
+                "longitude": 79.1378
+            }
 
     lat = float(farm.get("latitude", 10.7870))
     lon = float(farm.get("longitude", 79.1378))
@@ -213,16 +244,20 @@ async def run_what_if_scenario(
 
 @router.get("/latest")
 async def get_latest_rotation(
-    farm_id: str = Query(...),
+    farm_id: Optional[str] = Query(None),
     current_user: dict = Depends(get_current_user)
 ):
+    target_farm_id = farm_id or "default_farm"
     rotation_col = get_collection("rotation_analyses")
-    cursor = rotation_col.find({"farm_id": farm_id})
+    cursor = rotation_col.find({"farm_id": target_farm_id})
     items = list(cursor)
     if items:
         # Return most recent
-        return items[-1]
+        res = items[-1]
+        if "_id" in res and "id" not in res:
+            res["id"] = str(res["_id"])
+        return res
     # If none yet, trigger generation
-    req = RotationAnalysisRequest(farm_id=farm_id)
+    req = RotationAnalysisRequest(farm_id=target_farm_id)
     return await generate_crop_rotation(req, current_user)
 

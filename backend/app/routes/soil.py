@@ -40,14 +40,20 @@ def _default_soil_record(farm_id: str, user_id: str):
 
 @router.get("/records", response_model=List[SoilRecordResponse])
 async def list_soil_records(
-    farm_id: str = Query(...),
+    farm_id: Optional[str] = Query(None),
+    district: Optional[str] = Query(None),
     current_user: dict = Depends(get_current_user)
 ):
     soil_col = get_collection("soil_records")
-    records = list(soil_col.find({"farm_id": farm_id}))
+    target_district = district or current_user.get("district") or "Thanjavur"
+    target_farm_id = farm_id or f"farm_{target_district.lower()}"
+    
+    query = {"$or": [{"farm_id": target_farm_id}, {"district": target_district}]}
+    records = list(soil_col.find(query))
     if not records:
         # Create default record for quick testability
-        default_rec = _default_soil_record(farm_id, current_user["_id"])
+        default_rec = _default_soil_record(target_farm_id, current_user["_id"])
+        default_rec["district"] = target_district
         soil_col.insert_one(default_rec)
         records = [default_rec]
 
@@ -55,7 +61,7 @@ async def list_soil_records(
     for r in records:
         results.append({
             "id": r["_id"],
-            "farm_id": r["farm_id"],
+            "farm_id": r.get("farm_id", target_farm_id),
             "user_id": r.get("user_id", current_user["_id"]),
             "test_date": r["test_date"],
             "ph": float(r["ph"]),
@@ -76,17 +82,23 @@ async def list_soil_records(
 
 @router.get("/latest", response_model=SoilRecordResponse)
 async def get_latest_soil_record(
-    farm_id: str = Query(...),
+    farm_id: Optional[str] = Query(None),
+    district: Optional[str] = Query(None),
     current_user: dict = Depends(get_current_user)
 ):
     soil_col = get_collection("soil_records")
-    rec = soil_col.find_one({"farm_id": farm_id})
+    target_district = district or current_user.get("district") or "Thanjavur"
+    target_farm_id = farm_id or f"farm_{target_district.lower()}"
+
+    query = {"$or": [{"farm_id": target_farm_id}, {"district": target_district}]}
+    rec = soil_col.find_one(query)
     if not rec:
-        rec = _default_soil_record(farm_id, current_user["_id"])
+        rec = _default_soil_record(target_farm_id, current_user["_id"])
+        rec["district"] = target_district
         soil_col.insert_one(rec)
     return {
         "id": rec["_id"],
-        "farm_id": rec["farm_id"],
+        "farm_id": rec.get("farm_id", target_farm_id),
         "user_id": rec.get("user_id", current_user["_id"]),
         "test_date": rec["test_date"],
         "ph": float(rec["ph"]),
