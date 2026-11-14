@@ -102,20 +102,6 @@ async def root():
         "api_docs": "/docs"
     }
 
-@app.api_route("/api/index.py", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"])
-@app.api_route("/index.py", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"])
-@app.api_route("/api/index", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"])
-async def debug_vercel_request(request: Request):
-    return {
-        "debug": "vercel_entrypoint_intercept",
-        "method": request.method,
-        "headers": dict(request.headers),
-        "url": str(request.url),
-        "scope_path": request.scope.get("path"),
-        "raw_path": request.scope.get("raw_path", b"").decode("latin1", errors="ignore"),
-        "query_string": request.scope.get("query_string", b"").decode("latin1", errors="ignore")
-    }
-
 @app.get("/health")
 @app.get("/api/health")
 @app.get("/api/health/")
