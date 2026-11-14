@@ -229,8 +229,8 @@ export default function CropExplorerPage() {
           </div>
 
           {/* District Selector Dropdown */}
-          <div className="flex items-center gap-2">
-            <div className="relative min-w-[200px]">
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative w-full md:w-auto md:min-w-[200px]">
               <div className="relative">
                 <select
                   value={selectedDistrict}

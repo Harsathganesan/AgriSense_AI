@@ -118,8 +118,8 @@ export default function SoilHealthPage() {
           </div>
 
           {/* District Dropdown Selector */}
-          <div className="flex items-center gap-2">
-            <div className="relative min-w-[200px]">
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative w-full md:w-auto md:min-w-[200px]">
               <div className="relative">
                 <select
                   value={selectedDistrict}
@@ -325,7 +325,7 @@ export default function SoilHealthPage() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
           {/* pH */}
           <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
             <div>

@@ -59,6 +59,7 @@ export default function App() {
                 <Route path="crop-explorer" element={<CropExplorerPage />} />
                 <Route path="agri-tracker" element={<AgriTrackerPage />} />
                 <Route path="rotation-planner" element={<CropRotationPlannerPage />} />
+                <Route path="crop-rotation" element={<Navigate to="/rotation-planner" replace />} />
                 <Route path="ai-assistant" element={<AiAssistantPage />} />
                 <Route path="history" element={<HistoryPage />} />
                 <Route path="settings" element={<SettingsPage />} />

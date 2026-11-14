@@ -120,7 +120,7 @@ export default function CropRotationPlannerPage() {
         </div>
 
         {/* Compact District Selector */}
-        <div className="relative min-w-[200px]">
+        <div className="relative w-full md:w-auto md:min-w-[200px]">
           <select
             value={selectedDistrict}
             onChange={(e) => handleDistrictChange(e.target.value)}
@@ -377,11 +377,18 @@ export default function CropRotationPlannerPage() {
                     </div>
                   </div>
 
-                  {/* Connecting Arrow for Desktop */}
+                  {/* Connecting Arrows (Down on Mobile, Right on Desktop) */}
                   {!isLast && (
-                    <div className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-white border border-slate-300 shadow-sm items-center justify-center text-[#238636]">
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
+                    <>
+                      <div className="md:hidden flex justify-center py-2 text-[#238636]">
+                        <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center shadow-2xs">
+                          <ChevronDown className="w-4 h-4 text-[#238636]" />
+                        </div>
+                      </div>
+                      <div className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-white border border-slate-300 shadow-sm items-center justify-center text-[#238636]">
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </div>
+                    </>
                   )}
                 </div>
               );
