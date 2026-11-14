@@ -27,16 +27,31 @@ export const AuthProvider = ({ children }) => {
           const res = await axios.get('/api/auth/me');
           setUser(res.data);
         } else {
-          // Auto login demo farmer for instant user accessibility
-          const res = await axios.post('/api/auth/login', {
-            email: 'farmer@agrisense.ai',
-            password: 'farmer123'
-          });
-          setToken(res.data.access_token);
-          setUser(res.data.user);
+          const hasBase = import.meta.env.VITE_API_BASE_URL || localStorage.getItem('agrisense_api_base_url');
+          const isVercelWithoutBase = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') && !hasBase;
+
+          if (!isVercelWithoutBase) {
+            // Auto login demo farmer for instant user accessibility
+            const res = await axios.post('/api/auth/login', {
+              email: 'farmer@agrisense.ai',
+              password: 'farmer123'
+            });
+            setToken(res.data.access_token);
+            setUser(res.data.user);
+          } else {
+            // On Vercel without configured backend, gracefully supply demo user without generating 404 network errors
+            setUser({
+              _id: "user_demo_farmer",
+              name: "Kandasamy Muthusamy (முத்துசாமி)",
+              email: "farmer@agrisense.ai",
+              district: "Pudukkottai",
+              state: "Tamil Nadu",
+              country: "India",
+              language: "en"
+            });
+          }
         }
       } catch (err) {
-        console.warn("Auth initialization fallback:", err);
         if (token) {
           setToken(null);
           localStorage.removeItem('agrisense_token');

@@ -37,7 +37,20 @@ export const FarmProvider = ({ children }) => {
         });
       }
     } catch (err) {
-      console.error("Failed to load farms:", err);
+      console.warn("Using baseline fallback farm due to:", err.message || err);
+      setFarms([]);
+      const dist = user?.registered_location?.district || user?.district || 'Pudukkottai';
+      const st = user?.registered_location?.state || user?.state || 'Tamil Nadu';
+      setActiveFarm({
+        id: 'district_baseline',
+        name: `${dist} Agricultural Land`,
+        district: dist,
+        state: st,
+        latitude: 10.7870,
+        longitude: 79.1378,
+        area_acres: 5.0,
+        soil_type: 'Alluvial Soil'
+      });
     } finally {
       setLoading(false);
     }

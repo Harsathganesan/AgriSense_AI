@@ -23,26 +23,35 @@ export default function LoginPage() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showServerConfig, setShowServerConfig] = useState(false);
+  const [showServerConfig, setShowServerConfig] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const isVercel = window.location.hostname.includes('vercel.app');
+      const hasBase = import.meta.env.VITE_API_BASE_URL || localStorage.getItem('agrisense_api_base_url');
+      return Boolean(isVercel && !hasBase);
+    }
+    return false;
+  });
   const [serverUrl, setServerUrl] = useState(() => {
     return localStorage.getItem('agrisense_api_base_url') || import.meta.env.VITE_API_BASE_URL || '';
   });
   const [serverSavedMsg, setServerSavedMsg] = useState('');
 
   const handleSaveServerUrl = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     const cleanUrl = serverUrl.trim().replace(/\/+$/, '');
     if (cleanUrl) {
       localStorage.setItem('agrisense_api_base_url', cleanUrl);
       axios.defaults.baseURL = cleanUrl;
-      setServerSavedMsg(`Connected to ${cleanUrl}`);
+      setServerSavedMsg(`Connected to ${cleanUrl}! Reloading...`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 700);
     } else {
       localStorage.removeItem('agrisense_api_base_url');
       delete axios.defaults.baseURL;
       setServerSavedMsg('Reset to default proxy mode');
     }
     setError('');
-    setTimeout(() => setServerSavedMsg(''), 4000);
   };
 
   // Available options
@@ -92,9 +101,15 @@ export default function LoginPage() {
       }
       navigate('/');
     } catch (err) {
+      const is404 = err.response?.status === 404;
+      const is405 = err.response?.status === 405;
       const isHtmlResponse = typeof err.response?.data === 'string' && err.response?.data.includes('<!DOCTYPE');
-      if (err.response?.status === 405 || isHtmlResponse) {
-        setError("405 Error: Frontend is calling itself instead of your FastAPI backend. Enter your Vercel Backend URL below (e.g. https://your-backend.vercel.app).");
+      if (is404 || is405 || isHtmlResponse) {
+        setError(
+          lang === 'ta'
+            ? "⚠️ Backend இன்னும் connect ஆகவில்லை (404/405). கீழே உள்ள பாக்ஸில் உங்கள் Vercel Backend URL-ஐ கொடுத்து 'Save' செய்யவும்."
+            : "⚠️ Backend API is not connected (404/405). Please paste your Vercel Backend URL below and click Save."
+        );
         setShowServerConfig(true);
       } else {
         setError(err.response?.data?.detail || err.message || "Authentication failed. Please verify credentials.");
@@ -111,9 +126,15 @@ export default function LoginPage() {
       await login('farmer@agrisense.ai', 'farmer123');
       navigate('/');
     } catch (err) {
+      const is404 = err.response?.status === 404;
+      const is405 = err.response?.status === 405;
       const isHtmlResponse = typeof err.response?.data === 'string' && err.response?.data.includes('<!DOCTYPE');
-      if (err.response?.status === 405 || isHtmlResponse) {
-        setError("405 Error: Frontend is calling itself instead of your FastAPI backend. Enter your Vercel Backend URL below (e.g. https://your-backend.vercel.app).");
+      if (is404 || is405 || isHtmlResponse) {
+        setError(
+          lang === 'ta'
+            ? "⚠️ Backend இன்னும் connect ஆகவில்லை (404/405). கீழே உள்ள பாக்ஸில் உங்கள் Vercel Backend URL-ஐ கொடுத்து 'Save' செய்யவும்."
+            : "⚠️ Backend API is not connected (404/405). Please paste your Vercel Backend URL below and click Save."
+        );
         setShowServerConfig(true);
       } else {
         setError("Demo login error: " + (err.response?.data?.detail || err.message));
@@ -144,6 +165,26 @@ export default function LoginPage() {
             {error}
           </div>
         )}
+
+        {/* Vercel Backend Notice Banner */}
+        {typeof window !== 'undefined' &&
+          window.location.hostname.includes('vercel.app') &&
+          !import.meta.env.VITE_API_BASE_URL &&
+          !localStorage.getItem('agrisense_api_base_url') && (
+            <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-950 text-xs space-y-2">
+              <div className="flex items-center gap-2 font-black text-amber-900">
+                <Link2 className="w-4 h-4 text-amber-700" />
+                <span>
+                  {lang === 'ta' ? 'FastAPI Backend இணைப்பு தேவை' : 'Backend URL Required on Vercel'}
+                </span>
+              </div>
+              <p className="text-[11px] text-amber-800 leading-relaxed font-medium">
+                {lang === 'ta'
+                  ? 'Frontend தனியாக இயங்குகிறது. கீழே உங்கள் FastAPI Backend Vercel URL-ஐ போட்டு Save செய்யவும்.'
+                  : 'Frontend is running separately. Enter your Vercel FastAPI backend URL below to connect.'}
+              </p>
+            </div>
+          )}
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {isRegister && (

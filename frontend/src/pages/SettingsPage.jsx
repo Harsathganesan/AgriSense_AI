@@ -8,7 +8,8 @@ import {
   CheckCircle2,
   MapPin,
   Globe,
-  Building
+  Building,
+  Server
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -31,6 +32,9 @@ export default function SettingsPage() {
 
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [backendUrl, setBackendUrl] = useState(() => {
+    return localStorage.getItem('agrisense_api_base_url') || import.meta.env.VITE_API_BASE_URL || '';
+  });
 
   const handleCountryChange = (newCountry) => {
     setCountry(newCountry);
@@ -51,6 +55,14 @@ export default function SettingsPage() {
     e.preventDefault();
     try {
       setSaving(true);
+      // Persist backend URL
+      const cleanUrl = backendUrl.trim().replace(/\/+$/, '');
+      if (cleanUrl) {
+        localStorage.setItem('agrisense_api_base_url', cleanUrl);
+      } else {
+        localStorage.removeItem('agrisense_api_base_url');
+      }
+
       const payload = {
         name,
         phone,
@@ -65,8 +77,13 @@ export default function SettingsPage() {
           risk_tolerance: 'medium'
         }
       };
-      const res = await authApi.updateProfile(payload);
-      setUser(res.data);
+      try {
+        const res = await authApi.updateProfile(payload);
+        setUser(res.data);
+      } catch (apiErr) {
+        // Fallback local update if backend offline
+        setUser(prev => ({ ...prev, ...payload }));
+      }
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
     } catch (err) {
@@ -225,6 +242,33 @@ export default function SettingsPage() {
               <span className="block text-sm font-black">தமிழ் (Tamil)</span>
               <span className="text-[11px] text-slate-400">தமிழ்நாடு விவசாயிகளுக்கு</span>
             </button>
+          </div>
+        </div>
+
+        {/* Backend API Server Configuration */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-slate-800 font-extrabold text-sm border-b border-slate-100 pb-2">
+            <Server className="w-4 h-4 text-[#238636]" />
+            <h3>{lang === 'ta' ? 'FastAPI Backend இணைப்பு' : 'FastAPI Backend API Connection'}</h3>
+          </div>
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <label className="font-bold text-slate-700 block text-xs">
+              {lang === 'ta' ? 'Vercel Backend URL' : 'Backend URL (e.g. https://agrisense-backend.vercel.app)'}
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={backendUrl}
+                onChange={(e) => setBackendUrl(e.target.value)}
+                placeholder="https://your-backend.vercel.app"
+                className="flex-1 px-3.5 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-[#238636] text-xs font-mono"
+              />
+            </div>
+            <p className="text-[11px] text-slate-400">
+              {lang === 'ta'
+                ? 'உங்கள் Backend Vercel project URL-ஐ இங்கு உள்ளிடலாம். உள்ளிட்ட பின் கீழே உள்ள Save பொத்தானை அழுத்தவும்.'
+                : 'Enter your deployed FastAPI backend URL to sync live telemetry, farms, and satellite data.'}
+            </p>
           </div>
         </div>
 
