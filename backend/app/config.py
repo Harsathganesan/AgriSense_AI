@@ -7,7 +7,7 @@ load_dotenv(BASE_DIR / ".env")
 
 class Settings:
     PROJECT_NAME: str = "AgriSense AI"
-    VERSION: str = "1.0.4"
+    VERSION: str = "1.0.5"
     API_PREFIX: str = "/api"
     
     PORT: int = int(os.getenv("PORT", 8000))
