@@ -15,6 +15,9 @@ for directory in (root_dir, backend_dir):
 os.environ.setdefault("VERCEL", "1")
 
 # Import the FastAPI application directly
-from app.main import app
+try:
+    from backend.app.main import app
+except ImportError:
+    from app.main import app  # type: ignore
 
 __all__ = ["app"]
