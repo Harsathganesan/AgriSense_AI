@@ -18,18 +18,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { assistantApi, authApi } from '../services/api';
 import { getDistricts } from '../data/locationHierarchy';
 
-// Quick popular agricultural districts for one-tap selection
-const POPULAR_DISTRICTS = [
-  'Pudukkottai',
-  'Thanjavur',
-  'Tiruvarur',
-  'Nagapattinam',
-  'Madurai',
-  'Coimbatore',
-  'Salem',
-  'Tiruchirappalli'
-];
-
 export default function AiAssistantPage() {
   const { t, lang, toggleLanguage } = useLanguage();
   const { user, setUser } = useAuth();
@@ -223,30 +211,6 @@ export default function AiAssistantPage() {
               </button>
             </div>
           </div>
-        </div>
-
-        {/* Quick Popular District Chips */}
-        <div className="pt-2 border-t border-slate-100 flex items-center gap-2 flex-wrap">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-            {lang === 'ta' ? 'விரைவு மாவட்டங்கள்:' : 'Quick Select:'}
-          </span>
-          {POPULAR_DISTRICTS.map((d) => {
-            const isCurrent = selectedDistrict.toLowerCase() === d.toLowerCase();
-            return (
-              <button
-                key={d}
-                type="button"
-                onClick={() => handleDistrictChange(d)}
-                className={`text-xs px-3 py-1 rounded-lg font-semibold transition-all border ${
-                  isCurrent
-                    ? 'bg-[#238636] text-white border-[#238636] shadow-xs'
-                    : 'bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-900 border-slate-200'
-                }`}
-              >
-                {d}
-              </button>
-            );
-          })}
         </div>
       </div>
 
