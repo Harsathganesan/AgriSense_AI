@@ -66,12 +66,6 @@ export default function AlertBanner({ alerts = [] }) {
               <p className="text-xs text-slate-700 leading-relaxed">
                 {msg}
               </p>
-              {alert.recommendation && (
-                <div className="mt-2 text-xs font-semibold flex items-center gap-1.5 text-slate-800 bg-white/70 px-2.5 py-1 rounded-lg border border-slate-200/50 w-fit">
-                  <span className="text-[#238636]">Action:</span>
-                  <span>{alert.recommendation}</span>
-                </div>
-              )}
             </div>
           </div>
         );

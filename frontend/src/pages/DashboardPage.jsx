@@ -313,22 +313,22 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Quick Action Buttons */}
-        <div className="z-10 flex flex-wrap gap-2.5 shrink-0">
+        {/* Quick Action Buttons - Single Line on Mobile & Desktop */}
+        <div className="z-10 flex flex-row items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0">
           <button
             onClick={() => navigate('/rotation-planner')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-emerald-900 font-bold text-xs hover:bg-emerald-50 transition shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-white text-emerald-900 font-extrabold text-xs hover:bg-emerald-50 transition shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer whitespace-nowrap"
           >
-            <RotateCcw className="w-4 h-4 text-[#238636]" />
-            {t('dashboard.planRotation')}
+            <RotateCcw className="w-4 h-4 text-[#238636] shrink-0" />
+            <span className="truncate">{t('dashboard.planRotation')}</span>
           </button>
           <button
             onClick={handleDownloadReport}
             disabled={downloadingReport}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-900/40 hover:bg-emerald-900/60 border border-white/20 text-white font-bold text-xs transition backdrop-blur-sm cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-emerald-900/50 hover:bg-emerald-900/70 border border-white/20 text-white font-extrabold text-xs transition backdrop-blur-sm cursor-pointer whitespace-nowrap"
           >
-            <FileDown className="w-4 h-4" />
-            {downloadingReport ? 'Building PDF...' : t('common.download')}
+            <FileDown className="w-4 h-4 shrink-0" />
+            <span className="truncate">{downloadingReport ? 'Building...' : t('common.download')}</span>
           </button>
         </div>
       </div>
@@ -554,65 +554,55 @@ export default function DashboardPage() {
             {/* Dual Risk Gauges: Drought Risk & Heavy Rain Risk */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Drought Risk Card */}
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-slate-600 flex items-center gap-1">
-                      <Thermometer className="w-3.5 h-3.5 text-amber-500" />
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                    <Thermometer className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-slate-800 block">
                       {lang === 'ta' ? 'வறட்சி அபாயம்' : 'Drought Risk'}
                     </span>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                      locAnalysis?.drought_risk?.risk_level === 'Severe'
-                        ? 'bg-rose-100 text-rose-800'
-                        : locAnalysis?.drought_risk?.risk_level === 'Moderate'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-emerald-100 text-emerald-800'
-                    }`}>
-                      {locAnalysis?.drought_risk?.risk_level || 'Low'}
+                    <span className="text-[10px] text-slate-500 font-semibold block">
+                      {locAnalysis?.drought_risk?.risk_level === 'Low' ? (lang === 'ta' ? 'குறைவு • இயல்பு நிலை' : 'Low • Normal State') : (locAnalysis?.drought_risk?.risk_level || 'Low')}
                     </span>
                   </div>
-                  <h4 className="text-xs font-extrabold text-slate-800 truncate">
-                    {lang === 'ta' ? locAnalysis?.drought_risk?.title_ta : locAnalysis?.drought_risk?.title_en}
-                  </h4>
-                  <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
-                    {lang === 'ta' ? locAnalysis?.drought_risk?.description_ta : locAnalysis?.drought_risk?.description_en}
-                  </p>
                 </div>
-                <div className="mt-2 pt-1.5 border-t border-slate-200/60 text-[10px] text-slate-600 font-semibold flex items-center gap-1">
-                  <span className="text-[#238636] font-bold">💡</span>
-                  <span className="truncate">{lang === 'ta' ? locAnalysis?.drought_risk?.recommendation_ta : locAnalysis?.drought_risk?.recommendation_en}</span>
-                </div>
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${
+                  locAnalysis?.drought_risk?.risk_level === 'Severe'
+                    ? 'bg-rose-100 text-rose-800'
+                    : locAnalysis?.drought_risk?.risk_level === 'Moderate'
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'bg-emerald-100 text-emerald-800'
+                }`}>
+                  {locAnalysis?.drought_risk?.risk_level || 'Low'}
+                </span>
               </div>
 
               {/* Heavy Rainfall Risk Card */}
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-slate-600 flex items-center gap-1">
-                      <CloudRain className="w-3.5 h-3.5 text-sky-500" />
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center shrink-0">
+                    <CloudRain className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-slate-800 block">
                       {lang === 'ta' ? 'மழை அபாயம்' : 'Rainfall Risk'}
                     </span>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                      locAnalysis?.heavy_rainfall_risk?.risk_level === 'High'
-                        ? 'bg-rose-100 text-rose-800'
-                        : locAnalysis?.heavy_rainfall_risk?.risk_level === 'Moderate'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-emerald-100 text-emerald-800'
-                    }`}>
-                      {locAnalysis?.heavy_rainfall_risk?.risk_level || 'Low'}
+                    <span className="text-[10px] text-slate-500 font-semibold block">
+                      {locAnalysis?.heavy_rainfall_risk?.risk_level === 'High' ? (lang === 'ta' ? 'அதிகம் • வடிகால் தேவை' : 'High • Drainage Needed') : (lang === 'ta' ? 'குறைவு • இயல்பு நிலை' : 'Low • Safe Drainage')}
                     </span>
                   </div>
-                  <h4 className="text-xs font-extrabold text-slate-800 truncate">
-                    {lang === 'ta' ? locAnalysis?.heavy_rainfall_risk?.title_ta : locAnalysis?.heavy_rainfall_risk?.title_en}
-                  </h4>
-                  <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
-                    {lang === 'ta' ? locAnalysis?.heavy_rainfall_risk?.description_ta : locAnalysis?.heavy_rainfall_risk?.description_en}
-                  </p>
                 </div>
-                <div className="mt-2 pt-1.5 border-t border-slate-200/60 text-[10px] text-slate-600 font-semibold flex items-center gap-1">
-                  <span className="text-[#238636] font-bold">💡</span>
-                  <span className="truncate">{lang === 'ta' ? locAnalysis?.heavy_rainfall_risk?.recommendation_ta : locAnalysis?.heavy_rainfall_risk?.recommendation_en}</span>
-                </div>
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${
+                  locAnalysis?.heavy_rainfall_risk?.risk_level === 'High'
+                    ? 'bg-rose-100 text-rose-800'
+                    : locAnalysis?.heavy_rainfall_risk?.risk_level === 'Moderate'
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'bg-emerald-100 text-emerald-800'
+                }`}>
+                  {locAnalysis?.heavy_rainfall_risk?.risk_level || 'Low'}
+                </span>
               </div>
             </div>
 
@@ -673,15 +663,9 @@ export default function DashboardPage() {
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-extrabold text-base text-slate-900 tracking-tight">
-                  {lang === 'ta' ? 'இன்றைய வானிலை கணிப்பு & விவசாய வழிகாட்டுதல்' : "Today's Weather Forecast & Advisory"}
-                </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold border border-emerald-300 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                  {lang === 'ta' ? 'நேரலை கணிப்பு' : 'Live Forecast'}
-                </span>
-              </div>
+              <h3 className="font-extrabold text-base text-slate-900 tracking-tight">
+                {lang === 'ta' ? 'இன்றைய வானிலை கணிப்பு & விவசாய வழிகாட்டுதல்' : "Today's Weather Forecast & Advisory"}
+              </h3>
               <p className="text-xs text-slate-500 mt-0.5">
                 {lang === 'ta'
                   ? `${activeDistrict} பகுதிக்கான இன்றைய நேரலை வானிலை மற்றும் விவசாய முன்னறிவிப்பு.`
