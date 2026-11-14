@@ -17,3 +17,4 @@ from app.main import app
 
 # Export app for Vercel Python runtime
 __all__ = ["app"]
+
