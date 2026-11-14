@@ -1,5 +1,6 @@
 import sys
 import os
+from urllib.parse import parse_qs
 
 # Determine directory paths
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,16 +25,31 @@ class VercelPathMiddleware:
 
     async def __call__(self, scope, receive, send):
         if scope["type"] == "http":
-            headers = dict(scope.get("headers", []))
-            matched_path = headers.get(b"x-matched-path", b"").decode("utf-8")
-            if matched_path:
-                scope["path"] = matched_path.split("?")[0]
+            query_string = scope.get("query_string", b"").decode("utf-8", errors="ignore")
+            path_override = None
 
-            path = scope.get("path", "")
-            if path in ("/api/index.py", "/api/index", "/index.py", "/api/index.py/"):
-                scope["path"] = "/"
-            elif path.startswith("/api/index.py/"):
-                scope["path"] = path[len("/api/index.py"):]
+            # 1. Check query parameter ?path=...
+            if "path=" in query_string:
+                params = parse_qs(query_string)
+                if "path" in params and params["path"]:
+                    path_override = params["path"][0]
+
+            # 2. Check x-forwarded-uri header
+            if not path_override:
+                headers = dict(scope.get("headers", []))
+                fwd_uri = headers.get(b"x-forwarded-uri", b"").decode("utf-8", errors="ignore")
+                if fwd_uri:
+                    path_override = fwd_uri.split("?")[0]
+
+            # Apply path override if extracted
+            if path_override:
+                scope["path"] = path_override
+            else:
+                path = scope.get("path", "")
+                if path in ("/api/index.py", "/api/index", "/index.py", "/api/index.py/"):
+                    scope["path"] = "/"
+                elif path.startswith("/api/index.py/"):
+                    scope["path"] = path[len("/api/index.py"):]
 
         await self.asgi_app(scope, receive, send)
 
