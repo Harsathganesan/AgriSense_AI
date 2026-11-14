@@ -1,6 +1,7 @@
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import get_collection
@@ -113,6 +114,18 @@ async def health_check():
         "nasa_services": "Operational",
         "gemini_assistant": "Available" if settings.GEMINI_API_KEY else "Agronomy Mode"
     }
+
+@app.exception_handler(404)
+async def custom_404_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=404,
+        content={
+            "detail": "Not Found",
+            "received_path": request.scope.get("path"),
+            "received_raw_path": request.scope.get("raw_path", b"").decode("latin1", errors="ignore"),
+            "query_string": request.scope.get("query_string", b"").decode("latin1", errors="ignore")
+        }
+    )
 
 if __name__ == "__main__":
     import uvicorn
