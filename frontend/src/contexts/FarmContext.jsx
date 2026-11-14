@@ -15,14 +15,15 @@ export const FarmProvider = ({ children }) => {
       setLoading(true);
       const res = await axios.get('/api/farms');
       const data = res.data;
-      setFarms(data);
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
+        setFarms(data);
         // Restore saved farm ID or select first
         const savedId = localStorage.getItem('agrisense_active_farm_id');
         const found = data.find(f => f.id === savedId) || data[0];
         setActiveFarm(found);
       } else {
-        const dist = user?.registered_location?.district || user?.district || 'Thanjavur';
+        setFarms([]);
+        const dist = user?.registered_location?.district || user?.district || 'Pudukkottai';
         const st = user?.registered_location?.state || user?.state || 'Tamil Nadu';
         setActiveFarm({
           id: 'district_baseline',

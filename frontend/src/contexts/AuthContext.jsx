@@ -60,15 +60,25 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const res = await axios.post('/api/auth/login', { email, password });
-    setToken(res.data.access_token);
-    setUser(res.data.user);
+    if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE')) {
+      throw new Error("Backend API unreachable: Received HTML instead of JSON. Please verify backend URL.");
+    }
+    if (res.data && res.data.access_token) {
+      setToken(res.data.access_token);
+      setUser(res.data.user);
+    }
     return res.data;
   };
 
   const register = async (userData) => {
     const res = await axios.post('/api/auth/register', userData);
-    setToken(res.data.access_token);
-    setUser(res.data.user);
+    if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE')) {
+      throw new Error("Backend API unreachable: Received HTML instead of JSON. Please verify backend URL.");
+    }
+    if (res.data && res.data.access_token) {
+      setToken(res.data.access_token);
+      setUser(res.data.user);
+    }
     return res.data;
   };
 

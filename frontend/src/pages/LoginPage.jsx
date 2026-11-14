@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Leaf, Lock, Mail, User, ShieldCheck, Tractor, ArrowRight, Globe, MapPin, Building } from 'lucide-react';
+import axios from 'axios';
+import { Leaf, Lock, Mail, User, ShieldCheck, Tractor, ArrowRight, Globe, MapPin, Building, Link2, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getCountries, getStates, getDistricts } from '../data/locationHierarchy';
@@ -22,6 +23,27 @@ export default function LoginPage() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showServerConfig, setShowServerConfig] = useState(false);
+  const [serverUrl, setServerUrl] = useState(() => {
+    return localStorage.getItem('agrisense_api_base_url') || import.meta.env.VITE_API_BASE_URL || '';
+  });
+  const [serverSavedMsg, setServerSavedMsg] = useState('');
+
+  const handleSaveServerUrl = (e) => {
+    e.preventDefault();
+    const cleanUrl = serverUrl.trim().replace(/\/+$/, '');
+    if (cleanUrl) {
+      localStorage.setItem('agrisense_api_base_url', cleanUrl);
+      axios.defaults.baseURL = cleanUrl;
+      setServerSavedMsg(`Connected to ${cleanUrl}`);
+    } else {
+      localStorage.removeItem('agrisense_api_base_url');
+      delete axios.defaults.baseURL;
+      setServerSavedMsg('Reset to default proxy mode');
+    }
+    setError('');
+    setTimeout(() => setServerSavedMsg(''), 4000);
+  };
 
   // Available options
   const countries = getCountries();
@@ -70,7 +92,13 @@ export default function LoginPage() {
       }
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.detail || "Authentication failed. Please verify credentials.");
+      const isHtmlResponse = typeof err.response?.data === 'string' && err.response?.data.includes('<!DOCTYPE');
+      if (err.response?.status === 405 || isHtmlResponse) {
+        setError("405 Error: Frontend is calling itself instead of your FastAPI backend. Enter your Vercel Backend URL below (e.g. https://your-backend.vercel.app).");
+        setShowServerConfig(true);
+      } else {
+        setError(err.response?.data?.detail || err.message || "Authentication failed. Please verify credentials.");
+      }
     } finally {
       setLoading(false);
     }
@@ -83,7 +111,13 @@ export default function LoginPage() {
       await login('farmer@agrisense.ai', 'farmer123');
       navigate('/');
     } catch (err) {
-      setError("Demo login error: " + (err.response?.data?.detail || err.message));
+      const isHtmlResponse = typeof err.response?.data === 'string' && err.response?.data.includes('<!DOCTYPE');
+      if (err.response?.status === 405 || isHtmlResponse) {
+        setError("405 Error: Frontend is calling itself instead of your FastAPI backend. Enter your Vercel Backend URL below (e.g. https://your-backend.vercel.app).");
+        setShowServerConfig(true);
+      } else {
+        setError("Demo login error: " + (err.response?.data?.detail || err.message));
+      }
     } finally {
       setLoading(false);
     }
@@ -283,6 +317,50 @@ export default function LoginPage() {
                 Register Farm Profile
               </button>
             </p>
+          )}
+        </div>
+
+        {/* Backend API Configuration Panel */}
+        <div className="pt-2 border-t border-slate-100">
+          <button
+            type="button"
+            onClick={() => setShowServerConfig(!showServerConfig)}
+            className="text-[11px] font-bold text-slate-400 hover:text-emerald-700 flex items-center justify-center gap-1.5 mx-auto transition cursor-pointer"
+          >
+            <Link2 className="w-3 h-3" />
+            {showServerConfig ? 'Hide Backend Settings' : 'Configure Backend API URL'}
+          </button>
+
+          {showServerConfig && (
+            <div className="mt-3 p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 animate-in fade-in">
+              <span className="text-[11px] font-extrabold text-slate-700 block">
+                🔗 FastAPI Backend URL (Vercel)
+              </span>
+              <p className="text-[10px] text-slate-500 leading-relaxed">
+                If your backend is deployed on a separate Vercel URL, paste it here:
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  placeholder="https://your-backend.vercel.app"
+                  value={serverUrl}
+                  onChange={(e) => setServerUrl(e.target.value)}
+                  className="flex-1 px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-[#238636]"
+                />
+                <button
+                  type="button"
+                  onClick={handleSaveServerUrl}
+                  className="px-3 py-2 bg-[#238636] hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition cursor-pointer shrink-0"
+                >
+                  Save
+                </button>
+              </div>
+              {serverSavedMsg && (
+                <span className="text-[10px] font-bold text-emerald-700 block mt-1 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> {serverSavedMsg}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </div>

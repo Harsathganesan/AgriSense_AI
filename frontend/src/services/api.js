@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// Configure Axios baseURL from Vite environment variables
-const apiBase = import.meta.env.VITE_API_BASE_URL;
+// Configure Axios baseURL from Vite environment variables or localStorage
+const savedApiUrl = typeof window !== 'undefined' ? localStorage.getItem('agrisense_api_base_url') : null;
+const envApiUrl = import.meta.env.VITE_API_BASE_URL;
+const apiBase = envApiUrl || savedApiUrl;
 if (apiBase) {
   axios.defaults.baseURL = apiBase.replace(/\/+$/, '');
 }
