@@ -191,9 +191,17 @@ class DatabaseManager:
         self._init_connection()
 
     def _init_connection(self):
+        # pyrefly: ignore[bad-assignment]
         self._last_attempt_time = time.time()
         try:
             import certifi
+            try:
+                import dns.resolver
+                dns.resolver.default_resolver = dns.resolver.Resolver(configure=True)
+                dns.resolver.default_resolver.timeout = 2.0
+                dns.resolver.default_resolver.lifetime = 2.0
+            except Exception:
+                pass
             uri = settings.MONGODB_URI
             if not uri or uri.strip() == "mongodb://localhost:27017":
                 uri = "mongodb+srv://harsath137_db_user:9jsMz0qF10EJLDwJ@cluster0.eqwgeh8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -205,6 +213,7 @@ class DatabaseManager:
                 "retryWrites": True,
             }
             try:
+                # pyrefly: ignore[bad-assignment]
                 client_kwargs["tlsCAFile"] = certifi.where()
             except Exception:
                 pass
@@ -220,6 +229,14 @@ class DatabaseManager:
             # Migrate any local fallback records to MongoDB Atlas
             self._sync_fallback_to_mongo()
         except Exception as e:
+            try:
+                # pyrefly: ignore[unbound-name]
+                if 'client' in locals() and client:
+                    client.close()
+            except Exception:
+                pass
+            self.client = None
+            self.db = None
             self.is_connected_to_mongo = False
             self._last_error = str(e)
             print(f"[AgriSense AI] MongoDB Atlas connection note: ({e}). Using embedded persistent JSON data store.")
@@ -247,8 +264,8 @@ class DatabaseManager:
             print(f"[AgriSense AI] Data sync note: {e}")
 
     def get_collection(self, name: str):
-        # Re-attempt MongoDB Atlas connection if disconnected (debounce by 10s)
-        if not self.is_connected_to_mongo and (time.time() - self._last_attempt_time > 10):
+        # Re-attempt MongoDB Atlas connection if disconnected (debounce by 60s to prevent DNS latency)
+        if not self.is_connected_to_mongo and (time.time() - self._last_attempt_time > 60):
             self._init_connection()
 
         if self.is_connected_to_mongo and self.db is not None:
@@ -262,6 +279,7 @@ class DatabaseManager:
             self._init_connection()
         else:
             try:
+                # pyrefly: ignore[missing-attribute]
                 self.client.admin.command('ping')
             except Exception as e:
                 self.is_connected_to_mongo = False

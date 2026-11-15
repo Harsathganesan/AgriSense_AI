@@ -15,6 +15,7 @@ import AiAssistantPage from './pages/AiAssistantPage';
 import HistoryPage from './pages/HistoryPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
+import PlantDoctorPage from './pages/PlantDoctorPage';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -60,6 +61,8 @@ export default function App() {
                 <Route path="agri-tracker" element={<AgriTrackerPage />} />
                 <Route path="rotation-planner" element={<CropRotationPlannerPage />} />
                 <Route path="crop-rotation" element={<Navigate to="/rotation-planner" replace />} />
+                <Route path="plant-doctor" element={<PlantDoctorPage />} />
+                <Route path="disease-detection" element={<Navigate to="/plant-doctor" replace />} />
                 <Route path="ai-assistant" element={<AiAssistantPage />} />
                 <Route path="history" element={<HistoryPage />} />
                 <Route path="settings" element={<SettingsPage />} />

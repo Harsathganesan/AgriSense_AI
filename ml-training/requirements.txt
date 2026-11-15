@@ -1,0 +1,13 @@
+# AgriSense AI - Deep Learning Plant Disease Module Dependencies
+# Compatible with Python 3.11 on Windows
+tensorflow==2.21.0
+keras==3.15.1
+numpy>=1.24.0,<3.0.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+scikit-learn>=1.3.0
+pillow>=10.0.0
+scipy>=1.11.0
+h5py>=3.9.0
+

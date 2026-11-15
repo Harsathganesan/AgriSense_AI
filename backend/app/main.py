@@ -5,33 +5,42 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import get_collection
 from app.services.auth_service import AuthService
-from app.routes import auth, farms, nasa, soil, crops, rotation, assistant, reports, history, location, analysis, district
+from app.routes import auth, farms, nasa, soil, crops, rotation, assistant, reports, history, location, analysis, district, disease
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Ensure demo user and initial data
-    users_col = get_collection("users")
-    demo_user = users_col.find_one({"email": "farmer@agrisense.ai"})
-    if not demo_user:
-        hashed_pwd = AuthService.get_password_hash("farmer123")
-        users_col.insert_one({
-            "_id": "user_demo_farmer",
-            "name": "Kandasamy Muthusamy (முத்துசாமி)",
-            "email": "farmer@agrisense.ai",
-            "hashed_password": hashed_pwd,
-            "language": "en",
-            "phone": "+91 94431 82740",
-            "district": "Thanjavur",
-            "state": "Tamil Nadu",
-            "priorities": {
-                "soil_regeneration": 0.35,
-                "water_conservation": 0.35,
-                "market_profitability": 0.30,
-                "risk_tolerance": "medium"
-            },
-            "created_at": "2026-01-10T08:00:00"
-        })
-        print("[AgriSense AI] Demo farmer account provisioned: farmer@agrisense.ai / farmer123")
+    try:
+        users_col = get_collection("users")
+        demo_user = users_col.find_one({"email": "farmer@agrisense.ai"})
+        if not demo_user:
+            hashed_pwd = AuthService.get_password_hash("farmer123")
+            users_col.insert_one({
+                "_id": "user_demo_farmer",
+                "name": "Kandasamy Muthusamy (முத்துசாமி)",
+                "email": "farmer@agrisense.ai",
+                "hashed_password": hashed_pwd,
+                "language": "en",
+                "phone": "+91 94431 82740",
+                "district": "Thanjavur",
+                "state": "Tamil Nadu",
+                "priorities": {
+                    "soil_regeneration": 0.35,
+                    "water_conservation": 0.35,
+                    "market_profitability": 0.30,
+                    "risk_tolerance": "medium"
+                },
+                "created_at": "2026-01-10T08:00:00"
+            })
+            print("[AgriSense AI] Demo farmer account provisioned: farmer@agrisense.ai / farmer123")
+        else:
+            # Verify and heal demo user password if necessary
+            if not AuthService.verify_password("farmer123", demo_user.get("hashed_password", "")):
+                new_hash = AuthService.get_password_hash("farmer123")
+                users_col.update_one({"email": "farmer@agrisense.ai"}, {"$set": {"hashed_password": new_hash}})
+                print("[AgriSense AI] Healed demo farmer account password hash for farmer123")
+    except Exception as e:
+        print(f"[AgriSense AI] Lifespan demo user initialization note: {e}")
     yield
     print("[AgriSense AI] Backend shutting down.")
 
@@ -43,19 +52,23 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration
+# CORS configuration - Allow all localhost/127.0.0.1 ports (5173, 5174, 5175, etc.) and Vercel domains
 allowed_origins = [
     "https://frontend-chi-olive-vuf81ldsw2.vercel.app",
     "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
     "http://localhost:3000",
     "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:5175",
     "http://127.0.0.1:3000",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origin_regex=r"^(https?://(localhost|127\.0\.0\.1)(:\d+)?|https://.*\.vercel\.app)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -89,6 +102,7 @@ app.include_router(history.router, prefix=settings.API_PREFIX)
 app.include_router(location.router, prefix=settings.API_PREFIX)
 app.include_router(analysis.router, prefix=settings.API_PREFIX)
 app.include_router(district.router, prefix=settings.API_PREFIX)
+app.include_router(disease.router, prefix=settings.API_PREFIX)
 
 # Also register without prefix so endpoints work whether requested as /api/crops or /crops
 app.include_router(auth.router)
@@ -103,6 +117,7 @@ app.include_router(history.router)
 app.include_router(location.router)
 app.include_router(analysis.router)
 app.include_router(district.router)
+app.include_router(disease.router)
 
 @app.get("/")
 @app.get("/api")

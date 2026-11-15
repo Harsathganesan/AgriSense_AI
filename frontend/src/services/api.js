@@ -1,14 +1,41 @@
 import axios from 'axios';
 
-// Configure Axios baseURL from Vite environment variables or localStorage
-const savedApiUrl = typeof window !== 'undefined' ? localStorage.getItem('agrisense_api_base_url') : null;
+// Configure Axios baseURL
+// Priority: localStorage override (local only) → VITE_API_BASE_URL env → Vercel same-origin → Vite proxy ('')
+const rawSavedApiUrl = typeof window !== 'undefined' ? localStorage.getItem('agrisense_api_base_url') : null;
 const envApiUrl = import.meta.env.VITE_API_BASE_URL;
 const isVercelHost = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+const isLocalhost = typeof window !== 'undefined' && (
+  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+);
 const defaultProductionBackend = 'https://agri-sense-ai-theta-two.vercel.app';
 
-const apiBase = savedApiUrl || envApiUrl || (isVercelHost ? defaultProductionBackend : '');
+// In development (localhost), if localStorage contains a vercel.app URL, purge it immediately
+let savedApiUrl = rawSavedApiUrl;
+if (isLocalhost && rawSavedApiUrl && rawSavedApiUrl.includes('vercel.app')) {
+  try {
+    localStorage.removeItem('agrisense_api_base_url');
+    console.warn('[AgriSense AI] Purged outdated Vercel production URL from localStorage in local dev.');
+  } catch (_) {}
+  savedApiUrl = null;
+}
+
+// In local dev, never fall back to Vercel production URL; use Vite proxy ('')
+let apiBase = '';
+if (isLocalhost) {
+  // Only use savedApiUrl if it's explicitly a local address (e.g., http://localhost:8000)
+  apiBase = (savedApiUrl && !savedApiUrl.includes('vercel.app')) ? savedApiUrl : '';
+} else if (isVercelHost) {
+  apiBase = defaultProductionBackend;
+} else {
+  apiBase = savedApiUrl || envApiUrl || '';
+}
+
 if (apiBase) {
   axios.defaults.baseURL = apiBase.replace(/\/+$/, '');
+} else {
+  // Clear any existing baseURL so relative /api/... URLs use Vite proxy
+  delete axios.defaults.baseURL;
 }
 
 export const authApi = {
@@ -116,4 +143,17 @@ export const districtApi = {
     axios.get(`/api/district/rotation?district=${encodeURIComponent(district)}&state=${encodeURIComponent(state)}&country=${encodeURIComponent(country)}`),
   whatIf: (data) => axios.post('/api/district/rotation/what-if', data),
 };
+
+export const diseaseApi = {
+  predict: (formData) => axios.post('/api/disease/predict', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  getClasses: () => axios.get('/api/disease/classes'),
+  getHealth: () => axios.get('/api/disease/health'),
+  getHistory: () => axios.get('/api/disease/history'),
+  getScan: (scanId) => axios.get(`/api/disease/scan/${scanId}`),
+  deleteScan: (scanId) => axios.delete(`/api/disease/scan/${scanId}`),
+};
+
+
 

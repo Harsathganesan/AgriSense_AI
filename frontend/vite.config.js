@@ -24,7 +24,7 @@ function autoStartBackendPlugin(backendPort = 8000, backendHost = '127.0.0.1') {
       checked = true
 
       const socket = new net.Socket()
-      socket.setTimeout(1200)
+      socket.setTimeout(2500)
 
       const startBackend = () => {
         socket.destroy()
@@ -49,7 +49,7 @@ function autoStartBackendPlugin(backendPort = 8000, backendHost = '127.0.0.1') {
             {
               cwd: backendDir,
               stdio: 'inherit',
-              shell: false
+              shell: isWin
             }
           )
 
@@ -118,7 +118,20 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/api': {
           target: backendTarget,
-          changeOrigin: true
+          changeOrigin: true,
+          secure: false,
+          configure: (proxy, _options) => {
+            proxy.on('error', (err, req, res) => {
+              console.error('\x1b[31m%s\x1b[0m', `[AgriSense AI Vite Proxy] Backend unreachable at ${backendTarget}: ${err.message}`);
+              if (res && res.writeHead && !res.headersSent) {
+                res.writeHead(503, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                  detail: "FastAPI Backend is starting or temporarily unreachable on port 8000. Please retry in a few seconds.",
+                  error: err.message
+                }));
+              }
+            });
+          }
         }
       }
     }

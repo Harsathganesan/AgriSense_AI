@@ -1,0 +1,13 @@
+[tool.pyrefly]
+search-path = [".", "backend", "ml-training"]
+site-package-path = ["ml-training/venv/Lib/site-packages", "backend/venv/Lib/site-packages"]
+python-interpreter-path = "ml-training/venv/Scripts/python.exe"
+
+[tool.pyright]
+venvPath = "ml-training"
+venv = "venv"
+extraPaths = [
+  "backend",
+  "backend/app",
+  "ml-training"
+]

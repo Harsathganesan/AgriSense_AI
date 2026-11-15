@@ -9,48 +9,33 @@ export const FarmProvider = ({ children }) => {
   const [farms, setFarms] = useState([]);
   const [activeFarm, setActiveFarm] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchFarms = async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await axios.get('/api/farms');
       const data = res.data;
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setFarms(data);
-        // Restore saved farm ID or select first
-        const savedId = localStorage.getItem('agrisense_active_farm_id');
-        const found = data.find(f => f.id === savedId) || data[0];
-        setActiveFarm(found);
+        if (data.length > 0) {
+          // Restore saved farm ID or select first
+          const savedId = localStorage.getItem('agrisense_active_farm_id');
+          const found = data.find(f => f.id === savedId) || data[0];
+          setActiveFarm(found);
+        } else {
+          setActiveFarm(null);
+        }
       } else {
         setFarms([]);
-        const dist = user?.registered_location?.district || user?.district || 'Pudukkottai';
-        const st = user?.registered_location?.state || user?.state || 'Tamil Nadu';
-        setActiveFarm({
-          id: 'district_baseline',
-          name: `${dist} Agricultural Land`,
-          district: dist,
-          state: st,
-          latitude: 10.7870,
-          longitude: 79.1378,
-          area_acres: 5.0,
-          soil_type: 'Alluvial Soil'
-        });
+        setActiveFarm(null);
       }
     } catch (err) {
-      console.warn("Using baseline fallback farm due to:", err.message || err);
+      console.error("Failed to load farms from backend:", err.response?.data || err.message);
+      setError(err.response?.data?.detail || err.message || "Failed to load farms");
       setFarms([]);
-      const dist = user?.registered_location?.district || user?.district || 'Pudukkottai';
-      const st = user?.registered_location?.state || user?.state || 'Tamil Nadu';
-      setActiveFarm({
-        id: 'district_baseline',
-        name: `${dist} Agricultural Land`,
-        district: dist,
-        state: st,
-        latitude: 10.7870,
-        longitude: 79.1378,
-        area_acres: 5.0,
-        soil_type: 'Alluvial Soil'
-      });
+      setActiveFarm(null);
     } finally {
       setLoading(false);
     }
@@ -59,12 +44,16 @@ export const FarmProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       fetchFarms();
+    } else {
+      setFarms([]);
+      setActiveFarm(null);
+      setLoading(false);
     }
   }, [user]);
 
   const changeActiveFarm = (farm) => {
     setActiveFarm(farm);
-    if (farm) {
+    if (farm && farm.id) {
       localStorage.setItem('agrisense_active_farm_id', farm.id);
     }
   };
@@ -72,7 +61,9 @@ export const FarmProvider = ({ children }) => {
   const addFarm = async (farmData) => {
     const res = await axios.post('/api/farms', farmData);
     await fetchFarms();
-    setActiveFarm(res.data);
+    if (res.data) {
+      setActiveFarm(res.data);
+    }
     return res.data;
   };
 
@@ -87,12 +78,16 @@ export const FarmProvider = ({ children }) => {
     await fetchFarms();
   };
 
+  const currentDistrict = activeFarm?.district || user?.registered_location?.district || user?.district || 'Pudukkottai';
+
   return (
     <FarmContext.Provider value={{
       farms,
       activeFarm,
+      currentDistrict,
       setActiveFarm: changeActiveFarm,
       loading,
+      error,
       fetchFarms,
       addFarm,
       updateFarm,
@@ -104,4 +99,3 @@ export const FarmProvider = ({ children }) => {
 };
 
 export const useFarm = () => useContext(FarmContext);
-

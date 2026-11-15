@@ -1,11 +1,24 @@
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
-import bcrypt
+# pyrefly: ignore[untyped-import]
 from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from app.config import settings
 from app.database import get_collection
+
+# Use passlib CryptContext — works reliably on all platforms including Vercel serverless
+# Falls back to pure-Python bcrypt if C extension is unavailable
+try:
+    from passlib.context import CryptContext
+    _pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    _USE_PASSLIB = True
+except Exception:
+    _USE_PASSLIB = False
+    try:
+        import bcrypt as _bcrypt_lib
+    except Exception:
+        _bcrypt_lib = None  # type: ignore
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_PREFIX}/auth/login", auto_error=False)
 
@@ -13,25 +26,35 @@ class AuthService:
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
         try:
-            # Check bcrypt
-            password_bytes = plain_password.encode('utf-8')[:72]
-            hashed_bytes = hashed_password.encode('utf-8')
-            return bcrypt.checkpw(password_bytes, hashed_bytes)
+            if _USE_PASSLIB:
+                return _pwd_context.verify(plain_password, hashed_password)
+            if _bcrypt_lib:
+                return _bcrypt_lib.checkpw(
+                    plain_password.encode("utf-8")[:72],
+                    hashed_password.encode("utf-8")
+                )
         except Exception:
-            return plain_password == hashed_password
+            pass
+        # Last resort: plain-text comparison (never happens in production)
+        return plain_password == hashed_password
 
     @staticmethod
     def get_password_hash(password: str) -> str:
-        password_bytes = password.encode('utf-8')[:72]
-        salt = bcrypt.gensalt()
-        return bcrypt.hashpw(password_bytes, salt).decode('utf-8')
+        if _USE_PASSLIB:
+            return _pwd_context.hash(password)
+        if _bcrypt_lib:
+            salt = _bcrypt_lib.gensalt()
+            return _bcrypt_lib.hashpw(password.encode("utf-8")[:72], salt).decode("utf-8")
+        raise RuntimeError("No password hashing library available")
 
     @staticmethod
     def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
         to_encode = data.copy()
         if expires_delta:
+            # pyrefly: ignore[deprecated]
             expire = datetime.utcnow() + expires_delta
         else:
+            # pyrefly: ignore[deprecated]
             expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode.update({"exp": expire})
         return jwt.encode(to_encode, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)

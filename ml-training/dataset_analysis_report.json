@@ -1,0 +1,256 @@
+{
+  "dataset_root": "G:\\Projects\\NASA Farming\\ml-training\\dataset",
+  "total_images_scanned": 20638,
+  "corrupted_images_count": 0,
+  "corrupted_images": [],
+  "duplicate_images_count": 14,
+  "unique_valid_images_count": 20624,
+  "healthy_count": 3215,
+  "diseased_count": 17409,
+  "imbalance_ratio": 21.11,
+  "total_classes": 15,
+  "crops": {
+    "Pepper Bell": {
+      "total": 2475,
+      "healthy": 1478,
+      "diseased": 997,
+      "classes": [
+        {
+          "raw_class": "Pepper__bell___Bacterial_spot",
+          "condition": "Bacterial Spot",
+          "count": 997,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Pepper__bell___healthy",
+          "condition": "Healthy",
+          "count": 1478,
+          "is_healthy": true
+        }
+      ]
+    },
+    "Potato": {
+      "total": 2152,
+      "healthy": 152,
+      "diseased": 2000,
+      "classes": [
+        {
+          "raw_class": "Potato___Early_blight",
+          "condition": "Early Blight",
+          "count": 1000,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Potato___Late_blight",
+          "condition": "Late Blight",
+          "count": 1000,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Potato___healthy",
+          "condition": "Healthy",
+          "count": 152,
+          "is_healthy": true
+        }
+      ]
+    },
+    "Tomato": {
+      "total": 15997,
+      "healthy": 1585,
+      "diseased": 14412,
+      "classes": [
+        {
+          "raw_class": "Tomato_Bacterial_spot",
+          "condition": "Bacterial Spot",
+          "count": 2127,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato_Early_blight",
+          "condition": "Early Blight",
+          "count": 1000,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato_Late_blight",
+          "condition": "Late Blight",
+          "count": 1901,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato_Leaf_Mold",
+          "condition": "Leaf Mold",
+          "count": 952,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato_Septoria_leaf_spot",
+          "condition": "Septoria Leaf Spot",
+          "count": 1771,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato_Spider_mites_Two_spotted_spider_mite",
+          "condition": "Spider Mites Two Spotted Spider Mite",
+          "count": 1676,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato__Target_Spot",
+          "condition": "Target Spot",
+          "count": 1404,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato__Tomato_YellowLeaf__Curl_Virus",
+          "condition": "Tomato Yellowleaf  Curl Virus",
+          "count": 3208,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato__Tomato_mosaic_virus",
+          "condition": "Tomato Mosaic Virus",
+          "count": 373,
+          "is_healthy": false
+        },
+        {
+          "raw_class": "Tomato_healthy",
+          "condition": "Healthy",
+          "count": 1585,
+          "is_healthy": true
+        }
+      ]
+    }
+  },
+  "classes": [
+    {
+      "raw_class": "Pepper__bell___Bacterial_spot",
+      "crop": "Pepper Bell",
+      "condition": "Bacterial Spot",
+      "is_healthy": false,
+      "count": 997,
+      "percentage": 4.83
+    },
+    {
+      "raw_class": "Pepper__bell___healthy",
+      "crop": "Pepper Bell",
+      "condition": "Healthy",
+      "is_healthy": true,
+      "count": 1478,
+      "percentage": 7.17
+    },
+    {
+      "raw_class": "Potato___Early_blight",
+      "crop": "Potato",
+      "condition": "Early Blight",
+      "is_healthy": false,
+      "count": 1000,
+      "percentage": 4.85
+    },
+    {
+      "raw_class": "Potato___Late_blight",
+      "crop": "Potato",
+      "condition": "Late Blight",
+      "is_healthy": false,
+      "count": 1000,
+      "percentage": 4.85
+    },
+    {
+      "raw_class": "Potato___healthy",
+      "crop": "Potato",
+      "condition": "Healthy",
+      "is_healthy": true,
+      "count": 152,
+      "percentage": 0.74
+    },
+    {
+      "raw_class": "Tomato_Bacterial_spot",
+      "crop": "Tomato",
+      "condition": "Bacterial Spot",
+      "is_healthy": false,
+      "count": 2127,
+      "percentage": 10.31
+    },
+    {
+      "raw_class": "Tomato_Early_blight",
+      "crop": "Tomato",
+      "condition": "Early Blight",
+      "is_healthy": false,
+      "count": 1000,
+      "percentage": 4.85
+    },
+    {
+      "raw_class": "Tomato_Late_blight",
+      "crop": "Tomato",
+      "condition": "Late Blight",
+      "is_healthy": false,
+      "count": 1901,
+      "percentage": 9.22
+    },
+    {
+      "raw_class": "Tomato_Leaf_Mold",
+      "crop": "Tomato",
+      "condition": "Leaf Mold",
+      "is_healthy": false,
+      "count": 952,
+      "percentage": 4.62
+    },
+    {
+      "raw_class": "Tomato_Septoria_leaf_spot",
+      "crop": "Tomato",
+      "condition": "Septoria Leaf Spot",
+      "is_healthy": false,
+      "count": 1771,
+      "percentage": 8.59
+    },
+    {
+      "raw_class": "Tomato_Spider_mites_Two_spotted_spider_mite",
+      "crop": "Tomato",
+      "condition": "Spider Mites Two Spotted Spider Mite",
+      "is_healthy": false,
+      "count": 1676,
+      "percentage": 8.13
+    },
+    {
+      "raw_class": "Tomato__Target_Spot",
+      "crop": "Tomato",
+      "condition": "Target Spot",
+      "is_healthy": false,
+      "count": 1404,
+      "percentage": 6.81
+    },
+    {
+      "raw_class": "Tomato__Tomato_YellowLeaf__Curl_Virus",
+      "crop": "Tomato",
+      "condition": "Tomato Yellowleaf  Curl Virus",
+      "is_healthy": false,
+      "count": 3208,
+      "percentage": 15.55
+    },
+    {
+      "raw_class": "Tomato__Tomato_mosaic_virus",
+      "crop": "Tomato",
+      "condition": "Tomato Mosaic Virus",
+      "is_healthy": false,
+      "count": 373,
+      "percentage": 1.81
+    },
+    {
+      "raw_class": "Tomato_healthy",
+      "crop": "Tomato",
+      "condition": "Healthy",
+      "is_healthy": true,
+      "count": 1585,
+      "percentage": 7.69
+    }
+  ],
+  "splits": {
+    "train_count": 14436,
+    "val_count": 3094,
+    "test_count": 3094,
+    "train_percent": 70.0,
+    "val_percent": 15.0,
+    "test_percent": 15.0,
+    "data_leakage_detected": false
+  }
+}

@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 backend/venv/
+ml-training/venv/
+venv/
+.venv/
 # Environment Variables
 .env
 .env.*
@@ -28,3 +31,19 @@ dist-ssr/
 .DS_Store
 Thumbs.db
 
+# ML Training & Datasets
+ml-training/dataset/
+frontend/public/ml-train/
+*.keras
+*.h5
+*.tflite
+*.onnx
+ml-training/splits/
+ml-training/checkpoints/
+ml-training/*.png
+ml-training/*.jpg
+
+
+
+.keras_cache/
+test_farms_api.py

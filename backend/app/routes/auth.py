@@ -72,14 +72,19 @@ async def register(user_data: UserRegister):
 @router.post("/login", response_model=Token)
 async def login(credentials: UserLogin):
     users_col = get_collection("users")
-    user = users_col.find_one({"email": credentials.email})
+    clean_email = credentials.email.strip().lower()
+    # Try exact match, then lowercase match
+    user = users_col.find_one({"email": clean_email})
+    if not user:
+        user = users_col.find_one({"email": credentials.email.strip()})
+
     if not user or not AuthService.verify_password(credentials.password, user.get("hashed_password", "")):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password"
         )
 
-    access_token = AuthService.create_access_token({"sub": user["_id"], "email": user["email"]})
+    access_token = AuthService.create_access_token({"sub": str(user["_id"]), "email": user["email"]})
     country = user.get("country", "India")
     state = user.get("state", "Tamil Nadu")
     district = user.get("district", "Thanjavur")
@@ -93,7 +98,7 @@ async def login(credentials: UserLogin):
         "access_token": access_token,
         "token_type": "bearer",
         "user": {
-            "id": user["_id"],
+            "id": str(user["_id"]),
             "name": user.get("name", "Farmer"),
             "email": user["email"],
             "language": user.get("language", "en"),
@@ -104,7 +109,7 @@ async def login(credentials: UserLogin):
             "registered_location": reg_loc,
             "current_gps_location": user.get("current_gps_location"),
             "priorities": user.get("priorities", {}),
-            "created_at": user.get("created_at")
+            "created_at": str(user.get("created_at")) if user.get("created_at") else None
         }
     }
 
@@ -120,7 +125,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     }
 
     return {
-        "id": current_user["_id"],
+        "id": str(current_user["_id"]),
         "name": current_user.get("name", "Farmer"),
         "email": current_user.get("email", ""),
         "language": current_user.get("language", "en"),
@@ -131,7 +136,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         "registered_location": reg_loc,
         "current_gps_location": current_user.get("current_gps_location"),
         "priorities": current_user.get("priorities", {}),
-        "created_at": current_user.get("created_at")
+        "created_at": str(current_user.get("created_at")) if current_user.get("created_at") else None
     }
 
 @router.put("/profile", response_model=UserResponse)
