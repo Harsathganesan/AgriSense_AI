@@ -420,15 +420,18 @@ RULES:
         result["top_3"] = top3
         return result
 
+    assert np is not None
     def predict_with_local_model(self, img_batch: np.ndarray) -> Dict[str, Any]:
         """Inference with loaded local Keras or TFLite model."""
         if self.model_type == "keras" and self.model is not None:
+            assert np is not None
             probs = np.asarray(self.model.predict(img_batch, verbose=0)[0], dtype=np.float32)
         elif self.model_type == "tflite" and self.tflite_interpreter is not None:
             input_details = self.tflite_interpreter.get_input_details()[0]
             output_details = self.tflite_interpreter.get_output_details()[0]
 
             tensor = img_batch
+            assert np is not None
             if input_details["dtype"] == np.uint8:
                 # Quantized model expects raw 0..255 bytes
                 raw = (img_batch + 1.0) * 127.5 if APPLY_EXTERNAL_NORMALIZATION else img_batch

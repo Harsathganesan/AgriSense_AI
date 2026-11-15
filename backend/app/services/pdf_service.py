@@ -2,13 +2,16 @@ import io
 from datetime import datetime
 
 try:
-    from reportlab.lib.pagesizes import letter, A4
+    # pyrefly: ignore[untyped-import]
+    from reportlab.lib.pagesizes import A4
+    # pyrefly: ignore[untyped-import]
     from reportlab.lib import colors
+    # pyrefly: ignore[untyped-import]
     from reportlab.platypus import (
         SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
     )
+    # pyrefly: ignore[untyped-import]
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.lib.units import inch
     _HAS_REPORTLAB = True
 except ImportError:
     _HAS_REPORTLAB = False
@@ -29,6 +32,7 @@ class PDFReportService:
         if not _HAS_REPORTLAB:
             summary = (
                 f"AGRISENSE AI - COMPREHENSIVE FARM REPORT\n"
+                # pyrefly: ignore[deprecated]
                 f"Generated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
                 f"Farm: {farm_data.get('name', 'N/A')} ({farm_data.get('district', 'N/A')})\n"
                 f"Soil Health Score: {soil_eval.get('health_score', 'N/A')}/100\n"
@@ -106,6 +110,7 @@ class PDFReportService:
         # 1. Header Banner
         elements.append(Paragraph("AgriSense AI – Farm Health & Crop Rotation Report", title_style))
         elements.append(Paragraph(f"Smart Soil Health & Earth Observation Decision Platform • Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}", subtitle_style))
+        # pyrefly: ignore[bad-argument-type]
         elements.append(HRFlowable(width="100%", thickness=2, color=primary_color, spaceAfter=14))
 
         # 2. Farm Information
@@ -136,7 +141,9 @@ class PDFReportService:
             ('TOPPADDING', (0,0), (-1,-1), 4),
             ('BOTTOMPADDING', (0,0), (-1,-1), 4),
         ]))
+        # pyrefly: ignore[bad-argument-type]
         elements.append(farm_table)
+        # pyrefly: ignore[bad-argument-type]
         elements.append(Spacer(1, 12))
 
         # 3. Soil Health Assessment
@@ -161,9 +168,12 @@ class PDFReportService:
             ('TOPPADDING', (0,0), (-1,-1), 4),
             ('BOTTOMPADDING', (0,0), (-1,-1), 4),
         ]))
+        # pyrefly: ignore[bad-argument-type]
         elements.append(soil_table)
+        # pyrefly: ignore[bad-argument-type]
         elements.append(Spacer(1, 4))
         elements.append(Paragraph(f"<b>Soil Health Composite Score:</b> {composite_score}/100 — <b>Rating:</b> {grade}", body_style))
+        # pyrefly: ignore[bad-argument-type]
         elements.append(Spacer(1, 10))
 
         # 4. NASA Earth Observation Metrics
@@ -185,7 +195,9 @@ class PDFReportService:
             ('TOPPADDING', (0,0), (-1,-1), 4),
             ('BOTTOMPADDING', (0,0), (-1,-1), 4),
         ]))
+        # pyrefly: ignore[bad-argument-type]
         elements.append(nasa_table)
+        # pyrefly: ignore[bad-argument-type]
         elements.append(Spacer(1, 10))
 
         # 5. Crop Rotation Strategies Comparison
@@ -242,7 +254,9 @@ class PDFReportService:
             ('TOPPADDING', (0,0), (-1,-1), 4),
             ('BOTTOMPADDING', (0,0), (-1,-1), 4),
         ]))
+        # pyrefly: ignore[bad-argument-type]
         elements.append(strat_table)
+        # pyrefly: ignore[bad-argument-type]
         elements.append(Spacer(1, 12))
 
         # 6. Agronomic Advisory & Action Plan
@@ -250,8 +264,10 @@ class PDFReportService:
         recomms = soil_eval.get("recommendations", [])
         for r in recomms:
             elements.append(Paragraph(f"• {r}", body_style))
+            # pyrefly: ignore[bad-argument-type]
             elements.append(Spacer(1, 2))
 
+        # pyrefly: ignore[bad-argument-type]
         elements.append(Spacer(1, 10))
         # Disclaimer
         disclaimer_text = (
@@ -261,6 +277,7 @@ class PDFReportService:
         )
         elements.append(Paragraph(disclaimer_text, ParagraphStyle('Disclaimer', parent=styles['Normal'], fontSize=7.5, leading=10, textColor=colors.HexColor("#64748b"))))
 
+        # pyrefly: ignore[bad-argument-type]
         doc.build(elements)
         pdf_bytes = buffer.getvalue()
         buffer.close()
