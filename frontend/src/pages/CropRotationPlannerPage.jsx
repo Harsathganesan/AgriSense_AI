@@ -105,10 +105,6 @@ export default function CropRotationPlannerPage() {
       {/* 1. Header Bar */}
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#238636] text-[11px] font-bold border border-emerald-200 mb-1">
-            <Building className="w-3.5 h-3.5" />
-            <span>{selectedDistrict} District</span>
-          </div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <RotateCcw className="w-6 h-6 sm:w-7 sm:h-7 text-[#238636] shrink-0" />
             <span>{lang === 'ta' ? 'பயிர் சுழற்சித் திட்டம்' : 'Crop Rotation Planner'}</span>
@@ -229,16 +225,16 @@ export default function CropRotationPlannerPage() {
                 <div>
                   <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-900 text-white">
+                      <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-slate-900 text-white">
                         {lang === 'ta' ? `திட்டம் ${idx + 1}` : `Plan ${idx + 1}`}
                       </span>
                       {isRecommended && (
-                        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#238636] text-white">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#238636] text-white">
                           {lang === 'ta' ? 'பரிந்துரைக்கப்பட்டது ★' : 'Recommended ★'}
                         </span>
                       )}
                     </div>
-                    <span className="text-xs font-black text-[#238636]">
+                    <span className="text-xs font-bold text-[#238636]">
                       {strategy.overall_score}% {lang === 'ta' ? 'பொருத்தம்' : 'Fit'}
                     </span>
                   </div>
@@ -248,12 +244,12 @@ export default function CropRotationPlannerPage() {
                   </h3>
                 </div>
 
-                <div className="pt-2.5 mt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] font-semibold text-slate-500">
+                <div className="pt-2.5 mt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] font-normal text-slate-500">
                   <span>💧 {strategy.estimated_annual_water_mm} mm</span>
                   {strategy.nitrogen_added_kg_ha > 0 && (
-                    <span className="text-emerald-700">🌱 +{strategy.nitrogen_added_kg_ha} kg N</span>
+                    <span className="text-emerald-700 font-medium">🌱 +{strategy.nitrogen_added_kg_ha} kg N</span>
                   )}
-                  <span className={`text-[10px] font-bold ${isSelected ? 'text-[#238636]' : 'text-slate-400'}`}>
+                  <span className={`text-[10px] font-medium ${isSelected ? 'text-[#238636]' : 'text-slate-400'}`}>
                     {isSelected ? (lang === 'ta' ? '✓ செயலில் உள்ளது' : '✓ Active Plan') : (lang === 'ta' ? 'தேர்வு செய்க →' : 'Select →')}
                   </span>
                 </div>
@@ -278,7 +274,7 @@ export default function CropRotationPlannerPage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#238636] shrink-0" />
-                <h2 className="text-base sm:text-lg font-black text-slate-900">
+                <h2 className="text-base sm:text-lg font-bold text-slate-800">
                   {lang === 'ta' && activeStrategy.name_tamil ? activeStrategy.name_tamil : activeStrategy.name}
                 </h2>
               </div>
@@ -318,21 +314,21 @@ export default function CropRotationPlannerPage() {
                       {/* Step Header Badge */}
                       <div className="flex items-center justify-between mb-2.5">
                         <div className="flex items-center gap-2">
-                          <span className="w-7 h-7 rounded-xl bg-[#238636] text-white flex items-center justify-center font-black text-xs shadow-xs">
+                          <span className="w-7 h-7 rounded-xl bg-[#238636] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                             {sIdx + 1}
                           </span>
                           <div>
-                            <span className="text-[10px] uppercase font-bold text-slate-400 block leading-none">
+                            <span className="text-[10px] uppercase font-medium text-slate-400 block leading-none">
                               {lang === 'ta' ? `பருவம் ${sIdx + 1}` : `Season ${sIdx + 1}`}
                             </span>
-                            <span className="text-xs font-black text-slate-800">
+                            <span className="text-xs font-semibold text-slate-800">
                               {lang === 'ta' && step.season_tamil ? step.season_tamil : step.season}
                             </span>
                           </div>
                         </div>
 
                         {step.is_nitrogen_fixing && (
-                          <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-[#238636] text-white shadow-2xs">
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#238636] text-white shadow-2xs">
                             +N Fixer
                           </span>
                         )}
@@ -342,11 +338,11 @@ export default function CropRotationPlannerPage() {
                       <div className="py-2">
                         <div className="flex items-center gap-2">
                           <Sprout className="w-5 h-5 text-[#238636] shrink-0" />
-                          <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                          <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-tight">
                             {lang === 'ta' && step.crop_tamil ? step.crop_tamil : step.crop_name}
                           </h3>
                         </div>
-                        <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md inline-block mt-2">
+                        <span className="text-xs font-medium text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md inline-block mt-2">
                           📅 {step.months}
                         </span>
                       </div>
@@ -354,7 +350,7 @@ export default function CropRotationPlannerPage() {
                       {/* Soil Role Tag */}
                       <div className="pt-1">
                         <span
-                          className={`text-[10px] font-bold px-2.5 py-1 rounded-lg inline-block ${
+                          className={`text-[10px] font-medium px-2.5 py-1 rounded-lg inline-block ${
                             isRestorative
                               ? 'bg-emerald-100 text-emerald-900 border border-emerald-200'
                               : 'bg-slate-100 text-slate-800 border border-slate-200'
@@ -368,12 +364,12 @@ export default function CropRotationPlannerPage() {
                     </div>
 
                     {/* Step Metrics Footer */}
-                    <div className="pt-3.5 mt-3.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600">
+                    <div className="pt-3.5 mt-3.5 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-600">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5 text-slate-400" />
                         <span>{step.duration_days} {lang === 'ta' ? 'நாட்கள்' : 'days'}</span>
                       </div>
-                      <div className="flex items-center gap-1 text-sky-700">
+                      <div className="flex items-center gap-1 text-sky-700 font-semibold">
                         <Droplets className="w-3.5 h-3.5" />
                         <span>{step.water_need_mm} mm</span>
                       </div>
