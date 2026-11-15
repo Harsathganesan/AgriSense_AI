@@ -31,7 +31,7 @@ export default function Layout() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
         <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        <main className="flex-1 p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto w-full pb-24 lg:pb-8">
+        <main className="flex-1 p-2.5 sm:p-5 lg:p-8 max-w-7xl mx-auto w-full pb-24 lg:pb-8">
           <Outlet />
         </main>
       </div>

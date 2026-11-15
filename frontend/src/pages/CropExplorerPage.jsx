@@ -240,20 +240,20 @@ export default function CropExplorerPage() {
   const labMetrics = districtSoilInfo?.laboratory_soil_test || {};
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-4 sm:space-y-6 pb-12">
       {/* 1. Header & District Selection Bar */}
-      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-3 sm:space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#238636] text-xs font-bold border border-emerald-200 mb-2">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 text-[#238636] text-[11px] sm:text-xs font-bold border border-emerald-200 mb-1.5 sm:mb-2">
               <Building className="w-3.5 h-3.5" />
               <span>{selectedDistrict} District • {lang === 'ta' ? 'பயிர் பரிந்துரை' : 'Crop Suitability Matrix'}</span>
             </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-              <Sprout className="w-7 h-7 text-[#238636]" />
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <Sprout className="w-6 h-6 sm:w-7 sm:h-7 text-[#238636]" />
               {lang === 'ta' ? 'பயிர் வழிகாட்டி' : 'Crop Explorer'}
             </h1>
-            <p className="text-xs text-slate-500 mt-1 font-medium">
+            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 font-medium">
               {lang === 'ta'
                 ? `${selectedDistrict} மாவட்டத்திற்கான உகந்த பயிர் பரிந்துரைகள்`
                 : `Optimal crop recommendations for ${selectedDistrict} district`}
@@ -285,24 +285,24 @@ export default function CropExplorerPage() {
       </div>
 
       {/* 2. Soil Health Analysis Summary Strip for Selected District */}
-      <div className="bg-gradient-to-r from-emerald-50 via-teal-50/40 to-white p-5 rounded-2xl border border-emerald-200/90 shadow-sm space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-200/60 pb-3">
+      <div className="bg-gradient-to-r from-emerald-50 via-teal-50/40 to-white p-3.5 sm:p-5 rounded-2xl border border-emerald-200/90 shadow-sm space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-200/60 pb-2.5 sm:pb-3">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-[#238636] text-white">
+            <span className="p-1.5 rounded-lg bg-[#238636] text-white shrink-0">
               <Layers className="w-4 h-4" />
             </span>
-            <div>
-              <span className="text-xs font-black text-slate-900 block leading-tight">
+            <div className="min-w-0">
+              <span className="text-xs font-black text-slate-900 block leading-tight truncate">
                 {lang === 'ta'
                   ? `${selectedDistrict} மாவட்ட மண் வளம் & காலநிலைப் பகுப்பாய்வு:`
                   : `${selectedDistrict} Soil Health & Environmental Analysis:`}
               </span>
-              <span className="text-[11px] text-slate-600 font-medium">
+              <span className="text-[11px] text-slate-600 font-medium truncate block">
                 {lang === 'ta' ? districtSoilInfo?.primary_soil_type_tamil : districtSoilInfo?.primary_soil_type} • {districtSoilInfo?.soil_texture}
               </span>
             </div>
           </div>
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-white text-emerald-800 border border-emerald-300 w-fit">
+          <span className="text-xs font-bold px-2.5 sm:px-3 py-1 rounded-full bg-white text-emerald-800 border border-emerald-300 w-fit shrink-0">
             {lang === 'ta' ? 'பரிந்துரைக்கப்படும் பயிர்கள்' : `${filteredCrops.length} Crops Evaluated`}
           </span>
         </div>
@@ -368,7 +368,7 @@ export default function CropExplorerPage() {
       </div>
 
       {/* 3. Search Bar & Category Filter Pills */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+      <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5 sm:space-y-3">
         {/* Search Input */}
         <div className="relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -381,17 +381,17 @@ export default function CropExplorerPage() {
             }
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#238636]/40 focus:border-[#238636] transition"
+            className="w-full pl-10 pr-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#238636]/40 focus:border-[#238636] transition"
           />
         </div>
 
         {/* Category Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-none">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap shrink-0 cursor-pointer ${
                 selectedCategory === cat.id
                   ? 'bg-[#238636] text-white shadow-xs'
                   : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -405,14 +405,14 @@ export default function CropExplorerPage() {
 
       {/* 4. Simple, Farmer-Friendly Crop Cards Grid */}
       {loading ? (
-        <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div className="p-8 sm:p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
           <RefreshCw className="w-7 h-7 text-[#238636] animate-spin mx-auto mb-2" />
           <p className="text-xs font-bold text-slate-600">
             {lang === 'ta' ? `${selectedDistrict} மாவட்ட பயிர் பொருத்தங்கள் கணக்கிடப்படுகின்றன...` : `Analyzing soil & crop suitability for ${selectedDistrict}...`}
           </p>
         </div>
       ) : filteredCrops.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div className="p-8 sm:p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
           <Sprout className="w-10 h-10 text-slate-300 mx-auto mb-2" />
           <p className="text-sm font-bold text-slate-700">
             {lang === 'ta' ? 'பயிர்கள் எதுவும் கிடைக்கவில்லை' : 'No matching crops found'}
@@ -422,7 +422,7 @@ export default function CropExplorerPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-5">
           {filteredCrops.map((item) => {
             const crop = item.crop;
             const score = item.suitability_score;
@@ -574,12 +574,12 @@ export default function CropExplorerPage() {
 
       {/* 5. Detailed Crop & Sowing Guidelines Modal */}
       {selectedCropItem && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 space-y-3 sm:space-y-4 my-auto">
             {/* Modal Header */}
-            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-3">
+            <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-2.5 sm:pb-3">
               <div>
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                     {selectedCropItem.crop.botanical_name}
                   </span>
@@ -587,7 +587,7 @@ export default function CropExplorerPage() {
                     {selectedCropItem.suitability_score}% {lang === 'ta' ? 'பொருத்தம்' : 'Fit'} in {selectedDistrict}
                   </span>
                 </div>
-                <h2 className="text-xl font-black text-slate-900">
+                <h2 className="text-lg sm:text-xl font-black text-slate-900 leading-snug">
                   {selectedCropItem.crop.tamil_name || selectedCropItem.crop.name}
                 </h2>
                 <p className="text-xs font-semibold text-slate-500">
@@ -596,7 +596,8 @@ export default function CropExplorerPage() {
               </div>
               <button
                 onClick={() => setSelectedCropItem(null)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer"
+                title={lang === 'ta' ? 'மூடு' : 'Close'}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -707,19 +708,19 @@ export default function CropExplorerPage() {
       {/* TRACK PLAN SETUP & CONFIRMATION MODAL (Acre & Soil Type Confirmation)     */}
       {/* ========================================================================= */}
       {confirmingCropItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-          <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
             {/* Modal Header */}
-            <div className="p-5 bg-gradient-to-r from-emerald-800 to-teal-800 text-white flex items-center justify-between">
+            <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-800 to-teal-800 text-white flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center text-white">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 flex items-center justify-center text-white shrink-0">
                   <Sprout className="w-5 h-5" />
                 </div>
-                <div>
-                  <h3 className="text-base font-extrabold tracking-tight">
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-base font-extrabold tracking-tight truncate">
                     {lang === 'ta' ? 'சாகுபடி திட்ட உறுதிப்படுத்தல்' : 'Cultivation Plan Setup'}
                   </h3>
-                  <p className="text-xs text-emerald-200 font-medium">
+                  <p className="text-[11px] sm:text-xs text-emerald-200 font-medium truncate">
                     {lang === 'ta'
                       ? (confirmingCropItem.crop.tamil_name || confirmingCropItem.crop.name)
                       : confirmingCropItem.crop.name} • {selectedDistrict} District
@@ -729,14 +730,14 @@ export default function CropExplorerPage() {
               <button
                 type="button"
                 onClick={() => setConfirmingCropItem(null)}
-                className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer"
+                className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-5 space-y-4">
+            <div className="p-4 sm:p-5 space-y-3 sm:space-y-4">
               <p className="text-xs text-slate-500 leading-relaxed font-medium">
                 {lang === 'ta'
                   ? 'சாகுபடியைத் தொடங்குவதற்கு முன், உங்கள் நிலப்பரப்பு (ஏக்கர்) மற்றும் மண் வகையை உறுதிப்படுத்தவும். இதன் மூலம் உர மற்றும் நீர் அட்டவணை துல்லியமாக கணக்கிடப்படும்.'
