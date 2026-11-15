@@ -225,11 +225,11 @@ export default function CropRotationPlannerPage() {
                 <div>
                   <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-slate-900 text-white">
+                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-900 text-white">
                         {lang === 'ta' ? `திட்டம் ${idx + 1}` : `Plan ${idx + 1}`}
                       </span>
                       {isRecommended && (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#238636] text-white">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#238636] text-white">
                           {lang === 'ta' ? 'பரிந்துரைக்கப்பட்டது ★' : 'Recommended ★'}
                         </span>
                       )}
@@ -239,17 +239,17 @@ export default function CropRotationPlannerPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-normal text-slate-700 leading-snug">
+                  <h3 className="text-sm font-bold text-slate-900 leading-snug">
                     {lang === 'ta' && strategy.name_tamil ? strategy.name_tamil : strategy.name}
                   </h3>
                 </div>
 
-                <div className="pt-2.5 mt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] font-normal text-slate-500">
-                  <span>💧 {strategy.estimated_annual_water_mm} mm</span>
+                <div className="pt-2.5 mt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold text-slate-600">
+                  <span className="font-bold text-slate-700">💧 {strategy.estimated_annual_water_mm} mm</span>
                   {strategy.nitrogen_added_kg_ha > 0 && (
-                    <span className="text-emerald-700 font-medium">🌱 +{strategy.nitrogen_added_kg_ha} kg N</span>
+                    <span className="text-emerald-700 font-bold">🌱 +{strategy.nitrogen_added_kg_ha} kg N</span>
                   )}
-                  <span className={`text-[10px] font-medium ${isSelected ? 'text-[#238636]' : 'text-slate-400'}`}>
+                  <span className={`text-[10px] font-bold ${isSelected ? 'text-[#238636]' : 'text-slate-600'}`}>
                     {isSelected ? (lang === 'ta' ? '✓ செயலில் உள்ளது' : '✓ Active Plan') : (lang === 'ta' ? 'தேர்வு செய்க →' : 'Select →')}
                   </span>
                 </div>
