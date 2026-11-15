@@ -8,8 +8,7 @@ import {
   CheckCircle2,
   MapPin,
   Globe,
-  Building,
-  Server
+  Building
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -94,29 +93,29 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-4 sm:space-y-6 pb-12 max-w-4xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-          <Settings className="w-7 h-7 text-[#238636]" />
-          {t('nav.settings')}
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 sm:gap-2.5">
+          <Settings className="w-6 h-6 sm:w-7 sm:h-7 text-[#238636] shrink-0" />
+          <span>{t('nav.settings')}</span>
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 mt-1 leading-relaxed">
           {lang === 'ta'
             ? 'விவசாயி சுயவிவரம் மற்றும் மொழி விருப்பத்தேர்வுகள்.'
             : 'Farmer profile and language localization preferences.'}
         </p>
       </div>
 
-      <form onSubmit={handleSave} className="space-y-6">
+      <form onSubmit={handleSave} className="space-y-4 sm:space-y-6">
         {/* Profile Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-5">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-xs space-y-4 sm:space-y-5">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">
             <User className="w-4 h-4 text-[#238636]" />
-            {lang === 'ta' ? 'விவசாயி சுயவிவரம்' : 'Grower Profile & Identity'}
+            <span>{lang === 'ta' ? 'விவசாயி சுயவிவரம்' : 'Grower Profile & Identity'}</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
             <div>
               <label className="font-bold text-slate-700 block mb-1">
                 {lang === 'ta' ? 'முழுப் பெயர்' : 'Full Name'}
@@ -145,12 +144,12 @@ export default function SettingsPage() {
             <div>
               <label className="font-bold text-slate-700 flex items-center gap-1.5 mb-1">
                 <Globe className="w-3.5 h-3.5 text-slate-400" />
-                {lang === 'ta' ? 'நாடு' : 'Country'}
+                <span>{lang === 'ta' ? 'நாடு' : 'Country'}</span>
               </label>
               <select
                 value={country}
                 onChange={(e) => handleCountryChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white cursor-pointer"
               >
                 {availableCountries.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -161,12 +160,12 @@ export default function SettingsPage() {
             <div>
               <label className="font-bold text-slate-700 flex items-center gap-1.5 mb-1">
                 <Building className="w-3.5 h-3.5 text-slate-400" />
-                {lang === 'ta' ? 'மாநிலம்' : 'State / Province'}
+                <span>{lang === 'ta' ? 'மாநிலம்' : 'State / Province'}</span>
               </label>
               <select
                 value={state}
                 onChange={(e) => handleStateChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white cursor-pointer"
               >
                 {availableStates.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -177,18 +176,18 @@ export default function SettingsPage() {
             <div className="sm:col-span-2">
               <label className="font-bold text-slate-700 flex items-center gap-1.5 mb-1">
                 <MapPin className="w-3.5 h-3.5 text-[#238636]" />
-                {lang === 'ta' ? 'மாவட்டம் (பதிவு செய்யப்பட்ட பண்ணை இருப்பிடம்)' : 'District (Registered Farm Location)'}
+                <span>{lang === 'ta' ? 'மாவட்டம் (பதிவு செய்யப்பட்ட பண்ணை இருப்பிடம்)' : 'District (Registered Farm Location)'}</span>
               </label>
               <select
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white font-medium"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] text-sm bg-white font-medium cursor-pointer"
               >
                 {availableDistricts.map((d) => (
                   <option key={d} value={d}>{d}</option>
                 ))}
               </select>
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
                 {lang === 'ta'
                   ? 'இது உங்கள் பண்ணை பகுதிக்கான அடிப்படை மண் மற்றும் நாசா காலநிலைக் குறிப்புகளை அமைக்கும்.'
                   : 'This sets your baseline district, GeoJSON boundaries, and NASA agro-climatology references.'}
@@ -198,26 +197,26 @@ export default function SettingsPage() {
         </div>
 
         {/* Language & Regional Localization */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-xs space-y-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">
             <Languages className="w-4 h-4 text-[#238636]" />
-            {lang === 'ta' ? 'மொழி விருப்பங்கள்' : 'Language & Accessibility'}
+            <span>{lang === 'ta' ? 'மொழி விருப்பங்கள்' : 'Language & Accessibility'}</span>
           </div>
 
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 leading-relaxed">
             {lang === 'ta'
               ? 'பயன்பாட்டு இடைமுகம் மற்றும் தகவல்களுக்கான மொழியைத் தேர்வுசெய்யவும்.'
               : 'Select your preferred display language for UI labels, charts, and AI assistant interactions.'}
           </p>
 
-          <div className="grid grid-cols-2 gap-4 max-w-md pt-1">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-md pt-1">
             <button
               type="button"
               onClick={() => {
                 setLang('en');
                 localStorage.setItem('agrisense_lang', 'en');
               }}
-              className={`p-4 rounded-2xl border text-left transition ${
+              className={`p-3.5 sm:p-4 rounded-2xl border text-left transition cursor-pointer ${
                 lang === 'en'
                   ? 'border-emerald-500 bg-emerald-50/70 text-[#238636] ring-2 ring-emerald-500/20 font-bold'
                   : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
@@ -233,7 +232,7 @@ export default function SettingsPage() {
                 setLang('ta');
                 localStorage.setItem('agrisense_lang', 'ta');
               }}
-              className={`p-4 rounded-2xl border text-left transition ${
+              className={`p-3.5 sm:p-4 rounded-2xl border text-left transition cursor-pointer ${
                 lang === 'ta'
                   ? 'border-emerald-500 bg-emerald-50/70 text-[#238636] ring-2 ring-emerald-500/20 font-bold'
                   : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
@@ -245,58 +244,32 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Backend API Server Configuration */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 text-slate-800 font-extrabold text-sm border-b border-slate-100 pb-2">
-            <Server className="w-4 h-4 text-[#238636]" />
-            <h3>{lang === 'ta' ? 'FastAPI Backend இணைப்பு' : 'FastAPI Backend API Connection'}</h3>
-          </div>
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-            <label className="font-bold text-slate-700 block text-xs">
-              {lang === 'ta' ? 'Vercel Backend URL' : 'Backend URL (e.g. https://agrisense-backend.vercel.app)'}
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={backendUrl}
-                onChange={(e) => setBackendUrl(e.target.value)}
-                placeholder="https://your-backend.vercel.app"
-                className="flex-1 px-3.5 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-[#238636] text-xs font-mono"
-              />
-            </div>
-            <p className="text-[11px] text-slate-400">
-              {lang === 'ta'
-                ? 'உங்கள் Backend Vercel project URL-ஐ இங்கு உள்ளிடலாம். உள்ளிட்ட பின் கீழே உள்ள Save பொத்தானை அழுத்தவும்.'
-                : 'Enter your deployed FastAPI backend URL to sync live telemetry, farms, and satellite data.'}
-            </p>
-          </div>
-        </div>
-
         {/* Save Bar */}
-        <div className="flex items-center justify-between pt-2">
-          <button
-            type="button"
-            onClick={logout}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-200 text-rose-700 font-bold text-xs hover:bg-rose-50 transition"
-          >
-            <LogOut className="w-4 h-4" />
-            {t('nav.logout')}
-          </button>
+        <div className="space-y-3 pt-2">
+          {savedSuccess && (
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{lang === 'ta' ? 'அமைப்புகள் வெற்றிகரமாக சேமிக்கப்பட்டன!' : 'Settings successfully saved!'}</span>
+            </div>
+          )}
 
-          <div className="flex items-center gap-3">
-            {savedSuccess && (
-              <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
-                <CheckCircle2 className="w-4 h-4" />
-                {lang === 'ta' ? 'அமைப்புகள் சேமிக்கப்பட்டன!' : 'Settings Saved!'}
-              </span>
-            )}
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={logout}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-rose-200 text-rose-700 font-bold text-xs hover:bg-rose-50 transition cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>{t('nav.logout')}</span>
+            </button>
+
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-2.5 bg-[#238636] hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition hover:scale-[1.02] active:scale-[0.98]"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#238636] hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition cursor-pointer disabled:opacity-60"
             >
               <Save className="w-4 h-4" />
-              {saving ? (lang === 'ta' ? 'சேமிக்கிறது...' : 'Saving...') : t('common.save')}
+              <span>{saving ? (lang === 'ta' ? 'சேமிக்கிறது...' : 'Saving...') : t('common.save')}</span>
             </button>
           </div>
         </div>
