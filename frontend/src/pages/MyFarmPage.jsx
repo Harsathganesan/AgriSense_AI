@@ -11,7 +11,9 @@ import {
   RefreshCw,
   AlertTriangle,
   Compass,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Navigation,
+  CheckCircle2
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { analysisApi } from '../services/api';
@@ -62,6 +64,8 @@ export default function MyFarmPage() {
   const [mapLayer, setMapLayer] = useState('standard'); // 'standard', 'satellite'
   const [analysisData, setAnalysisData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [detectingLocation, setDetectingLocation] = useState(false);
+  const [locationSuccessMsg, setLocationSuccessMsg] = useState('');
   const [error, setError] = useState(null);
 
   // Fetch location-based NASA & Soil analysis
@@ -87,6 +91,85 @@ export default function MyFarmPage() {
   useEffect(() => {
     fetchAnalysis(DEFAULT_LAT, DEFAULT_LON);
   }, []);
+
+  // Get Current GPS Location from Mobile / Device
+  const handleGetCurrentLocation = () => {
+    setError(null);
+    setLocationSuccessMsg('');
+
+    if (!navigator.geolocation) {
+      setError(
+        lang === 'ta'
+          ? 'உங்கள் உலாவியில் GPS இருப்பிட வசதி இல்லை. கைமுறையாக அட்சரேகை/தீர்க்கரேகை உள்ளிடவும்.'
+          : 'Geolocation is not supported by your browser. Please enter coordinates manually.'
+      );
+      return;
+    }
+
+    setDetectingLocation(true);
+
+    const geoOptions = {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const lat = Number(pos.coords.latitude.toFixed(4));
+          const lon = Number(pos.coords.longitude.toFixed(4));
+
+          setInputLat(lat.toString());
+          setInputLon(lon.toString());
+          setActiveCoords({ lat, lon });
+
+          setLocationSuccessMsg(
+            lang === 'ta'
+              ? `உங்கள் தற்போதைய இருப்பிடம் பெறப்பட்டது: ${lat}°N, ${lon}°E`
+              : `Current device location detected: ${lat}°N, ${lon}°E`
+          );
+
+          await fetchAnalysis(lat, lon);
+        } catch (err) {
+          console.error('Location processing error:', err);
+        } finally {
+          setDetectingLocation(false);
+        }
+      },
+      (geoErr) => {
+        setDetectingLocation(false);
+        console.warn('Geolocation error:', geoErr);
+
+        if (geoErr.code === geoErr.PERMISSION_DENIED) {
+          setError(
+            lang === 'ta'
+              ? 'இருப்பிட அனுமதி மறுக்கப்பட்டது! தயவுசெய்து உங்கள் மொபைலில் GPS Location-ஐ ஆன் செய்து, பிரவுசரில் அனுமதி (Allow) வழங்கவும்.'
+              : 'Location permission denied! Please turn on device GPS and allow location access in your browser settings.'
+          );
+        } else if (geoErr.code === geoErr.POSITION_UNAVAILABLE) {
+          setError(
+            lang === 'ta'
+              ? 'மொபைல் GPS சிக்னல் கிடைக்கவில்லை. உங்கள் மொபைலில் Location/GPS-ஐ இயக்கி மீண்டும் முயற்சிக்கவும்.'
+              : 'GPS position unavailable. Please ensure location/GPS is enabled on your device.'
+          );
+        } else if (geoErr.code === geoErr.TIMEOUT) {
+          setError(
+            lang === 'ta'
+              ? 'GPS தகவல் பெறுவதில் தாமதம் ஏற்பட்டது. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.'
+              : 'Location request timed out. Please try again.'
+          );
+        } else {
+          setError(
+            lang === 'ta'
+              ? 'இருப்பிடத்தை கண்டறிய முடியவில்லை. தயவுசெய்து உங்கள் மொபைல் Location-ஐ ஆன் செய்யவும்.'
+              : 'Could not retrieve your location. Please check device location settings.'
+          );
+        }
+      },
+      geoOptions
+    );
+  };
 
   // Handle manual coordinate search
   const handleSearch = (e) => {
@@ -163,11 +246,11 @@ export default function MyFarmPage() {
         </div>
       </div>
 
-      {/* Coordinate Search Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      {/* Coordinate Search Bar with "Your Location" GPS Button */}
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
         <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
           {/* Latitude */}
-          <div className="md:col-span-5">
+          <div className="md:col-span-4">
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               {lang === 'ta' ? 'அட்சரேகை (Latitude °N)' : 'Latitude (°N)'}
             </label>
@@ -185,7 +268,7 @@ export default function MyFarmPage() {
           </div>
 
           {/* Longitude */}
-          <div className="md:col-span-5">
+          <div className="md:col-span-4">
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               {lang === 'ta' ? 'தீர்க்கரேகை (Longitude °E)' : 'Longitude (°E)'}
             </label>
@@ -202,26 +285,59 @@ export default function MyFarmPage() {
             </div>
           </div>
 
-          {/* Search Button */}
-          <div className="md:col-span-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#1f732f] text-white font-bold py-2.5 px-4 rounded-xl text-sm shadow-sm transition-all duration-150 disabled:opacity-60"
-            >
-              {loading ? (
-                <RefreshCw className="w-4 h-4 animate-spin" />
-              ) : (
-                <Search className="w-4 h-4 stroke-[2.2]" />
-              )}
-              <span>{lang === 'ta' ? 'தேடு' : 'Search Farm'}</span>
-            </button>
+          {/* Action Buttons: Your Location & Search */}
+          <div className="grid grid-cols-2 md:contents gap-2.5">
+            {/* Your Location GPS Button */}
+            <div className="md:col-span-2">
+              <button
+                type="button"
+                onClick={handleGetCurrentLocation}
+                disabled={detectingLocation || loading}
+                className="w-full flex items-center justify-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#238636] border border-emerald-300 font-extrabold py-2.5 px-3 rounded-xl text-xs sm:text-sm shadow-2xs transition-all duration-150 disabled:opacity-60 cursor-pointer active:scale-95 whitespace-nowrap"
+                title={lang === 'ta' ? 'மொபைல் GPS மூலம் உங்கள் இருப்பிடத்தை கண்டறியவும்' : 'Detect your current GPS location'}
+              >
+                {detectingLocation ? (
+                  <RefreshCw className="w-4 h-4 animate-spin text-[#238636] shrink-0" />
+                ) : (
+                  <Navigation className="w-4 h-4 text-[#238636] fill-[#238636]/20 shrink-0" />
+                )}
+                <span>
+                  {detectingLocation
+                    ? (lang === 'ta' ? 'கண்டறிகிறது...' : 'Locating...')
+                    : (lang === 'ta' ? 'உங்கள் இடம்' : 'Your Location')}
+                </span>
+              </button>
+            </div>
+
+            {/* Search Farm Button */}
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={loading || detectingLocation}
+                className="w-full flex items-center justify-center gap-1.5 bg-[#238636] hover:bg-[#1f732f] text-white font-extrabold py-2.5 px-3 rounded-xl text-xs sm:text-sm shadow-sm transition-all duration-150 disabled:opacity-60 cursor-pointer active:scale-95 whitespace-nowrap"
+              >
+                {loading ? (
+                  <RefreshCw className="w-4 h-4 animate-spin shrink-0" />
+                ) : (
+                  <Search className="w-4 h-4 stroke-[2.2] shrink-0" />
+                )}
+                <span>{lang === 'ta' ? 'தேடு' : 'Search Farm'}</span>
+              </button>
+            </div>
           </div>
         </form>
 
+        {/* Location Success Notification */}
+        {locationSuccessMsg && (
+          <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-800 text-xs font-semibold animate-in fade-in duration-200">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{locationSuccessMsg}</span>
+          </div>
+        )}
+
         {/* Error Notification */}
         {error && (
-          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-red-700 text-xs font-medium">
+          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-red-700 text-xs font-medium animate-in fade-in duration-200">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>

@@ -33,6 +33,7 @@ class PDFReportService:
             # Pure Python valid PDF-1.4 fallback for lightweight environments
             title = f"AGRISENSE AI - FARM REPORT: {farm_data.get('name', 'Farm')}"
             lines = [
+                # pyrefly: ignore[deprecated]
                 f"Generated Date: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}",
                 f"Location: {farm_data.get('district', 'N/A')}, {farm_data.get('state', 'Tamil Nadu')}",
                 f"Acreage: {farm_data.get('area_acres', '5.0')} Acres | Soil: {farm_data.get('soil_type', 'Red Sandy Loam')}",

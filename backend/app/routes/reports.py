@@ -101,6 +101,7 @@ async def _build_report_payload(district: str, farm_id: Optional[str], current_u
         rotation_data = rot_rec
     else:
         strats = RotationEngine.generate_three_strategies(farm, soil_eval, climate)
+        # pyrefly: ignore[deprecated]
         rotation_data = {"strategies": [s.dict() for s in strats]}
 
     pdf_bytes = PDFReportService.generate_comprehensive_farm_report(
@@ -110,6 +111,7 @@ async def _build_report_payload(district: str, farm_id: Optional[str], current_u
         rotation_data=rotation_data
     )
 
+    # pyrefly: ignore[missing-attribute]
     filename = f"AgriSense_Report_{district}_{farm.get('name', 'Farm').replace(' ', '_')}_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
     return farm, user_id, filename, pdf_bytes
 
@@ -133,6 +135,7 @@ async def generate_report(
     except Exception as e:
         print("Local file write warning:", e)
 
+    # pyrefly: ignore[deprecated]
     now = datetime.utcnow().isoformat()
     pdf_b64 = base64.b64encode(pdf_bytes).decode('utf-8')
 
