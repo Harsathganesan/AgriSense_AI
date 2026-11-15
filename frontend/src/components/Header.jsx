@@ -15,7 +15,7 @@ export default function Header({ onToggleSidebar }) {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 flex items-center justify-between">
+    <header className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 flex items-center justify-between m-0">
       {/* Left: Mobile Toggle & Mobile Logo */}
       <div className="flex items-center gap-2 sm:gap-3">
         <button

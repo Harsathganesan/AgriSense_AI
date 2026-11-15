@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
   Sprout,
@@ -92,6 +93,18 @@ export default function CropExplorerPage() {
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);
+
+  // Lock background scroll when modal is active
+  useEffect(() => {
+    if (selectedCropItem || confirmingCropItem) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedCropItem, confirmingCropItem]);
 
   // Open Track Plan Setup modal to specify acres and soil type before proceeding
   const handleOpenTrackConfirm = (item) => {
@@ -573,9 +586,16 @@ export default function CropExplorerPage() {
       )}
 
       {/* 5. Detailed Crop & Sowing Guidelines Modal */}
-      {selectedCropItem && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 space-y-3 sm:space-y-4 my-auto">
+      {selectedCropItem && typeof document !== 'undefined' && createPortal(
+        <div
+          className="modal-overlay-full bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto"
+          style={{ top: 0, left: 0, right: 0, bottom: 0, margin: 0 }}
+          onClick={() => setSelectedCropItem(null)}
+        >
+          <div
+            className="bg-white rounded-2xl sm:rounded-3xl max-w-xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 space-y-3 sm:space-y-4 my-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Modal Header */}
             <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-2.5 sm:pb-3">
               <div>
@@ -701,15 +721,23 @@ export default function CropExplorerPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ========================================================================= */}
       {/* TRACK PLAN SETUP & CONFIRMATION MODAL (Acre & Soil Type Confirmation)     */}
       {/* ========================================================================= */}
-      {confirmingCropItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+      {confirmingCropItem && typeof document !== 'undefined' && createPortal(
+        <div
+          className="modal-overlay-full flex items-center justify-center bg-slate-900/70 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in-50 overflow-y-auto"
+          style={{ top: 0, left: 0, right: 0, bottom: 0, margin: 0 }}
+          onClick={() => setConfirmingCropItem(null)}
+        >
+          <div
+            className="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Modal Header */}
             <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-800 to-teal-800 text-white flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -839,7 +867,8 @@ export default function CropExplorerPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -3,19 +3,33 @@
 @tailwind utilities;
 
 @layer base {
-  html {
+  html, body, #root {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    border: none !important;
   }
   body {
     @apply bg-slate-50 text-slate-800 antialiased font-sans selection:bg-emerald-200 selection:text-emerald-900;
     min-height: 100vh;
     min-height: 100dvh;
-    margin: 0;
-    padding: 0;
   }
+}
+
+/* Modal Overlay: 100% full screen coverage with zero top gap */
+.modal-overlay-full {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
 }
 
 /* Custom Leaflet Map styling */
