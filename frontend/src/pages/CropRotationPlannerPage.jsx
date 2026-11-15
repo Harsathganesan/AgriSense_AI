@@ -243,7 +243,7 @@ export default function CropRotationPlannerPage() {
                     </span>
                   </div>
 
-                  <h3 className="font-extrabold text-sm text-slate-900 leading-snug">
+                  <h3 className="text-sm font-normal text-slate-700 leading-snug">
                     {lang === 'ta' && strategy.name_tamil ? strategy.name_tamil : strategy.name}
                   </h3>
                 </div>
