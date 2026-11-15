@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   FlaskConical,
-  Building,
   Droplets,
   Thermometer,
   ShieldAlert,
@@ -100,12 +99,6 @@ export default function SoilHealthPage() {
       <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#238636] text-xs font-bold border border-emerald-200 mb-2">
-              <Building className="w-3.5 h-3.5" />
-              <span>
-                {selectedDistrict} District Soil Profile ({soilData?.primary_soil_type || 'Regional Soil'})
-              </span>
-            </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
               <FlaskConical className="w-7 h-7 text-[#238636]" />
               {lang === 'ta' ? 'மண் வளம் மற்றும் ஊட்டச்சத்து' : 'Soil Health & Diagnostics'}
@@ -151,19 +144,12 @@ export default function SoilHealthPage() {
             <div>
               <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
                 {lang === 'ta' ? 'நாசா செயற்கைக்கோள் மண் குறிகாட்டிகள்' : 'NASA Satellite Soil Environmental Indicators'}
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
-                  SMAP & POWER L3
-                </span>
               </h3>
               <p className="text-[11px] text-slate-500 font-medium">
                 Spatial footprint: 9km gridded radiometer • {selectedDistrict} Centroid
               </p>
             </div>
           </div>
-          <span className="text-[11px] font-mono text-slate-500 flex items-center gap-1.5 font-semibold">
-            <span className="w-2 h-2 rounded-full bg-[#238636] animate-pulse" />
-            Live NASA Pass
-          </span>
         </div>
 
         {/* 4 Satellite Metric Cards */}
@@ -174,9 +160,6 @@ export default function SoilHealthPage() {
               <span className="text-xs font-bold flex items-center gap-1.5">
                 <Droplets className="w-4 h-4 text-blue-600" />
                 Root-Zone Moisture (0-100cm)
-              </span>
-              <span className="text-[10px] font-bold text-blue-800 bg-blue-100 px-2 py-0.2 rounded">
-                NASA SMAP
               </span>
             </div>
             <div className="text-2xl font-black text-slate-900 mt-2">
@@ -196,9 +179,6 @@ export default function SoilHealthPage() {
               <span className="text-xs font-bold flex items-center gap-1.5">
                 <Thermometer className="w-4 h-4 text-amber-600" />
                 Soil Temperature
-              </span>
-              <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.2 rounded">
-                NASA POWER
               </span>
             </div>
             <div className="text-2xl font-black text-slate-900 mt-2">
@@ -246,9 +226,6 @@ export default function SoilHealthPage() {
                 <Droplets className="w-4 h-4 text-emerald-600" />
                 Plant Available Water (PAW)
               </span>
-              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.2 rounded">
-                AWC Metric
-              </span>
             </div>
             <div className="text-2xl font-black text-slate-900 mt-2">
               {satIndicators.water_availability?.plant_available_water_pct || 62.0}%
@@ -284,9 +261,6 @@ export default function SoilHealthPage() {
                 <Layers className="w-4 h-4 text-[#238636]" />
                 {lang === 'ta' ? 'மாவட்ட மண் & ஆய்வுக்கூட விவரம்' : 'District Soil & Testing Laboratory Profile'}
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                ICAR & TNAU Standards
-              </span>
             </div>
 
             <div className="mt-3 space-y-2.5 text-xs">
@@ -320,9 +294,6 @@ export default function SoilHealthPage() {
             <FlaskConical className="w-4 h-4 text-[#238636]" />
             {lang === 'ta' ? 'ஆய்வக ஊட்டச்சத்து அளவீடுகள்' : 'Laboratory Certified Nutrient Parameters'}
           </h3>
-          <span className="text-xs font-mono text-slate-500 font-semibold">
-            {selectedDistrict} District Baseline
-          </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
