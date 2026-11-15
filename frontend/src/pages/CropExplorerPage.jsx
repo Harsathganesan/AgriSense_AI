@@ -21,8 +21,18 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useFarm } from '../contexts/FarmContext';
 import { districtApi, authApi } from '../services/api';
 import { getDistricts } from '../data/locationHierarchy';
+
+const SOIL_OPTIONS = [
+  { id: 'Red Sandy Loam', en: 'Red Sandy Loam', ta: 'செம்மண் மற்றும் சரளை மண்' },
+  { id: 'Alluvial Soil', en: 'Alluvial Soil (Delta / River)', ta: 'வண்டல் மண்' },
+  { id: 'Black Cotton Soil', en: 'Black Cotton Soil (Clayey)', ta: 'கரிசல் மண்' },
+  { id: 'Clay Loam', en: 'Clay Loam Soil', ta: 'களிமண் கலந்த வண்டல்' },
+  { id: 'Laterite Soil', en: 'Laterite Soil', ta: 'செம்பொறை மண்' },
+  { id: 'Sandy Coastal Soil', en: 'Sandy Coastal Soil', ta: 'மணல் பாங்கான மண்' },
+];
 
 export default function CropExplorerPage() {
   const { t, lang } = useLanguage();
@@ -33,6 +43,7 @@ export default function CropExplorerPage() {
   const country = user?.registered_location?.country || user?.country || 'India';
   const initialDistrict = user?.registered_location?.district || user?.district || 'Pudukkottai';
 
+  const { activeFarm } = useFarm();
   const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict);
   const [cropList, setCropList] = useState([]);
   const [districtSoilInfo, setDistrictSoilInfo] = useState(null);
@@ -41,6 +52,11 @@ export default function CropExplorerPage() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedCropItem, setSelectedCropItem] = useState(null);
+
+  // Cultivation Plan Setup Modal State
+  const [confirmingCropItem, setConfirmingCropItem] = useState(null);
+  const [acresInput, setAcresInput] = useState(2.0);
+  const [soilTypeInput, setSoilTypeInput] = useState('Red Sandy Loam');
   const [trackedCropsList, setTrackedCropsList] = useState(() => {
     try {
       const savedList = localStorage.getItem('agrisense_tracked_crops_list');
@@ -77,14 +93,29 @@ export default function CropExplorerPage() {
     };
   }, []);
 
-  // Set tracked crop and optionally navigate to Agri Tracker
-  const handleLaunchTracker = (item, shouldNavigate = false) => {
+  // Open Track Plan Setup modal to specify acres and soil type before proceeding
+  const handleOpenTrackConfirm = (item) => {
+    setConfirmingCropItem(item);
+    const defaultAcres = activeFarm?.area_acres || 2.0;
+    setAcresInput(defaultAcres);
+    const defaultSoil = activeFarm?.soil_type || districtSoilInfo?.primary_soil || 'Red Sandy Loam';
+    setSoilTypeInput(defaultSoil);
+  };
+
+  // Confirm and proceed to Agri Tracker
+  const handleConfirmTrackPlan = () => {
+    if (!confirmingCropItem) return;
+    const numAcres = parseFloat(acresInput) > 0 ? parseFloat(acresInput) : 1.0;
+
     const data = {
-      crop: item.crop,
-      suitability_score: item.suitability_score,
+      crop: confirmingCropItem.crop,
+      suitability_score: confirmingCropItem.suitability_score,
       district: selectedDistrict,
+      area_acres: numAcres,
+      soil_type: soilTypeInput,
       tracked_at: new Date().toISOString()
     };
+
     try {
       localStorage.setItem('agrisense_tracked_crop', JSON.stringify(data));
 
@@ -96,8 +127,8 @@ export default function CropExplorerPage() {
 
       const idx = list.findIndex(
         (c) =>
-          c.crop?.id === item.crop.id ||
-          (c.crop?.name && c.crop.name.toLowerCase() === item.crop.name.toLowerCase())
+          (c.crop?.id && String(c.crop.id) === String(confirmingCropItem.crop.id)) ||
+          (c.crop?.name && c.crop.name.toLowerCase() === confirmingCropItem.crop.name.toLowerCase())
       );
       if (idx >= 0) {
         list[idx] = data;
@@ -111,9 +142,10 @@ export default function CropExplorerPage() {
     } catch (e) {
       console.warn('Tracked crop load error:', e);
     }
-    if (shouldNavigate) {
-      navigate('/agri-tracker');
-    }
+
+    setConfirmingCropItem(null);
+    setSelectedCropItem(null);
+    navigate('/agri-tracker');
   };
 
   const categories = [
@@ -521,7 +553,7 @@ export default function CropExplorerPage() {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleLaunchTracker(item, false);
+                          handleOpenTrackConfirm(item);
                         }}
                         className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-[#238636] text-[#238636] hover:text-white border border-emerald-300 font-extrabold text-[11px] transition flex items-center gap-1 shadow-2xs cursor-pointer"
                       >
@@ -635,7 +667,13 @@ export default function CropExplorerPage() {
                 return (
                   <button
                     type="button"
-                    onClick={() => handleLaunchTracker(selectedCropItem, true)}
+                    onClick={() => {
+                      if (isSelectedTracked) {
+                        navigate('/agri-tracker');
+                      } else {
+                        handleOpenTrackConfirm(selectedCropItem);
+                      }
+                    }}
                     className={`w-full sm:flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition flex items-center justify-center gap-2 shadow-sm cursor-pointer ${
                       isSelectedTracked
                         ? 'bg-emerald-700 hover:bg-emerald-800 text-white'
@@ -647,8 +685,8 @@ export default function CropExplorerPage() {
                       {isSelectedTracked
                         ? (lang === 'ta' ? 'செயலில் உள்ளது ⏳ (Agri Tracker-ல் பார்க்க)' : 'On Process ⏳ (View in Agri Tracker)')
                         : (lang === 'ta'
-                            ? `Agri Tracker-ல் சாகுபடியைத் தொடங்கு (${selectedCropItem.crop.duration_days_avg || 100} நாள் திட்டம்)`
-                            : `Execute ${selectedCropItem.crop.duration_days_avg || 100}-Day Plan in Agri Tracker`)}
+                            ? `சாகுபடி திட்டத்தை உறுதிசெய் (${selectedCropItem.crop.duration_days_avg || 100} நாள் திட்டம்)`
+                            : `Setup & Track ${selectedCropItem.crop.duration_days_avg || 100}-Day Plan`)}
                     </span>
                   </button>
                 );
@@ -660,6 +698,144 @@ export default function CropExplorerPage() {
               >
                 {lang === 'ta' ? 'மூடு' : 'Close'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TRACK PLAN SETUP & CONFIRMATION MODAL (Acre & Soil Type Confirmation)     */}
+      {/* ========================================================================= */}
+      {confirmingCropItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in-50">
+          <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-5 bg-gradient-to-r from-emerald-800 to-teal-800 text-white flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center text-white">
+                  <Sprout className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold tracking-tight">
+                    {lang === 'ta' ? 'சாகுபடி திட்ட உறுதிப்படுத்தல்' : 'Cultivation Plan Setup'}
+                  </h3>
+                  <p className="text-xs text-emerald-200 font-medium">
+                    {lang === 'ta'
+                      ? (confirmingCropItem.crop.tamil_name || confirmingCropItem.crop.name)
+                      : confirmingCropItem.crop.name} • {selectedDistrict} District
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setConfirmingCropItem(null)}
+                className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 space-y-4">
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                {lang === 'ta'
+                  ? 'சாகுபடியைத் தொடங்குவதற்கு முன், உங்கள் நிலப்பரப்பு (ஏக்கர்) மற்றும் மண் வகையை உறுதிப்படுத்தவும். இதன் மூலம் உர மற்றும் நீர் அட்டவணை துல்லியமாக கணக்கிடப்படும்.'
+                  : 'Please confirm your planned acreage and soil type before proceeding to Agri Tracker for accurate irrigation and fertilizer scheduling.'}
+              </p>
+
+              {/* 1. Acres Input Field */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 flex items-center justify-between">
+                  <span>{lang === 'ta' ? 'எத்தனை ஏக்கர் நிலம்?' : 'Cultivation Area (Acres):'}</span>
+                  <span className="text-[11px] font-semibold text-[#238636]">{acresInput} {lang === 'ta' ? 'ஏக்கர்' : 'Acres'}</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="0.1"
+                    max="1000"
+                    step="0.5"
+                    value={acresInput}
+                    onChange={(e) => setAcresInput(e.target.value)}
+                    placeholder="e.g. 2.5"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-[#238636] focus:ring-2 focus:ring-[#238636]/20 font-bold text-slate-900 text-sm bg-slate-50 focus:bg-white transition"
+                  />
+                  <span className="absolute right-3.5 top-2.5 text-xs font-bold text-slate-400">
+                    {lang === 'ta' ? 'ஏக்கர்' : 'Acres'}
+                  </span>
+                </div>
+
+                {/* Quick Selection Chips for Acres */}
+                <div className="flex items-center gap-1.5 pt-1">
+                  <span className="text-[10px] text-slate-400 font-bold uppercase">{lang === 'ta' ? 'தேர்வு:' : 'Quick:'}</span>
+                  {[1, 2, 3, 5, 10].map((ac) => (
+                    <button
+                      key={ac}
+                      type="button"
+                      onClick={() => setAcresInput(ac)}
+                      className={`px-2 py-0.5 rounded-md text-[11px] font-bold border transition cursor-pointer ${
+                        Number(acresInput) === ac
+                          ? 'bg-[#238636] text-white border-[#238636]'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      {ac} {lang === 'ta' ? 'ஏ' : 'ac'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Soil Type Dropdown */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700">
+                  {lang === 'ta' ? 'மண் வகை (Soil Type):' : 'Soil Type:'}
+                </label>
+                <div className="relative">
+                  <select
+                    value={soilTypeInput}
+                    onChange={(e) => setSoilTypeInput(e.target.value)}
+                    className="w-full appearance-none px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#238636]/20 focus:border-[#238636] transition cursor-pointer"
+                  >
+                    {SOIL_OPTIONS.map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {lang === 'ta' ? `${opt.ta} (${opt.en})` : `${opt.en}`}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Plan Summary Card */}
+              <div className="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200/60 flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase block">{lang === 'ta' ? 'திட்ட காலம்' : 'Duration'}</span>
+                  <span className="font-extrabold text-slate-900">{confirmingCropItem.crop.duration_days_avg || 100} {lang === 'ta' ? 'நாட்கள்' : 'Days'}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase block">{lang === 'ta' ? 'நீர் தேவை' : 'Water Req'}</span>
+                  <span className="font-extrabold text-emerald-800">{confirmingCropItem.crop.water_req_mm || 450} mm</span>
+                </div>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setConfirmingCropItem(null)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-bold transition cursor-pointer"
+                >
+                  {lang === 'ta' ? 'ரத்து செய்' : 'Cancel'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmTrackPlan}
+                  className="px-5 py-2.5 rounded-xl bg-[#238636] hover:bg-emerald-700 text-white text-xs font-black transition flex items-center gap-1.5 shadow-md shadow-[#238636]/20 cursor-pointer active:scale-95"
+                >
+                  <CalendarCheck2 className="w-4 h-4" />
+                  <span>{lang === 'ta' ? 'உறுதிப்படுத்தி தொடங்கு 🚀' : 'Confirm & Track Plan 🚀'}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
