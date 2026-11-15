@@ -16,6 +16,7 @@ class AssistantMessage(BaseModel):
     state: Optional[str] = "Tamil Nadu"
     country: Optional[str] = "India"
     language: Optional[str] = "en"  # "en" or "ta"
+    history: Optional[List[Dict[str, Any]]] = None
 
 @router.post("/chat")
 async def chat_with_assistant(
@@ -115,7 +116,8 @@ async def chat_with_assistant(
         soil_context=soil_context,
         nasa_context=nasa_context,
         rotation_context=rotation_context,
-        language=lang
+        language=lang,
+        history=chat_req.history
     )
 
     return response

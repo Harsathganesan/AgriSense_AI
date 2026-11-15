@@ -111,8 +111,10 @@ export const rotationApi = {
 };
 
 export const assistantApi = {
-  chat: (message, district, language) => axios.post('/api/assistant/chat', { message, district, language }),
-  getPrompts: (language, district) => axios.get(`/api/assistant/prompts?language=${language}${district ? `&district=${encodeURIComponent(district)}` : ''}`),
+  chat: (message, district, language, history = []) =>
+    axios.post('/api/assistant/chat', { message, district, language, history }),
+  getPrompts: (language, district) =>
+    axios.get(`/api/assistant/prompts?language=${language}${district ? `&district=${encodeURIComponent(district)}` : ''}`),
 };
 
 export const reportsApi = {

@@ -78,13 +78,18 @@ export default function AiAssistantPage() {
     setInputText('');
     setLoading(true);
 
+    const historyPayload = messages.slice(-10).map((m) => ({
+      sender: m.sender,
+      text: m.text
+    }));
+
     try {
-      const res = await assistantApi.chat(text, district, lang);
+      const res = await assistantApi.chat(text, district, lang, historyPayload);
       const aiMsg = {
         id: (Date.now() + 1).toString(),
         sender: 'ai',
         text: res.data?.reply || (lang === 'ta' ? 'பதில் பெறப்பட்டது.' : 'Response received.'),
-        engine: res.data?.engine || 'AgriSense Farm AI',
+        engine: res.data?.engine || 'Gemini AI',
         isLive: res.data?.is_live_gemini,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
