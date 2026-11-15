@@ -461,12 +461,12 @@ export default function CropExplorerPage() {
                     />
 
                     {/* Category Badge */}
-                    <div className="absolute top-2.5 left-2.5 flex gap-1">
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-900/80 text-white backdrop-blur-xs">
+                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1 max-w-[calc(100%-80px)] flex-wrap">
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-900/80 text-white backdrop-blur-xs whitespace-nowrap">
                         {crop.category}
                       </span>
                       {crop.is_nitrogen_fixing && (
-                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#238636] text-white shadow-xs">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#238636] text-white shadow-xs whitespace-nowrap shrink-0">
                           {lang === 'ta' ? '+மண்வளம்' : '+N Fixer'}
                         </span>
                       )}

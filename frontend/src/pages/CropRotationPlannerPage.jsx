@@ -328,8 +328,8 @@ export default function CropRotationPlannerPage() {
                         </div>
 
                         {step.is_nitrogen_fixing && (
-                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#238636] text-white shadow-2xs">
-                            +N Fixer
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#238636] text-white shadow-2xs whitespace-nowrap shrink-0">
+                            {lang === 'ta' ? '+மண்வளம்' : '+N Fixer'}
                           </span>
                         )}
                       </div>
