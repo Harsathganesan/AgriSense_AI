@@ -273,12 +273,69 @@ export default function DashboardPage() {
   const handleDownloadReport = async () => {
     try {
       setDownloadingReport(true);
-      const res = await reportsApi.generate("default_farm");
-      if (res.data?.download_url) {
-        window.open(res.data.download_url, '_blank');
+      const res = await reportsApi.generate("default_farm", activeDistrict);
+      const filename = res.data?.filename || `AgriSense_Report_${activeDistrict}.pdf`;
+
+      if (res.data?.pdf_base64) {
+        // Direct Base64 to Blob conversion (Works instantly on Mobile & Desktop, 0 popup blocks!)
+        const byteCharacters = atob(res.data.pdf_base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+          try {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(blobUrl);
+          } catch (_) {}
+        }, 1500);
+      } else {
+        // Fallback: direct blob stream endpoint
+        const blobRes = await reportsApi.exportDirect(activeDistrict, "default_farm");
+        const blob = new Blob([blobRes.data], { type: 'application/pdf' });
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+          try {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(blobUrl);
+          } catch (_) {}
+        }, 1500);
       }
     } catch (err) {
       console.error("Report generation error:", err);
+      // Emergency Fallback: trigger download link directly
+      try {
+        const fallbackUrl = `/api/reports/export?district=${encodeURIComponent(activeDistrict)}`;
+        const a = document.createElement('a');
+        a.href = fallbackUrl;
+        a.download = `AgriSense_Report_${activeDistrict}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          try { document.body.removeChild(a); } catch (_) {}
+        }, 1500);
+      } catch (e) {
+        console.error("Emergency fallback download error:", e);
+      }
     } finally {
       setDownloadingReport(false);
     }

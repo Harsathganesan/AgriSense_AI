@@ -118,7 +118,12 @@ export const assistantApi = {
 };
 
 export const reportsApi = {
-  generate: (farmId) => axios.post('/api/reports/generate', { farm_id: farmId }),
+  generate: (farmId = 'default_farm', district = 'Pudukkottai') =>
+    axios.post('/api/reports/generate', { farm_id: farmId, district }),
+  exportDirect: (district = 'Pudukkottai', farmId = 'default_farm') =>
+    axios.get(`/api/reports/export?district=${encodeURIComponent(district)}&farm_id=${encodeURIComponent(farmId)}`, {
+      responseType: 'blob'
+    }),
   list: () => axios.get('/api/reports/list'),
   downloadUrl: (reportId) => `/api/reports/download/${reportId}`,
 };

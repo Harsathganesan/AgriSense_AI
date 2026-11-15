@@ -13,6 +13,4 @@ httpx>=0.27.0
 google-generativeai>=0.4.0
 python-multipart>=0.0.9
 pillow>=10.0.0
-# TensorFlow, Keras, NumPy and ReportLab are only needed for local CLI/notebook experiments.
-# On Vercel serverless, disease_detector uses Gemini Vision and pdf_service uses plain-text summary fallback
-# to strictly stay within the 225 MB Lambda bundle size limit.
+reportlab>=4.1.0
