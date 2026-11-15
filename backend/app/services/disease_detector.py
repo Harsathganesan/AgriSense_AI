@@ -45,7 +45,11 @@ import logging
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 from PIL import Image, ImageOps  # type: ignore
-import numpy as np  # type: ignore
+
+try:
+    import numpy as np  # type: ignore
+except ImportError:
+    np = None  # type: ignore
 
 try:
     from app.config import settings  # type: ignore
@@ -277,12 +281,14 @@ class PlantDiseaseDetector:
 
         return image, ALLOWED_FORMATS[fmt]
 
-    def preprocess_image(self, image_bytes: bytes) -> Tuple[np.ndarray, Image.Image]:
+    def preprocess_image(self, image_bytes: bytes) -> Tuple[Any, Image.Image]:
         """Validate and preprocess image bytes into (1, 224, 224, 3) tensor."""
         image, _ = self.validate_image(image_bytes)
         return self._image_to_batch(image), image
 
-    def _image_to_batch(self, image: Image.Image) -> np.ndarray:
+    def _image_to_batch(self, image: Image.Image) -> Any:
+        if np is None:
+            raise RuntimeError("NumPy is required for local model inference. On Vercel, Gemini Vision is used.")
         resized = image.resize(MODEL_INPUT_SIZE, Image.Resampling.BILINEAR)
         img_array = np.array(resized, dtype=np.float32)
 

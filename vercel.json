@@ -2,6 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/index.py": {
+      "excludeFiles": "{ml-training/**,frontend/**,backend/app/models/*.keras,backend/app/models/*.tflite,backend/tests/**,*.md,*.log}"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",

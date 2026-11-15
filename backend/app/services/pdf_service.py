@@ -1,12 +1,17 @@
 import io
 from datetime import datetime
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.lib import colors
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
-)
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
+
+try:
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib import colors
+    from reportlab.platypus import (
+        SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+    )
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    _HAS_REPORTLAB = True
+except ImportError:
+    _HAS_REPORTLAB = False
 
 class PDFReportService:
     @classmethod
@@ -21,6 +26,16 @@ class PDFReportService:
         Generates a professional PDF report containing Farm summary, Soil test analysis,
         NASA satellite metrics, 3-strategy rotation comparison, and environmental risk advisory.
         """
+        if not _HAS_REPORTLAB:
+            summary = (
+                f"AGRISENSE AI - COMPREHENSIVE FARM REPORT\n"
+                f"Generated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
+                f"Farm: {farm_data.get('name', 'N/A')} ({farm_data.get('district', 'N/A')})\n"
+                f"Soil Health Score: {soil_eval.get('health_score', 'N/A')}/100\n"
+                f"Recommended Strategy: {rotation_data.get('recommended_strategy_name', 'Soil Regeneration')}\n"
+            )
+            return summary.encode("utf-8")
+
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(
             buffer,
