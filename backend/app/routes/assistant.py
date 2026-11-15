@@ -130,16 +130,16 @@ async def get_suggested_prompts(
     dist = district or "Pudukkottai"
     if language == "ta":
         return [
-            {"id": "p1", "text": f"{dist} மாவட்ட செம்மண் நிலத்திற்கு ஏற்ற சிறந்த பயிர் சுழற்சி என்ன?"},
-            {"id": "p2", "text": "மண்ணில் தழைச்சத்து (Nitrogen) மற்றும் கரிமச்சத்தை எப்படி கூட்டுவது?"},
-            {"id": "p3", "text": "நாசா SMAP மண் ஈரப்பதத்தை அடிப்படையாகக் கொண்டு விதைப்பு எப்போது செய்யலாம்?"},
-            {"id": "p4", "text": "குறைந்த தண்ணீரில் அதிக லாபம் தரும் பயிர்கள் எவை?"},
-            {"id": "p5", "text": "உளுந்து விதைப்பால் யூரியா உரச் செலவு எவ்வளவு குறையும்?"}
+            {"id": "p1", "text": "என் நிலத்தின் மண் வளத்தை எப்படி மேம்படுத்துவது?"},
+            {"id": "p2", "text": f"{dist} மாவட்டத்திற்கு ஏற்ற சிறந்த பயிர் எது?"},
+            {"id": "p3", "text": "பயிர் சுழற்சி முறை எவ்வாறு செயல்படுகிறது?"},
+            {"id": "p4", "text": "பயிர் நோய்களை எவ்வாறு கண்டறிவது?"},
+            {"id": "p5", "text": "என் பயிருக்கு எவ்வளவு தண்ணீர் தேவைப்படும்?"}
         ]
     return [
-        {"id": "p1", "text": f"What is the recommended 3-season crop rotation plan for {dist}?"},
-        {"id": "p2", "text": f"How can I rebuild soil organic carbon and nitrogen in {dist}?"},
-        {"id": "p3", "text": "How does NASA SMAP soil moisture guide optimal sowing dates?"},
-        {"id": "p4", "text": f"Which water-efficient crops generate maximum profit in {dist}?"},
-        {"id": "p5", "text": "How does relay black gram save up to 35% on synthetic fertilizer?"}
+        {"id": "p1", "text": "How can I improve my soil health?"},
+        {"id": "p2", "text": f"Which crop is suitable for {dist} district?"},
+        {"id": "p3", "text": "How does crop rotation work?"},
+        {"id": "p4", "text": "How can I identify plant diseases?"},
+        {"id": "p5", "text": "How much water does my crop need?"}
     ]

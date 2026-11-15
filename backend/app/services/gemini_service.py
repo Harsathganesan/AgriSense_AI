@@ -48,8 +48,9 @@ class GeminiFarmAssistant:
         history: Optional[List[Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
         """
-        Generates friendly, conversational, context-grounded agricultural advisory responses.
-        Acts as a warm, helpful farming companion and agronomy friend for farmers.
+        Smart, friendly, conversational ChatGPT-like AI assistant with deep Agricultural Expertise.
+        - Supports normal casual conversations naturally without forcing agriculture.
+        - Activates Expert Agriculture Mode when farming questions are asked.
         """
         # Build structured context string
         context_parts = []
@@ -82,33 +83,49 @@ class GeminiFarmAssistant:
         # Build recent conversation history
         history_lines = []
         if history:
-            for turn in history[-8:]:
-                role_label = "Farmer" if (turn.get("sender") == "user" or turn.get("role") == "user") else "AgriSense AI"
+            for turn in history[-10:]:
+                role_label = "User" if (turn.get("sender") == "user" or turn.get("role") == "user") else "AgriSense AI"
                 turn_text = turn.get("text") or turn.get("content") or turn.get("message") or ""
                 if turn_text.strip():
                     history_lines.append(f"{role_label}: {turn_text.strip()}")
-        history_str = "\n".join(history_lines) if history_lines else "None (First message in this session)"
+        history_str = "\n".join(history_lines) if history_lines else "None (Start of conversation)"
 
         system_instructions = (
-            "You are 'AgriSense AI', a warm, friendly, caring, and knowledgeable agricultural companion and digital farming advisor (விவசாய நண்பன் & வழிகாட்டி) for farmers in Tamil Nadu and India.\n\n"
-            "YOUR PERSONALITY & CONVERSATIONAL STYLE:\n"
-            "1. Be genuinely friendly, encouraging, polite, and natural — like a knowledgeable local farming friend who cares about the farmer's success.\n"
-            "2. If the farmer says a greeting (like 'Hi', 'Hello', 'வணக்கம்', 'Vanakkam', 'எப்படி இருக்கீங்க', 'Epdi irukinga'), greet them back warmly, ask how their day or farm is going, and offer help with a smile.\n"
-            "3. Directly answer whatever the farmer asks in a clear, friendly, and practical way.\n"
-            "4. Language matching:\n"
-            "   - If the user writes in Tamil (தமிழ்) or selected language is 'ta': reply in natural, warm, conversational Tamil with helpful farming terms.\n"
-            "   - If the user writes in Tanglish (Tamil in English letters like 'thakkali ku enna uram podanum', 'weather epdi iruku', 'tanni kammiya iruku'): reply in friendly, conversational Tanglish or easy Tamil.\n"
-            "   - If the user writes in English: reply in friendly, simple, conversational English.\n"
-            "5. When giving agricultural advice, naturally incorporate their farm district, soil type, and weather conditions where relevant, but keep it conversational (use friendly emojis, clean bullet points for steps, easy-to-read paragraphs).\n"
-            "6. Never be robotic, repetitive, or cold. Talk like a real conversational friend."
+            "You are 'AgriSense AI', an intelligent, warm, human-friendly ChatGPT-like conversational AI assistant for AgriSense AI.\n\n"
+            "CORE BEHAVIOR & PERSONALITY:\n"
+            "1. NATURAL CHATGPT-LIKE CONVERSATION:\n"
+            "   - You behave like a friendly, thoughtful human conversational AI.\n"
+            "   - Support normal casual conversations (e.g., greetings, how are you, thank you, jokes, general knowledge, follow-up questions).\n"
+            "   - If the user says 'Hi', 'Hello', 'வணக்கம்', 'Hey': reply naturally and warmly, e.g.: 'Hi! 👋 How are you doing today? How can I help you?'\n"
+            "   - If the user says 'How are you?', respond conversationally like a helpful friend.\n"
+            "   - NEVER force agriculture, farm data, or soil metrics onto casual conversations. Answer normal questions normally!\n\n"
+            "2. AGRICULTURE EXPERT MODE (When asked farming/crop/soil questions):\n"
+            "   - Act as a world-class agricultural scientist and agronomy advisor.\n"
+            "   - Knowledge areas: Crop cultivation & selection, soil health, pH, NPK, micronutrients, 3-season crop rotation, intercropping, irrigation & water management, plant diseases & pest management, organic & chemical fertilizers, NASA environmental telemetry, weather & climate, sowing methods, yield improvement, government schemes (PM-KISAN, TNAU schemes), and sustainable farming.\n"
+            "   - Ground location-specific advice on the provided District, Soil Type, and NASA Earth observations.\n"
+            "   - Ask for crop, location, soil type or conditions when needed to give accurate recommendations.\n"
+            "   - Provide step-by-step farming guidance with clear explanations for agricultural terms.\n\n"
+            "3. NASA DATA INTEGRATION:\n"
+            "   - Use available NASA POWER (temperature/rainfall), GPM (precipitation), and SMAP (soil moisture) when relevant.\n"
+            "   - NEVER invent NASA measurements or claim that satellite telemetry proves a specific disease or nutrient deficiency.\n\n"
+            "4. SAFETY & ACCURACY:\n"
+            "   - Never invent chemical pesticide doses. For chemical controls, always advise following manufacturer label instructions and consulting local agricultural extension officers.\n"
+            "   - Clearly communicate uncertainty and recommend soil testing when nutrient levels are unverified.\n\n"
+            "5. CONVERSATIONAL STYLE & LANGUAGE:\n"
+            "   - Friendly, polite, and encouraging.\n"
+            "   - Short, direct answers for simple questions. Structured, thorough explanations with bullet points and friendly emojis for technical topics.\n"
+            "   - Tamil (தமிழ்): When user speaks in Tamil or requested language is 'ta', reply in warm, natural, respectful Tamil.\n"
+            "   - Tanglish: When user types Tamil using English letters (e.g., 'hi bro thakkali ku enna uram podanum'), reply in friendly, easy-to-read Tanglish or warm Tamil.\n"
+            "   - English: Respond in clean, natural, friendly English.\n"
+            "   - Maintain conversation context and reference previous messages seamlessly."
         )
 
         full_prompt = (
             f"{system_instructions}\n\n"
-            f"FARM & SATELLITE CONTEXT:\n{context_str}\n\n"
-            f"RECENT CHAT HISTORY:\n{history_str}\n\n"
-            f"FARMER'S CURRENT MESSAGE:\n{user_message}\n\n"
-            f"Please reply warmly and conversationally as their friendly farming companion:"
+            f"FARM & SATELLITE CONTEXT (Reference only when user asks farming questions):\n{context_str}\n\n"
+            f"RECENT CONVERSATION HISTORY:\n{history_str}\n\n"
+            f"USER'S LATEST MESSAGE:\n{user_message}\n\n"
+            f"Reply naturally as AgriSense AI:"
         )
 
         if self.model:
@@ -150,11 +167,11 @@ class GeminiFarmAssistant:
                     except Exception:
                         continue
 
-        # Warm & friendly Agronomic fallback response when Gemini is offline
+        # Friendly fallback response when Gemini API is offline/unreachable
         fallback_reply = self._generate_friendly_fallback(user_message, farm_context, soil_context, nasa_context, language)
         return {
             "reply": fallback_reply,
-            "engine": "AgriSense Agronomy Companion",
+            "engine": "AgriSense AI (Offline Engine)",
             "is_live_gemini": False,
             "language": language
         }
@@ -177,59 +194,67 @@ class GeminiFarmAssistant:
         ph_val = params.get("ph", {}).get("value", 6.4)
         n_val = params.get("nitrogen", {}).get("value", 185.0)
 
-        # Casual friendly greetings
-        greetings_ta = ["வணக்கம்", "வணக்கம் நண்பா", "ஹலோ", "எப்படி இருக்கீங்க", "ஹாய்", "நலமா"]
-        greetings_en = ["hi", "hello", "hey", "how are you", "good morning", "good evening", "vanakkam", "epdi irukinga"]
+        # 1. Casual Greetings & General Chat
+        if msg_lower in ["hi", "hello", "hey", "vanakkam", "வணக்கம்"]:
+            if is_ta:
+                return "வணக்கம்! 👋 எப்படி இருக்கீங்க? இன்று உங்களுக்கு நான் எப்படி உதவலாம்?"
+            return "Hi! 👋 How are you doing today? How can I help you?"
 
-        if any(g in msg_lower for g in greetings_ta) or (msg_lower in ["hi", "hello", "hey"] and is_ta):
-            return (
-                f"வணக்கம் நண்பரே! 😊 நான் நல்லா இருக்கேன், உங்க பண்ணை மற்றும் பயிர்கள் எல்லாம் எப்படி இருக்கு?\n\n"
-                f"நான் உங்க **{district}** மாவட்ட மண்வளம், நாசா வானிலை தகவல்களுடன் இணைந்திருக்கேன். "
-                f"பயிர் சுழற்சி, உரம், பூச்சி தாக்குதல் அல்லது நீர் பாசனம் பற்றி என்ன பேசலாம் சொல்லுங்க, நண்பனா கூடவே இருந்து உதவுகிறேன்! 🌾"
-            )
-        elif any(g in msg_lower for g in greetings_en):
-            return (
-                f"Hello friend! 😊 I am doing great, thank you! How is your farm and your crops doing today?\n\n"
-                f"I am connected to your **{district}** soil records and live NASA weather telemetry. "
-                f"Whether you want to discuss crop rotation, organic fertilizer, irrigation, or pest control — ask me anything, I'm right here with you! 🌾"
-            )
+        if any(w in msg_lower for w in ["how are you", "how r u", "epdi iruka", "epdi irukinga", "நலமா"]):
+            if is_ta:
+                return "நான் நலமாக இருக்கிறேன், நன்றி! 😊 நீங்கள் எப்படி இருக்கிறீர்கள்? உங்கள் பண்ணை மற்றும் விவசாயம் எல்லாம் எப்படி செல்கிறது?"
+            return "I'm doing great, thank you! 😊 How are you doing? How is everything going with you and your farm?"
 
-        # Topic responses
+        if any(w in msg_lower for w in ["thank you", "thanks", "நன்றி"]):
+            if is_ta:
+                return "மிக்க மகிழ்ச்சி! 😊 உங்களுக்கு எப்போது உதவி தேவைப்பட்டாலும் நான் இங்கேயே இருப்பேன். வேறு ஏதேனும் கேள்விகள் உள்ளதா?"
+            return "You're very welcome! 😊 Happy to help anytime. Let me know if you have any other questions!"
+
+        # 2. Agriculture Topics
         if is_ta:
-            if any(w in msg_lower for w in ["சுழற்சி", "rotation", "பயிர்", "விதை"]):
+            if any(w in msg_lower for w in ["சுழற்சி", "rotation", "பயிர்", "விதை", "crop"]):
                 return (
-                    f"நண்பரே, **{district}** மாவட்டத்தின் ({soil_name_ta}) நிலத்திற்கு இந்த 3 பருவ பயிர் சுழற்சி மிக அருமையாக கை கொடுக்கும்:\n\n"
+                    f"நண்பரே, **{district}** மாவட்டத்தின் ({soil_name_ta}) நிலத்திற்கு இந்த 3 பருவ பயிர் சுழற்சி மிக சிறந்தது:\n\n"
                     f"1. **முதல் பருவம் (ஆடி / சம்பா):** நிலக்கடலை அல்லது பாரம்பரிய நெல் சாகுபடி.\n"
-                    f"2. **இரண்டாம் பருவம் (கார்த்திகை / தை):** உளுந்து (வம்பன் ரகங்கள்). உழவு செய்யாமல் எஞ்சிய ஈரத்திலேயே ஏக்கருக்கு 35 கிலோ இயற்கை தழைச்சத்தை மண்ணில் சேர்க்கும்.\n"
+                    f"2. **இரண்டாம் பருவம் (கார்த்திகை / தை):** உளுந்து (வம்பன் ரகங்கள்). நிலத்தில் உள்ள எஞ்சிய ஈரப்பதத்திலேயே ஏக்கருக்கு 35 கிலோ இயற்கை தழைச்சத்தை நிலைநிறுத்தும்.\n"
                     f"3. **மூன்றாம் பருவம் (கோடை):** சணப்பை (பசுந்தாள் உரம்) அல்லது தினை/குதிரைவாலி சிறுதானியங்கள். 40% நீர் சேமிப்புடன் மண்ணை பொலபொலப்பாக்கும்.\n\n"
-                    f"💡 இந்த சுழற்சியால் பூச்சித் தாக்குதல் குறையும், யூரியா உரச் செலவும் 30% மிச்சமாகும் நண்பரே!"
+                    f"💡 இந்த சுழற்சியைப் பின்பற்றினால் பூச்சித் தாக்குதல் குறையும், யூரியா மற்றும் உரச் செலவு 30% மிச்சமாகும்!"
                 )
             elif any(w in msg_lower for w in ["உரம்", "fertilizer", "மண்", "soil", "தழை"]):
                 return (
-                    f"நண்பா, உங்க **{district}** நிலத்துல pH **{ph_val}** மற்றும் தழைச்சத்து **{n_val} kg/ha** இருக்கு.\n\n"
-                    f"மண்ணை வளமாக்க எளிய வழிகள்:\n"
-                    f"• அறுவடைக்குப் பிறகு பயிர் கழிவுகளை எரிக்காமல் மடக்கி உழுங்கள்.\n"
-                    f"• அசோஸ்பைரில்லம் மற்றும் பாஸ்போபாக்டீரியா உயிர் உரங்களை தொழுவுரத்துடன் கலந்து இடுங்கள்.\n"
-                    f"• உளுந்து அல்லது பாசிப்பயறு நடுவது வேர் முடிச்சுகள் மூலம் இயற்கை தழைச்சத்தை கூட்டும்!"
+                    f"🌾 **{district} மாவட்ட மண்வளப் பரிந்துரைகள்:**\n\n"
+                    f"- **மண் வகை:** {soil_name_ta}\n"
+                    f"- **கார அமிலத்தன்மை (pH):** {ph_val}\n"
+                    f"- **தழைச்சத்து (N):** {n_val} kg/ha\n\n"
+                    f"💡 **மேம்படுத்தும் எளிய வழிகள்:**\n"
+                    f"• பயிர் கழிவுகளை எரிக்காமல் நிலத்தில் மடக்கி உழவும்.\n"
+                    f"• அசோஸ்பைரில்லம் மற்றும் பாஸ்போபாக்டீரியா உயிர் உரங்களை தொழுவுரத்துடன் கலந்து இடவும்.\n"
+                    f"• பயறு வகை பயிர்களை நடுவது இயற்கை தழைச்சத்தை கூட்டும்."
                 )
             else:
                 return (
-                    f"நண்பரே, உங்க கேள்வி புரிஞ்சது! **{district}** மாவட்ட மண்ணிற்கு ({soil_name_ta}) ஏற்ற சிறந்த ஆலோசனைகளைத் தருகிறேன்.\n\n"
-                    f"உர மேலாண்மை, பயிர் சுழற்சி, நாசா வானிலை அல்லது பூச்சித் தடுப்பு பற்றி இன்னும் தெளிவா கேளுங்க, பேசி நல்ல தீர்வைக் கண்டுபிடிப்போம்! 😊"
+                    f"உங்க கேள்வி புரிந்தது நண்பரே! **{district}** மாவட்ட மண் மற்றும் வானிலை சூழலுக்கு ஏற்ப உங்களுக்கு உதவ நான் தயாராக இருக்கிறேன். "
+                    f"பயிர் தேர்வு, உரம், நோய் தடுப்பு அல்லது பொதுவான உரையாடல் என எதை வேண்டுமானாலும் கேளுங்கள்! 😊"
                 )
         else:
-            if any(w in msg_lower for w in ["rotation", "crop", "sow", "plant"]):
+            if any(w in msg_lower for w in ["soil", "health", "fertilizer", "nutrient"]):
                 return (
-                    f"Friend, for **{district}** ({soil_name_en}), here is a high-reward 3-season rotation:\n\n"
-                    f"1. **Season 1 (Kharif):** Groundnut or Traditional Paddy.\n"
-                    f"2. **Season 2 (Rabi):** Black Gram (Vamban variety). Relies on residual moisture and adds 35 kg natural Nitrogen/acre.\n"
-                    f"3. **Season 3 (Summer):** Sunn Hemp green manure or Millets. Conserves 40% water and replenishes soil organic carbon.\n\n"
-                    f"💡 Alternating crops like this stops pests and cuts synthetic fertilizer bills by ~30%!"
+                    f"🌾 **Soil Health Improvement Guidelines for {district} ({soil_name_en}):**\n\n"
+                    f"1. **Organic Carbon:** Incorporate crop residues and well-decomposed farmyard manure (FYM) to improve microbial biomass.\n"
+                    f"2. **Biofertilizers:** Inoculate with Azospirillum and Phosphobacteria (2 kg/acre) to unlock bonded nutrients.\n"
+                    f"3. **Green Manuring:** Grow Sunn Hemp or Dhaincha prior to main cropping to boost natural nitrogen without chemical cost.\n"
+                    f"4. **Soil Testing:** Regular laboratory tests every 2 years are strongly recommended to avoid fertilizer wastage."
+                )
+            elif any(w in msg_lower for w in ["rotation", "crop", "suitable", "water"]):
+                return (
+                    f"🌱 **Recommended Crop Advisory for {district}:**\n\n"
+                    f"- **Primary Soil:** {soil_name_en}\n"
+                    f"- **Recommended Sequence:** Kharif Groundnut ➔ Rabi Black Gram (Pulse) ➔ Summer Millets / Green Manure.\n"
+                    f"- **Water Management:** Drip irrigation reduces water usage by ~40% while preserving root-zone moisture recorded by NASA SMAP satellite telemetry."
                 )
             else:
                 return (
-                    f"Got it, friend! Grounded in **{district}** soil data ({soil_name_en}, pH {ph_val}), I'm right here to guide you.\n\n"
-                    f"Feel free to ask more details on fertilizers, pest prevention, optimal sowing times, or NASA weather! 😊"
+                    f"I'm here to help! Whether you'd like to chat casually or explore crop rotation, soil diagnostics, irrigation, or NASA weather telemetry for **{district}**, feel free to ask anything! 😊"
                 )
 
 gemini_assistant = GeminiFarmAssistant()
