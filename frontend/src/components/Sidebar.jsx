@@ -119,26 +119,6 @@ export default function Sidebar({ isOpen, onClose }) {
             );
           })}
         </nav>
-
-        {/* Footer info badge */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50/60">
-          <div className="rounded-xl p-3 bg-white border border-slate-200/80 shadow-xs">
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-1">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                NASA Telemetry
-              </span>
-              <span className="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-mono">
-                POWER & SMAP
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-500 leading-tight">
-              {lang === 'ta'
-                ? 'நேரடி செயற்கைக்கோள் & மண் நலன் உத்திகள்'
-                : 'Satellite analytics & ICAR soil heuristics active.'}
-            </p>
-          </div>
-        </div>
       </aside>
     </>
   );
