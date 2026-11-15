@@ -448,16 +448,16 @@ export default function AgriTrackerPage() {
     return (
       <div className="space-y-6 pb-12 animate-in fade-in-50">
         {/* Header */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#238636] text-xs font-bold border border-emerald-200 mb-2">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-[#238636] text-[11px] font-bold border border-emerald-200">
             <Building className="w-3.5 h-3.5" />
             <span>{activeDistrict} District</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <CalendarCheck2 className="w-7 h-7 text-[#238636]" />
-            {lang === 'ta' ? 'அக்ரி டிராக்கர் (பயிர் வழிகாட்டி)' : 'Agri Tracker (Crop Lifecycle Manager)'}
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <CalendarCheck2 className="w-6 h-6 sm:w-7 sm:h-7 text-[#238636]" />
+            <span>{lang === 'ta' ? 'அக்ரி டிராக்கர் (பயிர் வழிகாட்டி)' : 'Agri Tracker (Crop Lifecycle Manager)'}</span>
           </h1>
-          <p className="text-xs md:text-sm text-slate-500 mt-1 font-medium">
+          <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-relaxed">
             {lang === 'ta'
               ? 'பயிர் எக்ஸ்ப்ளோரரில் நீங்கள் தேர்ந்தெடுத்த பயிர் மட்டுமே இங்கு காட்டப்படும். அட்டவணையைப் பார்க்க பயிரைத் தொடவும்.'
               : 'Only crops selected in Crop Explorer appear here. Click the crop card to view its tracking schedule.'}
@@ -568,65 +568,63 @@ export default function AgriTrackerPage() {
   return (
     <div className="space-y-6 pb-12 animate-in fade-in-50">
       {/* 1. Header with Back Button */}
-      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#238636] text-xs font-bold border border-emerald-200 mb-2 flex-wrap">
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-3 sm:space-y-4">
+        {/* Top Control Bar: Back Button & District Location Tag */}
+        <div className="flex items-center justify-between gap-2.5 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setIsTrackingActive(false)}
+            className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-2xs"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>{lang === 'ta' ? 'பயிர்கள் பட்டியல் (Back)' : 'Back to Crops'}</span>
+          </button>
+
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-[#238636] text-[11px] font-bold border border-emerald-200 shrink-0">
             <Building className="w-3.5 h-3.5" />
-            <span>{activeDistrict} District • {lang === 'ta' ? activeCrop.name_ta : activeCrop.name}</span>
-            {selectedTrackedItem?.area_acres && (
-              <span className="text-emerald-800 font-extrabold">• 🌾 {selectedTrackedItem.area_acres} {lang === 'ta' ? 'ஏக்கர்' : 'Acres'}</span>
-            )}
-            {selectedTrackedItem?.soil_type && (
-              <span className="text-slate-600 font-semibold">• {selectedTrackedItem.soil_type}</span>
-            )}
+            <span>{activeDistrict} District</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <CalendarCheck2 className="w-7 h-7 text-[#238636]" />
-            {lang === 'ta' ? activeCrop.name_ta : activeCrop.name} - {lang === 'ta' ? 'சாகுபடி அட்டவணை' : 'Tracking Schedule'}
-          </h1>
-          <p className="text-xs md:text-sm text-slate-500 mt-1 font-medium">
-            {lang === 'ta'
-              ? `${activeDistrict} மாவட்டத்திற்கான நாள்வாரியான நீர் பாசனம் & உர அட்டவணை (${confirmedAcres} ஏக்கருக்கு கணக்கிடப்பட்டது).`
-              : `Day-by-day irrigation stages & certified fertilizer dosages for ${activeDistrict} (scaled for ${confirmedAcres} Acres).`}
-          </p>
         </div>
 
-        {/* Back to Crops Button */}
-        <button
-          type="button"
-          onClick={() => setIsTrackingActive(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center gap-2 transition cursor-pointer self-start md:self-center"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{lang === 'ta' ? 'பயிர்கள் பட்டியல் (Back)' : 'Back to Crops'}</span>
-        </button>
+        {/* Title and Scaling Subtitle */}
+        <div>
+          <h1 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 leading-snug">
+            <CalendarCheck2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#238636] shrink-0" />
+            <span>{lang === 'ta' ? activeCrop.name_ta : activeCrop.name} - {lang === 'ta' ? 'சாகுபடி அட்டவணை' : 'Tracking Schedule'}</span>
+          </h1>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium leading-relaxed">
+            {lang === 'ta'
+              ? `${activeDistrict} மாவட்டத்திற்கான நாள்வாரியான நீர் பாசனம் & உர அட்டவணை (${confirmedAcres} ஏக்கருக்கு கணக்கிடப்பட்டது).`
+              : `Day-by-day irrigation stages & certified fertilizer dosages for ${activeDistrict} (scaled for ${confirmedAcres} ${confirmedAcres === 1 ? 'Acre' : 'Acres'}).`}
+          </p>
+        </div>
       </div>
 
       {/* 2. Scaled Farm Plan & Soil Profile Card */}
-      <div className="bg-white rounded-2xl p-5 border border-emerald-200/80 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-emerald-100/70 text-[#238636]">
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-emerald-200/80 shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-emerald-100/70 text-[#238636] shrink-0">
               <Sprout className="w-5 h-5" />
             </span>
-            <div>
-              <h3 className="font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
-                <span>{lang === 'ta' ? 'சாகுபடி பரப்பளவு & வளங்கள் கணக்கீடு' : 'Cultivation Metrics & Scaled Plan'}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold">
-                  {confirmedAcres} {lang === 'ta' ? 'ஏக்கர்' : 'Acres'}
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-black text-slate-900 text-sm sm:text-base leading-tight">
+                  {lang === 'ta' ? 'சாகுபடி பரப்பளவு & வளங்கள்' : 'Cultivation Metrics & Scaled Plan'}
+                </h3>
+                <span className="text-[11px] px-2.5 py-0.5 rounded-md bg-emerald-600 text-white font-extrabold whitespace-nowrap shrink-0 shadow-2xs">
+                  {confirmedAcres} {lang === 'ta' ? 'ஏக்கர்' : confirmedAcres === 1 ? 'Acre' : 'Acres'}
                 </span>
-              </h3>
-              <p className="text-[11px] text-slate-500 font-medium">
+                <span className="text-[11px] font-bold text-slate-700 px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 whitespace-nowrap shrink-0">
+                  🪴 {confirmedSoil}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 font-medium mt-1 leading-snug">
                 {lang === 'ta'
                   ? 'பயிர் எக்ஸ்ப்ளோரரில் உறுதிசெய்த ஏக்கர் மற்றும் மண்ணிற்கு ஏற்ப உரமும் தண்ணீரும் முழுமையாகக் கணக்கிடப்பட்டுள்ளது.'
                   : 'Total water & fertilizer dosages are dynamically scaled for your confirmed acreage and soil type.'}
               </p>
             </div>
-          </div>
-          <div className="text-right">
-            <span className="text-xs font-black text-slate-800 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 inline-block">
-              🪴 {confirmedSoil}
-            </span>
           </div>
         </div>
 
@@ -857,30 +855,30 @@ export default function AgriTrackerPage() {
       )}
 
       {/* 4. TWO COLUMNS: IRRIGATION SCHEDULE & FERTILIZER SCHEDULE */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* COLUMN 1: IRRIGATION SCHEDULE (Watering time removed) */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-sky-50 text-sky-700 border border-sky-100">
-                <Droplets className="w-5 h-5" />
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-3 sm:space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="p-1.5 sm:p-2 rounded-xl bg-sky-50 text-sky-700 border border-sky-100 shrink-0">
+                <Droplets className="w-4 h-4 sm:w-5 sm:h-5" />
               </span>
-              <div>
-                <h3 className="font-black text-slate-900 text-base">
+              <div className="min-w-0">
+                <h3 className="font-black text-slate-900 text-sm sm:text-base leading-tight truncate">
                   {lang === 'ta' ? 'நீர் பாசன அட்டவணை' : 'Irrigation Schedule'}
                 </h3>
-                <span className="text-[11px] text-slate-500 font-medium">
+                <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium block truncate">
                   {lang === 'ta' ? 'எந்த நாளில் எதற்கு பாசனம் செய்ய வேண்டும்' : 'Day & Irrigation Stage'}
                 </span>
               </div>
             </div>
-            <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-sky-50 text-sky-800 border border-sky-200">
-              {activeCrop.water_req_mm} mm {lang === 'ta' ? 'மொத்த தேவை' : 'Total'}
+            <span className="text-[11px] sm:text-xs font-extrabold px-2.5 py-1 rounded-lg bg-sky-50 text-sky-800 border border-sky-200 whitespace-nowrap shrink-0 shadow-2xs">
+              {activeCrop.water_req_mm} mm {lang === 'ta' ? 'தேவை' : 'Total'}
             </span>
           </div>
 
-          {/* Irrigation Items: Day + Stage - Watering time removed */}
-          <div className="space-y-2.5">
+          {/* Irrigation Items: Day + Stage */}
+          <div className="space-y-2">
             {activeCrop.irrigations.map((irr) => {
               const isNear = Math.abs(currentDay - irr.day) <= 4;
               const isPausedByRain = isHeavyRain && isNear;
@@ -888,26 +886,26 @@ export default function AgriTrackerPage() {
               return (
                 <div
                   key={irr.id}
-                  className={`p-3.5 rounded-xl border transition-all ${
+                  className={`p-3 sm:p-3.5 rounded-xl border transition-all shadow-2xs ${
                     isPausedByRain
                       ? 'bg-sky-50/70 border-sky-300'
                       : 'bg-white border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-slate-900 text-white shrink-0">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="px-2.5 py-0.5 rounded-md text-[11px] sm:text-xs font-black bg-slate-900 text-white shrink-0">
                         {lang === 'ta' ? `நாள் ${irr.day}` : `Day ${irr.day}`}
                       </span>
 
                       {/* Ethuku nu (Stage / Purpose) */}
-                      <h4 className="font-extrabold text-sm text-slate-900 leading-tight">
+                      <h4 className="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight">
                         {irr.stage}
                       </h4>
                     </div>
 
                     {isPausedByRain && (
-                      <span className="px-2.5 py-1 rounded-md text-[10px] font-black bg-sky-100 text-sky-800 border border-sky-300 shrink-0">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-sky-100 text-sky-800 border border-sky-300 shrink-0">
                         {lang === 'ta' ? '🌧️ மழையால் நிறுத்தம்' : '🌧️ Paused by Rain'}
                       </span>
                     )}
@@ -918,24 +916,24 @@ export default function AgriTrackerPage() {
           </div>
         </div>
 
-        {/* COLUMN 2: FERTILIZER SCHEDULE (No Method, No Description) */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-emerald-50 text-[#238636] border border-emerald-100">
-                <Sparkles className="w-5 h-5" />
+        {/* COLUMN 2: FERTILIZER SCHEDULE */}
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-3 sm:space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="p-1.5 sm:p-2 rounded-xl bg-emerald-50 text-[#238636] border border-emerald-100 shrink-0">
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
               </span>
-              <div>
-                <h3 className="font-black text-slate-900 text-base">
+              <div className="min-w-0">
+                <h3 className="font-black text-slate-900 text-sm sm:text-base leading-tight truncate">
                   {lang === 'ta' ? 'உர மேலாண்மை அட்டவணை' : 'Fertilizer Schedule'}
                 </h3>
-                <span className="text-[11px] text-slate-500 font-medium">
-                  {lang === 'ta' ? 'எந்த நாளில் எதற்கு & எவ்வளவு உரம் இட வேண்டும்' : 'Day, Purpose & Fertilizer Dosage'}
+                <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium block truncate">
+                  {lang === 'ta' ? 'எந்த நாளில் எதற்கு உரம் இட வேண்டும்' : 'Day, Purpose & Fertilizer Dosage'}
                 </span>
               </div>
             </div>
-            <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-              {lang === 'ta' ? 'TNAU பரிந்துரை' : 'TNAU Certified'}
+            <span className="text-[11px] sm:text-xs font-extrabold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 whitespace-nowrap shrink-0 shadow-2xs">
+              {lang === 'ta' ? 'TNAU சான்று' : 'TNAU Certified'}
             </span>
           </div>
 
@@ -944,37 +942,39 @@ export default function AgriTrackerPage() {
             {activeCrop.fertilizers.map((fert) => (
               <div
                 key={fert.id}
-                className="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-all"
+                className="p-3 sm:p-3.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-300 transition-all shadow-2xs space-y-2"
               >
-                <div className="flex items-start gap-3 flex-wrap">
-                  <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-slate-900 text-white shrink-0 mt-0.5">
+                {/* Header Row: Day Badge + Stage Name */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2.5 py-0.5 rounded-md text-[11px] sm:text-xs font-black bg-slate-900 text-white shrink-0">
                     {lang === 'ta' ? `நாள் ${fert.day}` : `Day ${fert.day}`}
                   </span>
+                  <h4 className="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight">
+                    {fert.stage}
+                  </h4>
+                </div>
 
-                  <div className="space-y-1.5 flex-1">
-                    {/* Ethuku nu (Stage) */}
-                    <h4 className="font-extrabold text-sm text-slate-900 leading-tight">
-                      {fert.stage}
-                    </h4>
-
-                    {/* Scaled Exact Dosage for Confirmed Acres */}
-                    <div className="bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-200 text-xs font-black text-emerald-950 block">
-                      <span className="text-[10px] font-bold text-emerald-700 block uppercase mb-0.5">
-                        {lang === 'ta'
-                          ? `🌾 ${confirmedAcres} ஏக்கருக்கான மொத்த உரத் தேவை:`
-                          : `🌾 Total Dosage for ${confirmedAcres} Acres:`}
-                      </span>
-                      <span>📦 {scaleDosageText(lang === 'ta' ? fert.dosage_ta || fert.dosage : fert.dosage, confirmedAcres)}</span>
-                    </div>
-
-                    {/* Baseline per-acre dosage if acres !== 1 */}
-                    {confirmedAcres !== 1 && (
-                      <div className="text-[11px] text-slate-500 font-semibold pl-1">
-                        {lang === 'ta' ? 'ஏக்கருக்கு:' : 'Per Acre:'} {lang === 'ta' ? fert.dosage_ta || fert.dosage : fert.dosage}
-                      </div>
-                    )}
+                {/* Scaled Exact Dosage Box */}
+                <div className="bg-emerald-50/80 p-2.5 sm:p-3 rounded-xl border border-emerald-200 text-xs font-bold text-emerald-950">
+                  <div className="text-[10px] font-extrabold text-[#238636] uppercase tracking-wider mb-1 flex items-center gap-1">
+                    <span>🌾</span>
+                    <span>
+                      {lang === 'ta'
+                        ? `${confirmedAcres} ஏக்கருக்கான மொத்த உரத் தேவை:`
+                        : `Total Dosage for ${confirmedAcres} ${confirmedAcres === 1 ? 'Acre' : 'Acres'}:`}
+                    </span>
+                  </div>
+                  <div className="text-slate-900 font-extrabold text-xs sm:text-[13px] leading-relaxed">
+                    📦 {scaleDosageText(lang === 'ta' ? fert.dosage_ta || fert.dosage : fert.dosage, confirmedAcres)}
                   </div>
                 </div>
+
+                {/* Baseline per-acre dosage if acres !== 1 */}
+                {confirmedAcres !== 1 && (
+                  <div className="text-[10px] sm:text-[11px] text-slate-500 font-semibold pl-1">
+                    {lang === 'ta' ? 'ஒரு ஏக்கருக்கு:' : 'Per Acre Base:'} {lang === 'ta' ? fert.dosage_ta || fert.dosage : fert.dosage}
+                  </div>
+                )}
               </div>
             ))}
           </div>
