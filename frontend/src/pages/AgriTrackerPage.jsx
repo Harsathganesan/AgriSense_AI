@@ -101,61 +101,141 @@ const CROP_TEMPLATES = {
       {
         id: 'pf1',
         day: 1,
-        stage: 'Basal (அடி உரம்)',
-        dosage: '50 kg DAP + 25 kg MOP + 10 kg Zinc Sulphate / acre',
-        dosage_ta: '50 கிலோ DAP + 25 கிலோ பொட்டாஷ் + 10 கிலோ ஜிங்க் சல்பேட் / ஏக்கர்'
+        stage: 'Basal Application (நடவு அடி உரம்)',
+        dosage: '10 tonnes FYM + 50 kg DAP + 20 kg Potash + 10 kg Zinc Sulphate / acre',
+        dosage_ta: '10 டன் தொழுவுரம் + 50 கிலோ DAP + 20 கிலோ பொட்டாஷ் + 10 கிலோ துத்தநாக சல்பேட் / ஏக்கர்'
       },
       {
         id: 'pf2',
         day: 25,
-        stage: 'Tillering Top Dressing (முதல் மேலுரம்)',
-        dosage: '30 kg Urea + 2 kg Azospirillum / acre',
-        dosage_ta: '30 கிலோ யூரியா + 2 கிலோ அசோஸ்பைரில்லம் / ஏக்கர்'
+        stage: 'Active Tillering Booster (தூர்கட்டும் பருவம்)',
+        dosage: '35 kg Urea + 15 kg Potash / acre',
+        dosage_ta: '35 கிலோ யூரியா + 15 கிலோ பொட்டாஷ் / ஏக்கர்'
       },
       {
         id: 'pf3',
         day: 50,
-        stage: 'Panicle Top Dressing (இரண்டாம் மேலுரம்)',
-        dosage: '25 kg Urea + 15 kg MOP / acre',
+        stage: 'Panicle Initiation (கதிர் உருவாகும் சமயம்)',
+        dosage: '25 kg Urea + 15 kg Potash / acre',
         dosage_ta: '25 கிலோ யூரியா + 15 கிலோ பொட்டாஷ் / ஏக்கர்'
       }
     ]
   },
   blackgram: {
     id: 'blackgram',
-    name: 'Black Gram / Urad (உளுந்து)',
+    name: 'Black Gram (உளுந்து)',
     name_ta: 'உளுந்து',
-    variety: 'Vamban 8 / Vamban 11 / ADT 5',
+    variety: 'VBN 6 / VBN 8 / CO 6',
     category: 'Pulse',
-    total_days: 75,
-    water_req_mm: 220,
+    total_days: 70,
+    water_req_mm: 300,
     stages: [
-      { id: 1, name: 'Sowing & Emergence', name_ta: 'விதைப்பு மற்றும் முளைப்பு', start_day: 1, end_day: 10 },
-      { id: 2, name: 'Vegetative Growth', name_ta: 'செடி வளர்ச்சிப் பருவம்', start_day: 11, end_day: 30 },
-      { id: 3, name: 'Flowering & Podding', name_ta: 'பூக்கும் மற்றும் நெற்று உருவாகும் பருவம்', start_day: 31, end_day: 50 },
-      { id: 4, name: 'Harvest & Drying', name_ta: 'முதிர்ச்சி மற்றும் அறுவடை', start_day: 51, end_day: 75 }
+      { id: 1, name: 'Germination & Seedling', name_ta: 'முளைப்பு மற்றும் நாற்று', start_day: 1, end_day: 12 },
+      { id: 2, name: 'Vegetative Branching', name_ta: 'கிளைக்கும் பருவம்', start_day: 13, end_day: 28 },
+      { id: 3, name: 'Flowering & Pod Setting', name_ta: 'பூக்கும் மற்றும் காய் பிடிக்கும் பருவம்', start_day: 29, end_day: 50 },
+      { id: 4, name: 'Pod Maturity & Picking', name_ta: 'முதிர்ச்சி மற்றும் காய் பறித்தல்', start_day: 51, end_day: 70 }
     ],
     irrigations: [
       { id: 'bi1', day: 1, stage: 'Sowing Irrigation (விதைப்பு நீர்)' },
-      { id: 'bi2', day: 28, stage: 'Pre-flowering Irrigation (பூக்கும் முன் நீர்)' }
+      { id: 'bi2', day: 4, stage: 'Life Irrigation (உயிர் தண்ணீர்)' },
+      { id: 'bi3', day: 22, stage: 'Branching Irrigation (கிளைக்கும் சமயம்)' },
+      { id: 'bi4', day: 40, stage: 'Pod Setting Irrigation (காய் பிடிக்கும் பருவம்)' }
     ],
     fertilizers: [
       {
         id: 'bf1',
         day: 1,
-        stage: 'Basal Seed Inoculation (விதை நேர்த்தி & அடி உரம்)',
-        dosage: '25 kg DAP / acre + 200 g Rhizobium packet',
-        dosage_ta: '25 கிலோ DAP / ஏக்கர் + 200 கிராம் ரைசோபியம் பாக்கெட்'
+        stage: 'Basal Seed Enrichment (அடி உரம் & விதை நேர்த்தி)',
+        dosage: '5 tonnes FYM + 25 kg DAP + 12 kg Potash / acre',
+        dosage_ta: '5 டன் தொழுவுரம் + 25 கிலோ DAP + 12 கிலோ பொட்டாஷ் / ஏக்கர்'
       },
       {
         id: 'bf2',
-        day: 35,
-        stage: 'Flowering Spray (பூக்கும் சமயம்)',
-        dosage: '2 kg Pulse Wonder in 200 L water / acre',
-        dosage_ta: '2 கிலோ பல்ஸ் வொண்டர் (200 லி நீரில்) / ஏக்கர்'
+        day: 30,
+        stage: 'Pulse Wonder Foliar Spray (பூ உதிராமல் இருக்க)',
+        dosage: '2 kg TNAU Pulse Wonder in 200 L water / acre',
+        dosage_ta: '2 கிலோ தமிழ்நாடு வேளாண் பல்கலை உளுந்து வொண்டர் (200 லி நீரில்) / ஏக்கர்'
       }
     ]
   }
+};
+
+// =========================================================================
+// Dynamic Scaling & Agronomy Utilities based on User-Confirmed Acres & Soil
+// =========================================================================
+
+// Scale fertilizer dosages dynamically based on the farm's acreage
+export const scaleDosageText = (dosageText, acres) => {
+  if (!dosageText || !acres || acres <= 0) return dosageText;
+  if (acres === 1) return dosageText;
+
+  // Scale numbers followed by common units (tonnes, ton, kg, g, L, litres, ml, டன், கிலோ, கிராம், லிட்டர்)
+  const scaled = dosageText.replace(
+    /(\d+(?:\.\d+)?)\s*(tonnes?|tons?|kg|g|liters?|litres?|L|ml|டன்|கிலோ|கிராம்|லிட்டர்|மில்லி)/gi,
+    (match, numStr, unit) => {
+      const num = parseFloat(numStr);
+      if (isNaN(num)) return match;
+      const scaledVal = num * acres;
+      const formatted = Number.isInteger(scaledVal)
+        ? scaledVal.toString()
+        : scaledVal.toFixed(1).replace(/\.0$/, '');
+      return `${formatted} ${unit}`;
+    }
+  );
+
+  return scaled
+    .replace(/\/\s*acre/gi, `(for ${acres} Acres)`)
+    .replace(/\/\s*ஏக்கர்/gi, `(${acres} ஏக்கருக்கு)`);
+};
+
+// Calculate total water requirement in Liters and Lakhs
+export const calculateTotalWaterLiters = (waterReqMm, acres) => {
+  const mm = Number(waterReqMm) || 450;
+  const ac = Number(acres) || 1.0;
+  // 1 mm water on 1 acre = 4,046.86 Liters
+  const totalLiters = Math.round(mm * ac * 4047);
+  const lakhLiters = (totalLiters / 100000).toFixed(1);
+  return {
+    liters: totalLiters,
+    formatted_en: `${lakhLiters} Lakh Liters (${mm} mm for ${ac} ac)`,
+    formatted_ta: `${lakhLiters} லட்சம் லிட்டர் (${ac} ஏக்கருக்கு ${mm} மி.மீ)`
+  };
+};
+
+// Dynamic agronomic advice tailored to confirmed soil type
+export const getSoilAgronomyGuide = (soilType, lang) => {
+  const s = (soilType || '').toLowerCase();
+  if (s.includes('black') || s.includes('கரிசல்')) {
+    return {
+      texture: lang === 'ta' ? 'அதிக களிமண் கொண்ட கரிசல் மண்' : 'Heavy Clay Black Cotton Soil',
+      drainage: lang === 'ta' ? 'மெதுவான வடிகால், அதிக ஈரப்பதம் தாங்கும்' : 'Slow drainage, high moisture retention',
+      water_strategy: lang === 'ta' ? '10-12 நாட்களுக்கு ஒருமுறை ஆழமாக நீர் பாய்ச்சவும். அதிக நீர் தேங்கினால் வேர் அழுகல் ஏற்படும்.' : 'Deep watering every 10-12 days. Prevent waterlogging to protect roots.',
+      fertilizer_tip: lang === 'ta' ? 'பொட்டாஷ் சத்து போதுமானது; பாஸ்பரஸ் மற்றும் ஜிப்சம் இடுவது அவசியமாகும்.' : 'Rich in Potassium; ensure adequate Phosphorous and Gypsum.'
+    };
+  }
+  if (s.includes('clay') || s.includes('களிமண்')) {
+    return {
+      texture: lang === 'ta' ? 'களிமண் (Clayey Soil)' : 'Fine Clay Texture',
+      drainage: lang === 'ta' ? 'குறைந்த வடிகால் வசதி' : 'Restricted internal drainage',
+      water_strategy: lang === 'ta' ? 'பாசன இடைவெளியை நீட்டிக்கவும் (8-10 நாட்கள்). வடிநீர் வாய்க்கால் அமைக்கவும்.' : 'Extended irrigation cycle (8-10 days). Maintain drainage channels.',
+      fertilizer_tip: lang === 'ta' ? 'மட்கிய தொழுவுரம் மற்றும் மண்புழு உரம் இட்டு மண்ணின் காற்றோட்டத்தை அதிகரிக்கவும்.' : 'Apply FYM and vermicompost to improve aeration and tilth.'
+    };
+  }
+  if (s.includes('alluvial') || s.includes('loam') || s.includes('வண்டல்')) {
+    return {
+      texture: lang === 'ta' ? 'வண்டல் மண் / செழுமையான இருமண்' : 'Alluvial Fertile Loam',
+      drainage: lang === 'ta' ? 'சிறந்த சமச்சீர் வடிகால் மற்றும் ஈரப்பதம்' : 'Optimal balanced drainage & moisture retention',
+      water_strategy: lang === 'ta' ? '7-8 நாட்களுக்கு ஒருமுறை சீரான பாசனம் செய்யவும்.' : 'Regular 7-8 day irrigation cycle.',
+      fertilizer_tip: lang === 'ta' ? 'பரிந்துரைக்கப்பட்ட NPK உரங்களை சமச்சீராக 3 தவணைகளாக இடவும்.' : 'Apply balanced NPK split in 3 recommended intervals.'
+    };
+  }
+  // Default: Red Sandy Loam / செம்மண்
+  return {
+    texture: lang === 'ta' ? 'செம்மண் மற்றும் மணற்பாங்கான சரளை மண்' : 'Red Sandy Loam / Gravelly Loam',
+    drainage: lang === 'ta' ? 'விரைவான வடிகால் (Quick drainage)' : 'Fast draining, high aeration',
+    water_strategy: lang === 'ta' ? 'மண் விரைவாக உலர்வதால் 5-7 நாட்களுக்கு ஒருமுறை மிதமான பாசனம் செய்யவும்.' : 'Frequent light irrigations (every 5-7 days) due to fast infiltration.',
+    fertilizer_tip: lang === 'ta' ? 'நுண்ணூட்டங்கள் வடிந்துவிடாமல் இருக்க தொழுவுரம் (FYM) மற்றும் வேப்பம் புண்ணாக்குடன் கலந்து இடவும்.' : 'Mix fertilizers with FYM & neem cake to prevent nutrient leaching.'
+  };
 };
 
 // Generates dynamic lifecycle if another crop was tracked from Crop Explorer
@@ -457,6 +537,9 @@ export default function AgriTrackerPage() {
                             {item.soil_type}
                           </span>
                         )}
+                        <span className="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200 text-[11px]">
+                          💧 {calculateTotalWaterLiters(lifecycle.water_req_mm, item.area_acres)[lang === 'ta' ? 'formatted_ta' : 'formatted_en']}
+                        </span>
                       </div>
                     )}
 
@@ -477,6 +560,11 @@ export default function AgriTrackerPage() {
   // =========================================================================
   // VIEW 2: NEXT TRACKING PAGE (Shown ONLY when the crop name is clicked!)
   // =========================================================================
+  const confirmedAcres = Number(selectedTrackedItem?.area_acres || 1.0);
+  const confirmedSoil = selectedTrackedItem?.soil_type || 'Red Sandy Loam';
+  const waterMetrics = calculateTotalWaterLiters(activeCrop.water_req_mm, confirmedAcres);
+  const soilGuide = getSoilAgronomyGuide(confirmedSoil, lang);
+
   return (
     <div className="space-y-6 pb-12 animate-in fade-in-50">
       {/* 1. Header with Back Button */}
@@ -498,8 +586,8 @@ export default function AgriTrackerPage() {
           </h1>
           <p className="text-xs md:text-sm text-slate-500 mt-1 font-medium">
             {lang === 'ta'
-              ? `${activeDistrict} மாவட்டத்திற்கான நாள்வாரியான நீர் பாசனம் & உர அட்டவணை.`
-              : `Day-by-day irrigation stages & certified fertilizer dosages for ${activeDistrict}.`}
+              ? `${activeDistrict} மாவட்டத்திற்கான நாள்வாரியான நீர் பாசனம் & உர அட்டவணை (${confirmedAcres} ஏக்கருக்கு கணக்கிடப்பட்டது).`
+              : `Day-by-day irrigation stages & certified fertilizer dosages for ${activeDistrict} (scaled for ${confirmedAcres} Acres).`}
           </p>
         </div>
 
@@ -512,6 +600,83 @@ export default function AgriTrackerPage() {
           <ArrowLeft className="w-4 h-4" />
           <span>{lang === 'ta' ? 'பயிர்கள் பட்டியல் (Back)' : 'Back to Crops'}</span>
         </button>
+      </div>
+
+      {/* 2. Scaled Farm Plan & Soil Profile Card */}
+      <div className="bg-white rounded-2xl p-5 border border-emerald-200/80 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <span className="p-2 rounded-xl bg-emerald-100/70 text-[#238636]">
+              <Sprout className="w-5 h-5" />
+            </span>
+            <div>
+              <h3 className="font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                <span>{lang === 'ta' ? 'சாகுபடி பரப்பளவு & வளங்கள் கணக்கீடு' : 'Cultivation Metrics & Scaled Plan'}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold">
+                  {confirmedAcres} {lang === 'ta' ? 'ஏக்கர்' : 'Acres'}
+                </span>
+              </h3>
+              <p className="text-[11px] text-slate-500 font-medium">
+                {lang === 'ta'
+                  ? 'பயிர் எக்ஸ்ப்ளோரரில் உறுதிசெய்த ஏக்கர் மற்றும் மண்ணிற்கு ஏற்ப உரமும் தண்ணீரும் முழுமையாகக் கணக்கிடப்பட்டுள்ளது.'
+                  : 'Total water & fertilizer dosages are dynamically scaled for your confirmed acreage and soil type.'}
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <span className="text-xs font-black text-slate-800 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 inline-block">
+              🪴 {confirmedSoil}
+            </span>
+          </div>
+        </div>
+
+        {/* 4 Farm Scale Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div className="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200/70">
+            <span className="text-[10px] font-bold uppercase text-emerald-800 block">
+              🌾 {lang === 'ta' ? 'சாகுபடி பரப்பளவு' : 'Farm Acreage'}
+            </span>
+            <span className="text-base font-extrabold text-slate-900 mt-0.5 block">
+              {confirmedAcres} {lang === 'ta' ? 'ஏக்கர்' : 'Acres'}
+            </span>
+            <span className="text-[10px] text-emerald-700 font-medium">
+              {lang === 'ta' ? 'முழு அட்டவணையும் இதற்கேற்ப கணக்கிடப்பட்டது' : 'All dosages scaled to this size'}
+            </span>
+          </div>
+
+          <div className="p-3 rounded-xl bg-sky-50/60 border border-sky-200/70">
+            <span className="text-[10px] font-bold uppercase text-sky-800 block">
+              💧 {lang === 'ta' ? 'மொத்த நீர் தேவை' : 'Total Water Needed'}
+            </span>
+            <span className="text-sm font-extrabold text-sky-950 mt-0.5 block">
+              {lang === 'ta' ? waterMetrics.formatted_ta : waterMetrics.formatted_en}
+            </span>
+            <span className="text-[10px] text-sky-700 font-medium">
+              {activeCrop.water_req_mm} mm × {confirmedAcres} ac
+            </span>
+          </div>
+
+          <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-200/70">
+            <span className="text-[10px] font-bold uppercase text-amber-800 block">
+              🪴 {lang === 'ta' ? 'மண்ணின் தன்மை' : 'Soil Texture'}
+            </span>
+            <span className="text-xs font-extrabold text-amber-950 mt-0.5 block truncate" title={soilGuide.texture}>
+              {soilGuide.texture}
+            </span>
+            <span className="text-[10px] text-amber-800 font-medium truncate block">
+              {soilGuide.drainage}
+            </span>
+          </div>
+
+          <div className="p-3 rounded-xl bg-purple-50/60 border border-purple-200/70">
+            <span className="text-[10px] font-bold uppercase text-purple-800 block">
+              ⏱️ {lang === 'ta' ? 'பாசன இடைவெளி' : 'Irrigation Advice'}
+            </span>
+            <span className="text-[11px] font-semibold text-purple-950 mt-0.5 block leading-tight">
+              {soilGuide.water_strategy}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* 2. Selected District & Crop Agro Summary Strip */}
@@ -792,10 +957,22 @@ export default function AgriTrackerPage() {
                       {fert.stage}
                     </h4>
 
-                    {/* Exact Dosage */}
-                    <div className="bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200 text-xs font-black text-emerald-950 inline-block">
-                      📦 {lang === 'ta' ? fert.dosage_ta || fert.dosage : fert.dosage}
+                    {/* Scaled Exact Dosage for Confirmed Acres */}
+                    <div className="bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-200 text-xs font-black text-emerald-950 block">
+                      <span className="text-[10px] font-bold text-emerald-700 block uppercase mb-0.5">
+                        {lang === 'ta'
+                          ? `🌾 ${confirmedAcres} ஏக்கருக்கான மொத்த உரத் தேவை:`
+                          : `🌾 Total Dosage for ${confirmedAcres} Acres:`}
+                      </span>
+                      <span>📦 {scaleDosageText(lang === 'ta' ? fert.dosage_ta || fert.dosage : fert.dosage, confirmedAcres)}</span>
                     </div>
+
+                    {/* Baseline per-acre dosage if acres !== 1 */}
+                    {confirmedAcres !== 1 && (
+                      <div className="text-[11px] text-slate-500 font-semibold pl-1">
+                        {lang === 'ta' ? 'ஏக்கருக்கு:' : 'Per Acre:'} {lang === 'ta' ? fert.dosage_ta || fert.dosage : fert.dosage}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -804,7 +981,7 @@ export default function AgriTrackerPage() {
         </div>
       </div>
 
-      {/* 5. AGRONOMIC ACTION BANNER: WEEDING & PEST CONTROL */}
+      {/* 5. AGRONOMIC ACTION BANNER: WEEDING, PEST CONTROL & SOIL ADVICE */}
       <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-[#238636]" />
@@ -838,12 +1015,10 @@ export default function AgriTrackerPage() {
 
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
             <span className="font-bold text-slate-700 block mb-1">
-              🌾 {lang === 'ta' ? 'மண்வள ஆலோசனை (Soil Health):' : 'Soil Rejuvenation Action:'}
+              🌾 {lang === 'ta' ? `மண்வள வழிகாட்டல் (${confirmedSoil}):` : `Soil Management (${confirmedSoil}):`}
             </span>
             <p className="text-slate-600 leading-relaxed font-medium">
-              {lang === 'ta'
-                ? `${activeDistrict} மாவட்ட செம்மண்ணில் ஜிப்சம் இடுவது பருப்பு தரத்தை 25% உயர்த்தும். வேர் அழுகல் நோய் வராமல் தடுக்க வடிகால் அவசியம்.`
-                : `Ensure gypsum is applied at 40-45 DAS. Essential calcium hardens pod shells and minimizes empty/hollow pods.`}
+              {soilGuide.fertilizer_tip} {soilGuide.drainage}
             </p>
           </div>
         </div>
