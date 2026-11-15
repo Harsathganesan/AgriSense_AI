@@ -2,6 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "buildCommand": "echo 'AgriSense FastAPI backend ready'",
+  "functions": {
+    "api/index.py": {
+      "excludeFiles": "{frontend/**,app/models/*.keras,app/models/*.tflite,tests/**,*.md,*.log}"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
