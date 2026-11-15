@@ -4,7 +4,9 @@ import {
   Send,
   Languages,
   Bot,
-  User
+  User,
+  X,
+  HelpCircle
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -22,6 +24,7 @@ export default function AiAssistantPage() {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [suggestedPrompts, setSuggestedPrompts] = useState([]);
+  const [showSuggested, setShowSuggested] = useState(true);
   const messagesEndRef = useRef(null);
 
   // Load initial welcome message and suggested prompts for district & language
@@ -106,15 +109,15 @@ export default function AiAssistantPage() {
   };
 
   return (
-    <div className="space-y-4 max-w-5xl mx-auto pb-6">
-      {/* 1. Header (Mela Heading) */}
-      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <Sparkles className="w-6 h-6 text-[#238636]" />
-            {lang === 'ta' ? 'AI பண்ணை உதவியாளர்' : 'AI Farm Assistant'}
+    <div className="w-full space-y-3 sm:space-y-4 pb-4">
+      {/* 1. Header (Mela Heading - Responsive & Full Cover) */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 truncate">
+            <Sparkles className="w-5 h-5 sm:w-6 h-6 text-[#238636] shrink-0" />
+            <span className="truncate">{lang === 'ta' ? 'AI பண்ணை உதவியாளர்' : 'AI Farm Assistant'}</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+          <p className="text-[11px] sm:text-sm text-slate-500 mt-0.5 sm:mt-1 font-medium line-clamp-1 sm:line-clamp-none">
             {lang === 'ta'
               ? 'மண் பரிசோதனை, நாசா விண்வெளித் தகவல்கள் மற்றும் பயிர் சுழற்சிக்கான நேரடி AI விவசாய ஆலோசகர்.'
               : 'Interactive bilingual farm advisor grounded in certified soil tests and NASA Earth telemetry.'}
@@ -125,31 +128,32 @@ export default function AiAssistantPage() {
         <button
           type="button"
           onClick={toggleLanguage}
-          className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-[#238636] text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
+          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-[#238636] text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
+          title={lang === 'en' ? 'Switch to Tamil' : 'Switch to English'}
         >
-          <Languages className="w-4 h-4" />
-          <span>{lang === 'en' ? 'தமிழ் (TA)' : 'English (EN)'}</span>
+          <Languages className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span className="text-[11px] sm:text-xs">{lang === 'en' ? 'தமிழ் (TA)' : 'English (EN)'}</span>
         </button>
       </div>
 
-      {/* 2. Interactive Chat Container (Keela Chat Screen) */}
-      <div className="h-[calc(100vh-230px)] min-h-[520px] flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* 2. Interactive Chat Container (Keela Chat Screen - Full Screen Cover) */}
+      <div className="h-[calc(100dvh-185px)] sm:h-[calc(100vh-210px)] min-h-[480px] flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {/* Messages Scroll Area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4">
           {messages.map((m) => {
             const isAi = m.sender === 'ai';
             return (
               <div
                 key={m.id}
-                className={`flex items-start gap-3 ${isAi ? 'justify-start' : 'justify-end'}`}
+                className={`flex items-start gap-2.5 sm:gap-3 ${isAi ? 'justify-start' : 'justify-end'}`}
               >
                 {isAi && (
-                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#238636] flex items-center justify-center shrink-0 mt-1 shadow-2xs">
-                    <Bot className="w-4.5 h-4.5" />
+                  <div className="w-7 h-7 sm:w-8 h-8 rounded-lg sm:rounded-xl bg-emerald-100 text-[#238636] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                    <Bot className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                   </div>
                 )}
                 <div
-                  className={`max-w-[85%] sm:max-w-[78%] rounded-2xl p-4 sm:p-5 shadow-xs transition-all ${
+                  className={`max-w-[88%] sm:max-w-[78%] rounded-2xl p-3.5 sm:p-5 shadow-xs transition-all ${
                     isAi
                       ? 'bg-slate-50 border border-slate-200/90 text-slate-800'
                       : 'bg-[#238636] text-white rounded-tr-xs shadow-sm shadow-[#238636]/20'
@@ -159,7 +163,7 @@ export default function AiAssistantPage() {
                     {m.text}
                   </div>
                   <div
-                    className={`mt-2.5 pt-2 border-t flex items-center justify-between text-[10px] ${
+                    className={`mt-2 pt-1.5 border-t flex items-center justify-between text-[9px] sm:text-[10px] ${
                       isAi ? 'border-slate-200/60 text-slate-400' : 'border-white/20 text-emerald-100'
                     }`}
                   >
@@ -168,8 +172,8 @@ export default function AiAssistantPage() {
                   </div>
                 </div>
                 {!isAi && (
-                  <div className="w-8 h-8 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 mt-1 shadow-2xs">
-                    <User className="w-4.5 h-4.5" />
+                  <div className="w-7 h-7 sm:w-8 h-8 rounded-lg sm:rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                    <User className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                   </div>
                 )}
               </div>
@@ -177,16 +181,16 @@ export default function AiAssistantPage() {
           })}
 
           {loading && (
-            <div className="flex items-start gap-3 justify-start">
-              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#238636] flex items-center justify-center shrink-0">
-                <Bot className="w-4.5 h-4.5" />
+            <div className="flex items-start gap-2.5 sm:gap-3 justify-start">
+              <div className="w-7 h-7 sm:w-8 h-8 rounded-lg sm:rounded-xl bg-emerald-100 text-[#238636] flex items-center justify-center shrink-0">
+                <Bot className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               </div>
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-xs">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 sm:p-4 shadow-xs">
                 <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" />
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce delay-150" />
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce delay-300" />
-                  <span className="ml-1 font-semibold text-slate-700">
+                  <span className="ml-1 font-semibold text-slate-700 text-xs sm:text-sm">
                     {lang === 'ta'
                       ? 'மண் & வானிலை தரவுகளை ஆராய்கிறது...'
                       : 'Analyzing soil health & NASA observations...'}
@@ -198,20 +202,31 @@ export default function AiAssistantPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Suggested Prompts Pill Container - Wrapped & Fitted (No Horizontal Scrolling) */}
-        {suggestedPrompts.length > 0 && (
-          <div className="p-3 border-t border-slate-100 bg-slate-50/70">
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#238636]" />
-              <span>{lang === 'ta' ? 'பரிந்துரைக்கப்பட்ட வினாக்கள்:' : 'Suggested Questions:'}</span>
+        {/* Suggested Prompts Container - With Dismissible 'X' button & Clean Wrap */}
+        {showSuggested && suggestedPrompts.length > 0 && (
+          <div className="p-2.5 sm:p-3 border-t border-slate-100 bg-slate-50/80 animate-in fade-in duration-200">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#238636]" />
+                <span>{lang === 'ta' ? 'பரிந்துரைக்கப்பட்ட வினாக்கள்:' : 'Suggested Questions:'}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSuggested(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer active:scale-95"
+                title={lang === 'ta' ? 'வினாக்களை மறைக்க' : 'Hide suggested questions'}
+                aria-label="Hide suggested questions"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {suggestedPrompts.map((p) => (
                 <button
                   key={p.id}
                   type="button"
                   onClick={() => handleSendMessage(p.text)}
-                  className="text-left text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-[#238636] transition shadow-2xs cursor-pointer active:scale-98"
+                  className="text-left text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-[#238636] transition shadow-2xs cursor-pointer active:scale-98 leading-snug"
                 >
                   {p.text}
                 </button>
@@ -221,7 +236,7 @@ export default function AiAssistantPage() {
         )}
 
         {/* Input Box Bar */}
-        <div className="p-3 sm:p-4 border-t border-slate-200 bg-white">
+        <div className="p-2.5 sm:p-4 border-t border-slate-200 bg-white">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -229,6 +244,18 @@ export default function AiAssistantPage() {
             }}
             className="flex items-center gap-2"
           >
+            {/* Quick Suggestions Restore Button if hidden */}
+            {!showSuggested && suggestedPrompts.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowSuggested(true)}
+                className="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50 text-slate-500 hover:text-[#238636] transition shadow-2xs shrink-0 cursor-pointer active:scale-95"
+                title={lang === 'ta' ? 'பரிந்துரை வினாக்களைக் காட்டு' : 'Show suggested questions'}
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button>
+            )}
+
             <input
               type="text"
               value={inputText}
@@ -238,15 +265,15 @@ export default function AiAssistantPage() {
                   ? 'பயிர் சுழற்சி, மண் வளம், உரம் பற்றி எதையும் கேளுங்கள்...'
                   : 'Ask anything about crop rotation, soil health, fertilizer, or NASA weather...'
               }
-              className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] focus:ring-2 focus:ring-[#238636]/20 text-xs sm:text-sm bg-slate-50/50 focus:bg-white transition"
+              className="flex-1 min-w-0 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#238636] focus:ring-2 focus:ring-[#238636]/20 text-xs sm:text-sm bg-slate-50/50 focus:bg-white transition"
             />
             <button
               type="submit"
               disabled={!inputText.trim() || loading}
-              className="px-4 sm:px-5 py-2.5 rounded-xl bg-[#238636] hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm flex items-center gap-2 transition disabled:opacity-50 shadow-xs cursor-pointer shrink-0"
+              className="px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-[#238636] hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 transition disabled:opacity-50 shadow-xs cursor-pointer shrink-0 active:scale-95"
             >
-              <span>{lang === 'ta' ? 'அனுப்பு' : 'Send'}</span>
-              <Send className="w-4 h-4" />
+              <span className="hidden xs:inline">{lang === 'ta' ? 'அனுப்பு' : 'Send'}</span>
+              <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </form>
         </div>
