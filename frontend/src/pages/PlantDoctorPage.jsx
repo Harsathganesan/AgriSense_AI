@@ -260,18 +260,18 @@ export default function PlantDoctorPage() {
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
           <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight">
               {isTamil ? 'AI பயிர் நோய் கண்டறிதல் & தீர்வுகள்' : 'AI Plant Disease Diagnosis & Treatment'}
             </h1>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            <div className="bg-black/20 backdrop-blur-md rounded-xl px-3 py-2 border border-white/15 text-left sm:text-right">
-              <div className="text-[10px] sm:text-[11px] text-emerald-200 font-semibold uppercase tracking-wider flex items-center sm:justify-end gap-1">
-                <Satellite className="w-3 h-3 text-emerald-300" />
-                {isTamil ? 'மாவட்ட வானிலை' : 'District Telemetry'}
+          <div className="flex items-center self-stretch sm:self-auto">
+            <div className="w-full sm:w-auto bg-black/20 backdrop-blur-md rounded-xl px-3.5 py-2 border border-white/15 flex items-center justify-between sm:block text-left sm:text-right">
+              <div className="text-[10px] sm:text-[11px] text-emerald-200 font-semibold uppercase tracking-wider flex items-center sm:justify-end gap-1.5">
+                <Satellite className="w-3.5 h-3.5 text-emerald-300" />
+                <span>{isTamil ? 'மாவட்ட வானிலை' : 'District Telemetry'}</span>
               </div>
-              <div className="text-xs sm:text-sm font-extrabold text-white mt-0.5">
+              <div className="text-xs sm:text-sm font-extrabold text-white sm:mt-0.5">
                 {currentDistrict || 'Pudukkottai'}, Tamil Nadu
               </div>
             </div>
@@ -345,23 +345,23 @@ export default function PlantDoctorPage() {
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-center gap-2 pt-2">
+                  <div className="grid grid-cols-2 gap-2 pt-2 w-full max-w-xs mx-auto">
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                      className="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm"
                     >
-                      <UploadCloud className="w-3.5 h-3.5 text-slate-600" />
-                      {isTamil ? 'கோப்பை தேர்வு செய்' : 'Browse File'}
+                      <UploadCloud className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                      <span className="truncate">{isTamil ? 'கோப்பை தேர்வு செய்' : 'Browse File'}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => cameraInputRef.current?.click()}
-                      className="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200 shadow-sm"
+                      className="w-full py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 shadow-sm"
                     >
-                      <Camera className="w-3.5 h-3.5 text-emerald-700" />
-                      {isTamil ? 'கேமரா மூலம் எடு' : 'Use Camera'}
+                      <Camera className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                      <span className="truncate">{isTamil ? 'கேமரா மூலம் எடு' : 'Use Camera'}</span>
                     </button>
                   </div>
                 </div>
@@ -464,7 +464,7 @@ export default function PlantDoctorPage() {
           {diagnosis && (
             <div className="space-y-4">
               {/* Main Diagnosis Card */}
-              <div className={`bg-white rounded-2xl border p-5 sm:p-6 shadow-sm space-y-4 ${
+              <div className={`bg-white rounded-2xl border p-4 sm:p-6 shadow-sm space-y-4 ${
                 diagnosis.status === 'inconclusive'
                   ? 'border-amber-300 bg-amber-50/10'
                   : diagnosis.is_healthy
@@ -474,19 +474,19 @@ export default function PlantDoctorPage() {
                 {/* Header Badge & Title */}
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                   <div>
-                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-2 flex-wrap">
                       {diagnosis.status === 'inconclusive' ? (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1">
                           <HelpCircle className="w-3.5 h-3.5 text-amber-700" />
                           {isTamil ? 'தெளிவற்ற முடிவு (Inconclusive)' : 'Inconclusive / Low Confidence'}
                         </span>
                       ) : diagnosis.is_healthy ? (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                           {isTamil ? 'ஆரோக்கியமான பயிர்' : 'Healthy Specimen'}
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300 flex items-center gap-1">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300 flex items-center gap-1">
                           <ShieldAlert className="w-3.5 h-3.5 text-rose-700" />
                           {isTamil ? 'நோய் கண்டறியப்பட்டது' : 'Pathology Detected'}
                         </span>
@@ -495,33 +495,35 @@ export default function PlantDoctorPage() {
                       {getSeverityBadge(diagnosis.severity)}
 
                       {diagnosis.crop_en && (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-slate-100 text-slate-700">
                           🌱 {isTamil && diagnosis.crop_ta ? diagnosis.crop_ta : diagnosis.crop_en}
                         </span>
                       )}
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
                       {isTamil && diagnosis.disease_name_ta
                         ? diagnosis.disease_name_ta
                         : diagnosis.disease_name_en}
                     </h3>
                     {diagnosis.causal_agent && diagnosis.causal_agent !== 'None' && (
-                      <p className="text-xs italic text-slate-500 font-serif mt-0.5">
+                      <p className="text-xs italic text-slate-500 font-serif mt-1">
                         Causal Organism: {diagnosis.causal_agent} ({diagnosis.pathogen_type})
                       </p>
                     )}
                   </div>
 
                   {/* Confidence Meter */}
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-right shrink-0">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                      {isTamil ? 'நம்பகத்தன்மை அளவு' : 'Diagnostic Confidence'}
-                    </span>
-                    <div className="text-2xl font-black text-slate-900 mt-0.5">
-                      {diagnosis.confidence_score}%
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between sm:block sm:text-right shrink-0">
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        {isTamil ? 'நம்பகத்தன்மை அளவு' : 'Diagnostic Confidence'}
+                      </span>
+                      <div className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">
+                        {diagnosis.confidence_score}%
+                      </div>
                     </div>
-                    <div className="w-24 bg-slate-200 rounded-full h-1.5 mt-1 overflow-hidden ml-auto">
+                    <div className="w-24 bg-slate-200 rounded-full h-1.5 sm:mt-1 overflow-hidden sm:ml-auto">
                       <div
                         className={`h-1.5 rounded-full ${
                           diagnosis.confidence_score >= 85
@@ -602,17 +604,17 @@ export default function PlantDoctorPage() {
               {diagnosis.status === 'diagnosed' && (
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                   {/* Tabs Bar */}
-                  <div className="flex border-b border-slate-200 bg-slate-50/80 overflow-x-auto">
+                  <div className="flex border-b border-slate-200 bg-slate-50/80 overflow-x-auto scrollbar-none py-0.5 px-1">
                     {[
                       { id: 'organic', labelEn: '🌿 Organic Control', labelTa: '🌿 இயற்கை மருத்துவம்' },
-                      { id: 'chemical', labelEn: '🧪 Chemical Control', labelTa: '🧪 பரிந்துரைக்கப்பட்ட பூச்சிக்கொல்லிகள்' },
-                      { id: 'prevention', labelEn: '🛡️ Prevention & Rotation', labelTa: '🛡️ தடுப்பு & பயிர் சுழற்சி' },
+                      { id: 'chemical', labelEn: '🧪 Chemical Control', labelTa: '🧪 பூச்சிக்கொல்லிகள்' },
+                      { id: 'prevention', labelEn: '🛡️ Prevention & Rotation', labelTa: '🛡️ தடுப்பு & சுழற்சி' },
                       { id: 'nasa', labelEn: '🛰️ NASA Telemetry Risk', labelTa: '🛰️ நாசா வானிலை ஆபத்து' }
                     ].map((tab) => (
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`py-3 px-4 text-xs font-extrabold whitespace-nowrap transition-all border-b-2 ${
+                        className={`py-3 px-3.5 text-xs font-extrabold whitespace-nowrap transition-all border-b-2 shrink-0 ${
                           activeTab === tab.id
                             ? 'border-emerald-600 text-emerald-800 bg-white shadow-sm'
                             : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
@@ -624,16 +626,16 @@ export default function PlantDoctorPage() {
                   </div>
 
                   {/* Tab Contents */}
-                  <div className="p-5 sm:p-6 text-sm">
+                  <div className="p-3.5 sm:p-6 text-sm">
                     {/* Tab 1: Organic & Biocontrol */}
                     {activeTab === 'organic' && (
                       <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                            <Leaf className="w-4 h-4 text-emerald-600" />
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                          <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                            <Leaf className="w-4 h-4 text-emerald-600 shrink-0" />
                             {isTamil ? 'இயற்கை மற்றும் உயிரியல் கட்டுப்பாடு முறைகள்' : 'Organic & Biological Treatment Protocols'}
                           </h4>
-                          <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                          <span className="self-start sm:self-auto text-[10px] sm:text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                             ICAR / TNAU Verified
                           </span>
                         </div>
@@ -656,12 +658,12 @@ export default function PlantDoctorPage() {
                     {/* Tab 2: Chemical Control */}
                     {activeTab === 'chemical' && (
                       <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                            <FlaskConical className="w-4 h-4 text-blue-600" />
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                          <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                            <FlaskConical className="w-4 h-4 text-blue-600 shrink-0" />
                             {isTamil ? 'சான்றளிக்கப்பட்ட ரசாயன மருந்துகள் & அளவுகள்' : 'Certified Chemical Formulations & Precise Dosage'}
                           </h4>
-                          <span className="text-[11px] font-bold text-blue-800 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                          <span className="self-start sm:self-auto text-[10px] sm:text-[11px] font-bold text-blue-800 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                             CIBRC / TNAU Approved
                           </span>
                         </div>
@@ -684,12 +686,12 @@ export default function PlantDoctorPage() {
                     {/* Tab 3: Prevention & Rotation */}
                     {activeTab === 'prevention' && (
                       <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                            <RotateCcw className="w-4 h-4 text-emerald-600" />
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                          <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                            <RotateCcw className="w-4 h-4 text-emerald-600 shrink-0" />
                             {isTamil ? 'வருமுன் காக்கும் தடுப்பு & பயிர் சுழற்சி முறைகள்' : 'Agronomic Prevention & Crop Rotation Strategy'}
                           </h4>
-                          <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                          <span className="self-start sm:self-auto text-[10px] sm:text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                             Sustainable Agronomy
                           </span>
                         </div>
@@ -712,12 +714,12 @@ export default function PlantDoctorPage() {
                     {/* Tab 4: NASA Telemetry Environmental Risk */}
                     {activeTab === 'nasa' && (
                       <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                            <Satellite className="w-4 h-4 text-teal-600" />
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                          <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                            <Satellite className="w-4 h-4 text-teal-600 shrink-0" />
                             {isTamil ? 'நாசா செயற்கைக்கோள் வானிலை ஆபத்து பகுப்பாய்வு' : 'NASA Satellite Environmental Conduciveness Assessment'}
                           </h4>
-                          <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
+                          <span className={`self-start sm:self-auto text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
                             diagnosis.nasa_environmental_risk?.risk_level === 'High'
                               ? 'bg-rose-50 text-rose-800 border-rose-300'
                               : diagnosis.nasa_environmental_risk?.risk_level === 'Moderate'
@@ -729,38 +731,38 @@ export default function PlantDoctorPage() {
                         </div>
 
                         {/* Climate telemetry grid */}
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                            <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-slate-500 uppercase">
-                              <Thermometer className="w-3.5 h-3.5 text-amber-500" />
-                              {isTamil ? 'வெப்பநிலை' : 'Mean Temp'}
+                        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                          <div className="bg-slate-50 p-2 sm:p-3 rounded-xl border border-slate-200 text-center">
+                            <div className="flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase">
+                              <Thermometer className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                              <span className="truncate">{isTamil ? 'வெப்பநிலை' : 'Mean Temp'}</span>
                             </div>
-                            <div className="text-lg font-black text-slate-900 mt-1">
+                            <div className="text-sm sm:text-lg font-black text-slate-900 mt-1">
                               {diagnosis.nasa_environmental_risk?.environmental_telemetry?.avg_temp_c || 28.5}°C
                             </div>
-                            <span className="text-[10px] text-slate-400">NASA POWER</span>
+                            <span className="text-[9px] sm:text-[10px] text-slate-400 block truncate">NASA POWER</span>
                           </div>
 
-                          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                            <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-slate-500 uppercase">
-                              <Droplets className="w-3.5 h-3.5 text-blue-500" />
-                              {isTamil ? 'காற்று ஈரப்பதம்' : 'Air Humidity'}
+                          <div className="bg-slate-50 p-2 sm:p-3 rounded-xl border border-slate-200 text-center">
+                            <div className="flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase">
+                              <Droplets className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                              <span className="truncate">{isTamil ? 'ஈரப்பதம்' : 'Humidity'}</span>
                             </div>
-                            <div className="text-lg font-black text-slate-900 mt-1">
+                            <div className="text-sm sm:text-lg font-black text-slate-900 mt-1">
                               {diagnosis.nasa_environmental_risk?.environmental_telemetry?.relative_humidity_pct || 75}%
                             </div>
-                            <span className="text-[10px] text-slate-400">Relative Humidity</span>
+                            <span className="text-[9px] sm:text-[10px] text-slate-400 block truncate">Relative Hum</span>
                           </div>
 
-                          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                            <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-slate-500 uppercase">
-                              <Satellite className="w-3.5 h-3.5 text-emerald-500" />
-                              {isTamil ? 'மண் ஈரப்பதம்' : 'Root Moisture'}
+                          <div className="bg-slate-50 p-2 sm:p-3 rounded-xl border border-slate-200 text-center">
+                            <div className="flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase">
+                              <Satellite className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                              <span className="truncate">{isTamil ? 'மண் ஈரம்' : 'Root Moist'}</span>
                             </div>
-                            <div className="text-lg font-black text-slate-900 mt-1">
+                            <div className="text-sm sm:text-lg font-black text-slate-900 mt-1">
                               {diagnosis.nasa_environmental_risk?.environmental_telemetry?.smap_soil_moisture_pct || 25.5}%
                             </div>
-                            <span className="text-[10px] text-slate-400">NASA SMAP Radar</span>
+                            <span className="text-[9px] sm:text-[10px] text-slate-400 block truncate">SMAP Radar</span>
                           </div>
                         </div>
 
