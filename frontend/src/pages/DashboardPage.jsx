@@ -295,20 +295,16 @@ export default function DashboardPage() {
   ) || rotationData?.strategies?.[0];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* 1. Top Banner / Welcome with Synchronized District */}
-      <div className="bg-gradient-to-r from-emerald-800 via-[#238636] to-teal-700 rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-emerald-900/10 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-emerald-800 via-[#238636] to-teal-700 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-lg shadow-emerald-900/10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent" />
 
         <div className="z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white text-xs font-semibold backdrop-blur-sm mb-3">
-            <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping" />
-            NASA Earth Telemetry Active • {activeDistrict}, {registeredState}
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight">
             {user?.name ? `${user.name} (${activeDistrict} Farm)` : `${activeDistrict} Agricultural Dashboard`}
           </h1>
-          <p className="text-emerald-100 text-sm mt-1.5 leading-relaxed">
+          <p className="text-emerald-100 text-xs sm:text-sm mt-1 sm:mt-1.5 leading-relaxed">
             {t('dashboard.overviewSubtitle')}
           </p>
         </div>
@@ -334,15 +330,15 @@ export default function DashboardPage() {
       </div>
 
       {/* 2. LIVE AGRI TRACKER & CROP LIFECYCLE WIDGET (Synced with Crop Explorer & Agri Tracker) */}
-      <div className="bg-gradient-to-r from-emerald-50 via-teal-50/50 to-white rounded-3xl p-5 sm:p-6 border border-emerald-200/90 shadow-sm space-y-4">
+      <div className="bg-gradient-to-r from-emerald-50 via-teal-50/50 to-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-emerald-200/90 shadow-sm space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-200/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#238636] text-white flex items-center justify-center shadow-md shadow-emerald-700/20 shrink-0">
-              <CalendarCheck2 className="w-5 h-5" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#238636] text-white flex items-center justify-center shadow-md shadow-emerald-700/20 shrink-0">
+              <CalendarCheck2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-extrabold text-base text-slate-900 tracking-tight">
+                <span className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight">
                   {lang === 'ta' ? 'நடப்பு சாகுபடி கண்காணிப்பு (Agri Tracker)' : 'Active Crop Cultivation Tracker'}
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black border border-emerald-300 flex items-center gap-1">
@@ -350,11 +346,6 @@ export default function DashboardPage() {
                   {trackedCropData ? (lang === 'ta' ? 'செயலில் உள்ளது ⏳' : 'On Process ⏳') : (lang === 'ta' ? 'பயிர் தேர்வு செய்க' : 'Ready to Track')}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5 font-medium">
-                {lang === 'ta'
-                  ? `${activeDistrict} மாவட்டத்திற்கான தினசரி பாசனம், உரம் & நாசா மழை கண்காணிப்பு.`
-                  : `Real-time cultivation stages, irrigation timing, and NASA rain adaptation for ${activeDistrict}.`}
-              </p>
             </div>
           </div>
 
@@ -372,45 +363,45 @@ export default function DashboardPage() {
         </div>
 
         {trackedCropData ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
             {/* 1. Tracked Crop Name */}
-            <div className="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
+            <div className="bg-white/90 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border border-emerald-100 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5 sm:mb-1">
                 {lang === 'ta' ? 'சாகுபடி பயிர்' : 'Cultivated Crop'}
               </span>
-              <h4 className="text-sm font-extrabold text-slate-900 leading-snug truncate">
+              <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug truncate">
                 🌱 {lang === 'ta' ? (trackedCropData.crop?.tamil_name || trackedCropData.crop?.name) : trackedCropData.crop?.name}
               </h4>
-              <span className="text-[10px] font-bold text-emerald-700 mt-1 inline-block">
+              <span className="text-[10px] font-bold text-emerald-700 mt-0.5 sm:mt-1 inline-block truncate max-w-full">
                 {trackedCropData.crop?.category || 'Field Crop'} • {activeDistrict}
               </span>
             </div>
 
             {/* 2. Crop Age & Progress */}
-            <div className="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
+            <div className="bg-white/90 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border border-emerald-100 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5 sm:mb-1">
                 {lang === 'ta' ? 'பயிரின் வயது' : 'Crop Age / Progress'}
               </span>
-              <div className="text-sm font-black text-slate-900">
-                Day 18 <span className="text-xs font-semibold text-slate-400">/ {trackedCropData.crop?.duration_days_avg || 105} Days</span>
+              <div className="text-xs sm:text-sm font-black text-slate-900">
+                Day 18 <span className="text-[10px] sm:text-xs font-semibold text-slate-400">/ {trackedCropData.crop?.duration_days_avg || 105}d</span>
               </div>
-              <span className="text-[10px] font-bold text-emerald-700 mt-1 inline-block">
-                {lang === 'ta' ? 'செடி வளர்ச்சிப் பருவம்' : 'Vegetative Stage'}
+              <span className="text-[10px] font-bold text-emerald-700 mt-0.5 sm:mt-1 inline-block truncate max-w-full">
+                {lang === 'ta' ? 'வளர்ச்சிப் பருவம்' : 'Vegetative Stage'}
               </span>
             </div>
 
             {/* 3. Next Irrigation Status (Synced with heavy rain auto-pause) */}
-            <div className="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
+            <div className="bg-white/90 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border border-emerald-100 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5 sm:mb-1">
                 {lang === 'ta' ? 'அடுத்த பாசனம்' : 'Next Irrigation'}
               </span>
-              <div className="text-sm font-black text-sky-900">
+              <div className="text-xs sm:text-sm font-black text-sky-900 truncate">
                 {(todayPrediction?.precipitation_mm ?? 0) > 20
                   ? (lang === 'ta' ? 'நாள் 22 (தள்ளிவைப்பு)' : 'Day 22 (Rescheduled)')
                   : 'Day 20'}
               </div>
               <span
-                className={`text-[10px] font-bold mt-1 inline-block ${
+                className={`text-[10px] font-bold mt-0.5 sm:mt-1 inline-block truncate max-w-full ${
                   (todayPrediction?.precipitation_mm ?? 0) > 20 ? 'text-rose-600' : 'text-emerald-700'
                 }`}
               >
@@ -421,15 +412,15 @@ export default function DashboardPage() {
             </div>
 
             {/* 4. Next Fertilizer */}
-            <div className="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
+            <div className="bg-white/90 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border border-emerald-100 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5 sm:mb-1">
                 {lang === 'ta' ? 'அடுத்த உரம்' : 'Next Fertilizer'}
               </span>
-              <div className="text-sm font-black text-slate-900 truncate">
+              <div className="text-xs sm:text-sm font-black text-slate-900 truncate">
                 Day 25
               </div>
-              <span className="text-[10px] font-bold text-emerald-700 mt-1 inline-block">
-                {lang === 'ta' ? 'முதல் மேலுரம் (இன்னும் 7 நாட்கள்)' : 'Top Dressing (In 7 Days)'}
+              <span className="text-[10px] font-bold text-emerald-700 mt-0.5 sm:mt-1 inline-block truncate max-w-full">
+                {lang === 'ta' ? 'முதல் மேலுரம்' : 'Top Dressing (7d)'}
               </span>
             </div>
           </div>
@@ -454,7 +445,7 @@ export default function DashboardPage() {
       </div>
 
       {/* 3. District-Based Map & Top Recommended Crops Section */}
-      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-sm space-y-5">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200/90 shadow-sm space-y-4 sm:space-y-5">
         {/* District Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
           <div className="flex items-center gap-3">
@@ -463,14 +454,14 @@ export default function DashboardPage() {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-extrabold text-lg text-slate-900 tracking-tight">
+                <span className="font-extrabold text-base sm:text-lg text-slate-900 tracking-tight">
                   {activeDistrict}, {registeredState}
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
                   {registeredCountry}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
                 {lang === 'ta'
                   ? `${activeDistrict} மாவட்ட எல்லை மற்றும் விவசாய சூழல் வரைபடம்.`
                   : `Boundary GeoJSON map and agricultural conditions for ${activeDistrict}.`}
@@ -480,9 +471,9 @@ export default function DashboardPage() {
         </div>
 
         {/* District Map with Boundary */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
           {/* Map Container (7 Cols) */}
-          <div className="lg:col-span-7 h-80 sm:h-96 rounded-2xl overflow-hidden border border-slate-200 relative shadow-inner">
+          <div className="lg:col-span-7 h-64 sm:h-80 md:h-96 rounded-2xl overflow-hidden border border-slate-200 relative shadow-inner">
             <MapContainer
               center={districtMeta?.center || [10.3833, 78.8000]}
               zoom={districtMeta?.recommended_zoom || 10}
@@ -622,27 +613,32 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {(districtCrops.length > 0
                   ? districtCrops.slice(0, 2)
                   : (locAnalysis?.crop_suitability_insights || []).slice(0, 2)
                 ).map((item, idx) => {
                   const cropObj = item.crop || item;
                   const score = item.suitability_score;
+                  const cropDisplayName = lang === 'ta'
+                    ? (cropObj.tamil_name || cropObj.name || cropObj.crop)
+                    : (cropObj.name || cropObj.crop);
+
                   return (
                     <div
                       key={idx}
                       onClick={() => navigate('/crop-explorer')}
-                      className="p-2 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-100 hover:border-emerald-300 text-xs transition cursor-pointer group"
+                      className="p-3 sm:p-3.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-xs transition cursor-pointer group shadow-2xs flex items-center justify-between gap-2.5"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-slate-800 text-[11px] truncate group-hover:text-[#238636]">
-                          {lang === 'ta' ? (cropObj.tamil_name || cropObj.name || cropObj.crop) : (cropObj.name || cropObj.crop)}
-                        </span>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">
-                          {score}%
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-base shrink-0">🌱</span>
+                        <span className="font-extrabold text-slate-800 text-xs sm:text-[13px] group-hover:text-[#238636] leading-tight break-words">
+                          {cropDisplayName}
                         </span>
                       </div>
+                      <span className="text-[11px] font-extrabold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg shrink-0 whitespace-nowrap">
+                        {score}%
+                      </span>
                     </div>
                   );
                 })}
@@ -656,17 +652,17 @@ export default function DashboardPage() {
       <AlertBanner alerts={alerts} />
 
       {/* 5. Today's Weather Forecast & Advisory Card */}
-      <div className="bg-gradient-to-br from-white via-sky-50/40 to-emerald-50/50 rounded-3xl p-5 sm:p-6 border border-sky-200/90 shadow-sm relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-sky-100">
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-teal-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-sky-500/20">
+      <div className="bg-gradient-to-br from-white via-sky-50/40 to-emerald-50/50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-sky-200/90 shadow-sm relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-sky-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 to-teal-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-sky-500/20">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-extrabold text-base text-slate-900 tracking-tight">
+              <h3 className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight">
                 {lang === 'ta' ? 'இன்றைய வானிலை கணிப்பு & விவசாய வழிகாட்டுதல்' : "Today's Weather Forecast & Advisory"}
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
                 {lang === 'ta'
                   ? `${activeDistrict} பகுதிக்கான இன்றைய நேரலை வானிலை மற்றும் விவசாய முன்னறிவிப்பு.`
                   : `Daily weather conditions and farm advisory for ${activeDistrict}.`}
@@ -681,7 +677,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 4 Telemetry Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 pt-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 pt-3 sm:pt-4">
           {/* 1. Temperature */}
           <div className="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-500 text-xs font-bold mb-1">
@@ -836,26 +832,28 @@ export default function DashboardPage() {
       </div>
 
       {/* 7. Daily Weather & Rainfall Trends Chart (Full Width Rectangle) */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-xs w-full">
-        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-          <div>
-            <h3 className="text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-              {t('dashboard.weatherTrends')}
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold border border-emerald-300">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2.5">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">
+                {t('dashboard.weatherTrends')}
+              </h3>
+              <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 text-[11px] sm:text-xs font-bold border border-emerald-200 shadow-2xs whitespace-nowrap shrink-0">
                 {lang === 'ta' ? `இன்று வரை (${todayPrediction?.date || 'Current Date'})` : `Through Today (${todayPrediction?.date || 'Current Date'})`}
               </span>
-            </h3>
-            <p className="text-xs text-slate-400">
+            </div>
+            <p className="text-[11px] sm:text-xs text-slate-400">
               {lang === 'ta' ? 'தினசரி வெப்பநிலை மற்றும் மழைப்பொழிவு விவரம்.' : 'Daily temperature and rainfall observations through today.'}
             </p>
           </div>
-          <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
+          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70 self-start sm:self-auto shrink-0">
             <span className="w-2.5 h-2.5 rounded-full bg-[#0284c7]" /> {lang === 'ta' ? 'மழை' : 'Rain'}
             <span className="w-2.5 h-2.5 rounded-full bg-[#f97316] ml-2" /> {lang === 'ta' ? 'வெப்பம்' : 'Temp'}
           </div>
         </div>
 
-        <div className="h-72 sm:h-80 w-full">
+        <div className="h-64 sm:h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={dailyHistory.slice(-20)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
@@ -888,9 +886,9 @@ export default function DashboardPage() {
       </div>
 
       {/* 8. Bottom Grid: Soil Health Scorecard & Recommended Crop Sequence */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Left: Soil Health Scorecard with Lab Nutrients */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-xs flex flex-col justify-between space-y-4">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs flex flex-col justify-between space-y-4">
           <div className="space-y-4">
             <SoilScoreGauge
               score={soilRecord?.health_score || 82}
@@ -932,14 +930,14 @@ export default function DashboardPage() {
         </div>
 
         {/* Right: Recommended Rotation Card (Live from Crop Rotation Planner) */}
-        <div className="bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/40 rounded-3xl p-5 sm:p-6 border border-emerald-200/90 shadow-xs flex flex-col justify-between">
+        <div className="bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/40 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-emerald-200/90 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2">
-              <span className="flex items-center gap-1.5">
-                <RotateCcw className="w-3.5 h-3.5 text-[#238636]" />
-                {t('dashboard.recommendedRotation')}
+            <div className="flex items-center justify-between gap-2 text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2">
+              <span className="flex items-center gap-1.5 truncate">
+                <RotateCcw className="w-3.5 h-3.5 text-[#238636] shrink-0" />
+                <span className="truncate">{t('dashboard.recommendedRotation')}</span>
               </span>
-              <span className="text-[10px] bg-emerald-100 text-[#238636] px-2 py-0.5 rounded-full font-extrabold">
+              <span className="text-[11px] sm:text-xs bg-emerald-50 text-[#238636] px-2.5 py-1 rounded-lg border border-emerald-200 font-extrabold whitespace-nowrap shrink-0 shadow-2xs">
                 Score {recStrategy?.mcda_score ? Math.round(recStrategy.mcda_score) : 88.5}/100
               </span>
             </div>
