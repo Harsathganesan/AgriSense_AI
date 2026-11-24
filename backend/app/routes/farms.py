@@ -119,6 +119,7 @@ async def list_farms(current_user: dict = Depends(get_current_user)):
         district = current_user.get("district") or current_user.get("registered_location", {}).get("district") or "Thanjavur"
         state = current_user.get("state") or current_user.get("registered_location", {}).get("state") or "Tamil Nadu"
         coords = dist_coords.get(district.lower().strip(), (10.7870, 79.1378))
+        # pyrefly: ignore[deprecated]
         now_iso = datetime.utcnow().isoformat()
         farm_doc = {
             "_id": str(uuid.uuid4()),

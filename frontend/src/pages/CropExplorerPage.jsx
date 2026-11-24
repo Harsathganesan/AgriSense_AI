@@ -35,6 +35,58 @@ const SOIL_OPTIONS = [
   { id: 'Sandy Coastal Soil', en: 'Sandy Coastal Soil', ta: 'மணல் பாங்கான மண்' },
 ];
 
+export const CROP_ACCURATE_IMAGES = {
+  crop_rice: 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&w=600&q=80',
+  crop_black_gram: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Black_gram.jpg',
+  crop_green_gram: 'https://images.unsplash.com/photo-1788630030425-dddcab75c8ff?auto=format&fit=crop&w=600&q=80',
+  crop_groundnut: 'https://images.unsplash.com/photo-1549978113-29eb25c8177f?auto=format&fit=crop&w=600&q=80',
+  crop_sesame: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Sesamum_indicum.jpg',
+  crop_maize: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=600&q=80',
+  crop_pearl_millet: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Pearl_millet_after_combine_harvesting.jpg',
+  crop_finger_millet: 'https://upload.wikimedia.org/wikipedia/commons/2/25/Finger_millet_3_11-21-02.jpg',
+  crop_sorghum: 'https://upload.wikimedia.org/wikipedia/commons/d/d7/Sorghum_bicolor.JPG',
+  crop_cotton: 'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?auto=format&fit=crop&w=600&q=80',
+  crop_red_gram: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Cajanus_cajan.jpg',
+  crop_sugarcane: 'https://upload.wikimedia.org/wikipedia/commons/1/1f/Sugarcane_Field_in_Evening.jpg',
+  crop_banana: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=600&q=80',
+  crop_sunflower: 'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=600&q=80',
+  crop_kudiraivali: 'https://upload.wikimedia.org/wikipedia/commons/5/58/Echinochloa_crus-galli.jpg',
+  crop_thinai: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Setaria_italica_plant_%2801%29.jpg',
+  crop_cowpea: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Vigna_unguiculata_02.jpg',
+  crop_sunn_hemp: 'https://upload.wikimedia.org/wikipedia/commons/e/e3/Crotalaria_juncea.jpg',
+};
+
+export function getCropImage(crop) {
+  if (!crop) return 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&w=600&q=80';
+  if (crop.id && CROP_ACCURATE_IMAGES[crop.id]) return CROP_ACCURATE_IMAGES[crop.id];
+  const nameKey = (crop.name || '').toLowerCase();
+  for (const [id, url] of Object.entries(CROP_ACCURATE_IMAGES)) {
+    const rawKey = id.replace('crop_', '').replace(/_/g, ' ');
+    if (nameKey.includes(rawKey)) return url;
+  }
+  const botName = (crop.botanical_name || '').toLowerCase();
+  if (botName.includes('oryza')) return CROP_ACCURATE_IMAGES.crop_rice;
+  if (botName.includes('mungo')) return CROP_ACCURATE_IMAGES.crop_black_gram;
+  if (botName.includes('radiata')) return CROP_ACCURATE_IMAGES.crop_green_gram;
+  if (botName.includes('arachis')) return CROP_ACCURATE_IMAGES.crop_groundnut;
+  if (botName.includes('sesamum')) return CROP_ACCURATE_IMAGES.crop_sesame;
+  if (botName.includes('zea')) return CROP_ACCURATE_IMAGES.crop_maize;
+  if (botName.includes('pennisetum')) return CROP_ACCURATE_IMAGES.crop_pearl_millet;
+  if (botName.includes('eleusine')) return CROP_ACCURATE_IMAGES.crop_finger_millet;
+  if (botName.includes('sorghum')) return CROP_ACCURATE_IMAGES.crop_sorghum;
+  if (botName.includes('gossypium')) return CROP_ACCURATE_IMAGES.crop_cotton;
+  if (botName.includes('cajanus')) return CROP_ACCURATE_IMAGES.crop_red_gram;
+  if (botName.includes('saccharum')) return CROP_ACCURATE_IMAGES.crop_sugarcane;
+  if (botName.includes('musa')) return CROP_ACCURATE_IMAGES.crop_banana;
+  if (botName.includes('helianthus')) return CROP_ACCURATE_IMAGES.crop_sunflower;
+  if (botName.includes('echinochloa')) return CROP_ACCURATE_IMAGES.crop_kudiraivali;
+  if (botName.includes('setaria')) return CROP_ACCURATE_IMAGES.crop_thinai;
+  if (botName.includes('unguiculata')) return CROP_ACCURATE_IMAGES.crop_cowpea;
+  if (botName.includes('crotalaria')) return CROP_ACCURATE_IMAGES.crop_sunn_hemp;
+
+  return crop.image_url || 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&w=600&q=80';
+}
+
 export default function CropExplorerPage() {
   const { t, lang } = useLanguage();
   const { user, setUser } = useAuth();
@@ -450,13 +502,13 @@ export default function CropExplorerPage() {
               >
                 <div>
                   {/* Crop Image */}
-                  <div className="h-40 w-full bg-slate-100 relative overflow-hidden">
+                  <div className="h-44 w-full bg-slate-100 relative overflow-hidden">
                     <img
-                      src={crop.image_url}
+                      src={getCropImage(crop)}
                       alt={crop.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                       onError={(e) => {
-                        e.target.src = 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&w=600&q=80';
+                        e.target.src = 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&w=600&q=80';
                       }}
                     />
 
@@ -623,6 +675,27 @@ export default function CropExplorerPage() {
               </button>
             </div>
 
+            {/* Crop Image Banner in Detail Modal */}
+            <div className="h-44 sm:h-52 w-full rounded-2xl overflow-hidden relative shadow-inner bg-slate-100">
+              <img
+                src={getCropImage(selectedCropItem.crop)}
+                alt={selectedCropItem.crop.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&w=600&q=80';
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-white text-xs">
+                <span className="font-extrabold uppercase px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md">
+                  {selectedCropItem.crop.category}
+                </span>
+                <span className="font-mono font-bold text-emerald-300 bg-emerald-950/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-emerald-500/30">
+                  {selectedCropItem.suitability_score}% {lang === 'ta' ? 'பொருத்தம்' : 'Fit'}
+                </span>
+              </div>
+            </div>
+
             {/* District Soil & Climate Advice */}
             <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-xs">
               <h4 className="font-extrabold text-emerald-950 mb-1 flex items-center gap-1.5">
@@ -741,8 +814,15 @@ export default function CropExplorerPage() {
             {/* Modal Header */}
             <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-800 to-teal-800 text-white flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 flex items-center justify-center text-white shrink-0">
-                  <Sprout className="w-5 h-5" />
+                <div className="w-11 h-11 rounded-xl overflow-hidden ring-2 ring-white/30 shrink-0 bg-white/15">
+                  <img
+                    src={getCropImage(confirmingCropItem.crop)}
+                    alt={confirmingCropItem.crop.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&w=600&q=80';
+                    }}
+                  />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-sm sm:text-base font-extrabold tracking-tight truncate">

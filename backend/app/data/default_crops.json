@@ -5,13 +5,22 @@
     "tamil_name": "நெல் (Paddy)",
     "botanical_name": "Oryza sativa",
     "category": "Cereal",
-    "growing_seasons": ["Kuruvai (Jun-Sep)", "Samba (Aug-Jan)", "Thaladi (Sep-Feb)", "Navarai (Dec-May)"],
+    "growing_seasons": [
+      "Kuruvai (Jun-Sep)",
+      "Samba (Aug-Jan)",
+      "Thaladi (Sep-Feb)",
+      "Navarai (Dec-May)"
+    ],
     "duration_days_min": 105,
     "duration_days_max": 145,
     "duration_days_avg": 120,
     "water_req_mm": 1200,
     "drought_tolerance": "Low",
-    "suitable_soils": ["Alluvial Soil", "Clay Loam", "Black Soil"],
+    "suitable_soils": [
+      "Alluvial Soil",
+      "Clay Loam",
+      "Black Soil"
+    ],
     "temp_min_c": 20.0,
     "temp_max_c": 36.0,
     "ph_min": 5.5,
@@ -22,8 +31,18 @@
     "soil_health_impact": "Depletive",
     "market_demand": "Very High",
     "avg_yield_kg_acre": "2200 - 2800 kg",
-    "pests_diseases_susceptibility": ["Blast", "Brown Planthopper", "Stem Borer", "Bacterial Leaf Blight"],
-    "break_crop_compatibility": ["Black Gram", "Green Gram", "Sesame", "Groundnut"],
+    "pests_diseases_susceptibility": [
+      "Blast",
+      "Brown Planthopper",
+      "Stem Borer",
+      "Bacterial Leaf Blight"
+    ],
+    "break_crop_compatibility": [
+      "Black Gram",
+      "Green Gram",
+      "Sesame",
+      "Groundnut"
+    ],
     "image_url": "https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&w=600&q=80",
     "description": "Primary staple crop of Tamil Nadu and the Cauvery delta. Requires reliable water standing or controlled wetting/drying.",
     "description_tamil": "தமிழ்நாட்டின் பிரதான பயிர். காவேரி டெல்டாவின் முதன்மை உணவுப் பயிர், அதிக நீர் தேவைப்படும் பயிராகும்."
@@ -34,13 +53,22 @@
     "tamil_name": "உளுந்து (Black Gram)",
     "botanical_name": "Vigna mungo",
     "category": "Pulse",
-    "growing_seasons": ["Rice Fallow / Thaladi (Jan-Apr)", "Chithirai Pattam (Apr-Jun)", "Adipattam (Jul-Oct)"],
+    "growing_seasons": [
+      "Rice Fallow / Thaladi (Jan-Apr)",
+      "Chithirai Pattam (Apr-Jun)",
+      "Adipattam (Jul-Oct)"
+    ],
     "duration_days_min": 65,
     "duration_days_max": 75,
     "duration_days_avg": 70,
     "water_req_mm": 300,
     "drought_tolerance": "Moderate",
-    "suitable_soils": ["Alluvial Soil", "Black Soil", "Sandy Loam", "Clay Loam"],
+    "suitable_soils": [
+      "Alluvial Soil",
+      "Black Soil",
+      "Sandy Loam",
+      "Clay Loam"
+    ],
     "temp_min_c": 22.0,
     "temp_max_c": 38.0,
     "ph_min": 6.0,
@@ -51,9 +79,17 @@
     "soil_health_impact": "Restorative",
     "market_demand": "High",
     "avg_yield_kg_acre": "350 - 500 kg",
-    "pests_diseases_susceptibility": ["Yellow Mosaic Virus", "Powdery Mildew", "Pod Borer"],
-    "break_crop_compatibility": ["Rice / Paddy", "Maize", "Sorghum"],
-    "image_url": "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Yellow Mosaic Virus",
+      "Powdery Mildew",
+      "Pod Borer"
+    ],
+    "break_crop_compatibility": [
+      "Rice / Paddy",
+      "Maize",
+      "Sorghum"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Black_gram.jpg",
     "description": "Ideal rice-fallow pulse in Tamil Nadu. Broadcast into standing paddy 5-7 days prior to harvest to utilize residual soil moisture without tilling.",
     "description_tamil": "நெல் தரிசில் உளுந்து விதைப்பு மண் வளத்தை பெருக்கும். தழைச்சத்து சேர்த்து அடுத்த பயிருக்கு உரச்செலவை குறைக்கும்."
   },
@@ -63,13 +99,21 @@
     "tamil_name": "பச்சைப்பயறு (Green Gram)",
     "botanical_name": "Vigna radiata",
     "category": "Pulse",
-    "growing_seasons": ["Summer / Rice Fallow (Feb-May)", "Adipattam (Jun-Aug)", "Purattasipattam (Sep-Nov)"],
+    "growing_seasons": [
+      "Summer / Rice Fallow (Feb-May)",
+      "Adipattam (Jun-Aug)",
+      "Purattasipattam (Sep-Nov)"
+    ],
     "duration_days_min": 60,
     "duration_days_max": 70,
     "duration_days_avg": 65,
     "water_req_mm": 280,
     "drought_tolerance": "Moderate",
-    "suitable_soils": ["Sandy Loam", "Alluvial Soil", "Red Soil"],
+    "suitable_soils": [
+      "Sandy Loam",
+      "Alluvial Soil",
+      "Red Soil"
+    ],
     "temp_min_c": 22.0,
     "temp_max_c": 37.0,
     "ph_min": 6.2,
@@ -80,9 +124,17 @@
     "soil_health_impact": "Restorative",
     "market_demand": "High",
     "avg_yield_kg_acre": "350 - 450 kg",
-    "pests_diseases_susceptibility": ["Whitefly", "Yellow Mosaic Virus", "Cercospora Leaf Spot"],
-    "break_crop_compatibility": ["Rice / Paddy", "Millets", "Cotton"],
-    "image_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Whitefly",
+      "Yellow Mosaic Virus",
+      "Cercospora Leaf Spot"
+    ],
+    "break_crop_compatibility": [
+      "Rice / Paddy",
+      "Millets",
+      "Cotton"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1788630030425-dddcab75c8ff?auto=format&fit=crop&w=600&q=80",
     "description": "Fast-maturing summer legume. Extremely low water footprint, ideal for quick turnaround between primary cereal crops.",
     "description_tamil": "குறுகிய கால பயிர் (60-70 நாட்கள்). குறைந்த தண்ணீரில் அதிக பலன், மண் ஆரோக்கியத்திற்கு உகந்தது."
   },
@@ -92,13 +144,21 @@
     "tamil_name": "வேர்க்கடலை (Groundnut)",
     "botanical_name": "Arachis hypogaea",
     "category": "Oilseed",
-    "growing_seasons": ["Chithirai Pattam (Apr-May)", "Adipattam (Jun-Jul)", "Margazhipattam (Dec-Jan)"],
+    "growing_seasons": [
+      "Chithirai Pattam (Apr-May)",
+      "Adipattam (Jun-Jul)",
+      "Margazhipattam (Dec-Jan)"
+    ],
     "duration_days_min": 105,
     "duration_days_max": 125,
     "duration_days_avg": 115,
     "water_req_mm": 450,
     "drought_tolerance": "Moderate",
-    "suitable_soils": ["Red Sandy Loam", "Alluvial Soil", "Sandy Loam"],
+    "suitable_soils": [
+      "Red Sandy Loam",
+      "Alluvial Soil",
+      "Sandy Loam"
+    ],
     "temp_min_c": 20.0,
     "temp_max_c": 34.0,
     "ph_min": 6.0,
@@ -109,9 +169,18 @@
     "soil_health_impact": "Restorative",
     "market_demand": "Very High",
     "avg_yield_kg_acre": "900 - 1300 kg pods",
-    "pests_diseases_susceptibility": ["Tikka Leaf Spot", "Rust", "Spodoptera Litura", "Collar Rot"],
-    "break_crop_compatibility": ["Maize", "Pearl Millet", "Rice / Paddy"],
-    "image_url": "https://images.unsplash.com/photo-1567894340315-735d7c361db0?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Tikka Leaf Spot",
+      "Rust",
+      "Spodoptera Litura",
+      "Collar Rot"
+    ],
+    "break_crop_compatibility": [
+      "Maize",
+      "Pearl Millet",
+      "Rice / Paddy"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1549978113-29eb25c8177f?auto=format&fit=crop&w=600&q=80",
     "description": "Crucial cash-oilseed and soil replenisher in Tamil Nadu drylands and irrigated red soils.",
     "description_tamil": "எண்ணெய் வித்து பயிர் மற்றும் தழைச்சத்து நிலைநிறுத்தும் பயிர். நிலக்கடலை சாகுபடி மண் அமைப்பை மென்மையாக்கும்."
   },
@@ -121,13 +190,21 @@
     "tamil_name": "எள் (Gingelly)",
     "botanical_name": "Sesamum indicum",
     "category": "Oilseed",
-    "growing_seasons": ["Summer / Masi Pattam (Feb-Apr)", "Adipattam (Jul-Aug)", "Karthigai Pattam (Nov-Dec)"],
+    "growing_seasons": [
+      "Summer / Masi Pattam (Feb-Apr)",
+      "Adipattam (Jul-Aug)",
+      "Karthigai Pattam (Nov-Dec)"
+    ],
     "duration_days_min": 75,
     "duration_days_max": 90,
     "duration_days_avg": 85,
     "water_req_mm": 250,
     "drought_tolerance": "High",
-    "suitable_soils": ["Sandy Loam", "Alluvial Soil", "Red Soil"],
+    "suitable_soils": [
+      "Sandy Loam",
+      "Alluvial Soil",
+      "Red Soil"
+    ],
     "temp_min_c": 24.0,
     "temp_max_c": 40.0,
     "ph_min": 5.5,
@@ -138,9 +215,17 @@
     "soil_health_impact": "Neutral",
     "market_demand": "High",
     "avg_yield_kg_acre": "250 - 400 kg",
-    "pests_diseases_susceptibility": ["Shoot and Leaf Webbler", "Phyllody", "Root Rot"],
-    "break_crop_compatibility": ["Rice / Paddy", "Groundnut", "Sorghum"],
-    "image_url": "https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Shoot and Leaf Webbler",
+      "Phyllody",
+      "Root Rot"
+    ],
+    "break_crop_compatibility": [
+      "Rice / Paddy",
+      "Groundnut",
+      "Sorghum"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Sesamum_indicum.jpg",
     "description": "Thrives in hot summer conditions with minimal moisture. Excellent rice-follow crop in delta regions.",
     "description_tamil": "குறைந்த தண்ணீரில் வறட்சியை தாங்கி வளரும் எண்ணெய் வித்து. கோடை பருவத்தில் பயிரிட மிகச் சிறந்தது."
   },
@@ -150,13 +235,22 @@
     "tamil_name": "மக்காச்சோளம் (Maize)",
     "botanical_name": "Zea mays",
     "category": "Cereal",
-    "growing_seasons": ["Adipattam (Jul-Oct)", "Purattasipattam (Sep-Dec)", "Thai Pattam (Jan-Apr)"],
+    "growing_seasons": [
+      "Adipattam (Jul-Oct)",
+      "Purattasipattam (Sep-Dec)",
+      "Thai Pattam (Jan-Apr)"
+    ],
     "duration_days_min": 95,
     "duration_days_max": 115,
     "duration_days_avg": 105,
     "water_req_mm": 500,
     "drought_tolerance": "Moderate",
-    "suitable_soils": ["Red Soil", "Black Soil", "Clay Loam", "Alluvial Soil"],
+    "suitable_soils": [
+      "Red Soil",
+      "Black Soil",
+      "Clay Loam",
+      "Alluvial Soil"
+    ],
     "temp_min_c": 18.0,
     "temp_max_c": 35.0,
     "ph_min": 6.0,
@@ -167,8 +261,16 @@
     "soil_health_impact": "Depletive",
     "market_demand": "High",
     "avg_yield_kg_acre": "2500 - 3200 kg",
-    "pests_diseases_susceptibility": ["Fall Armyworm", "Turcicum Leaf Blight", "Stem Borer"],
-    "break_crop_compatibility": ["Groundnut", "Cowpea", "Green Gram"],
+    "pests_diseases_susceptibility": [
+      "Fall Armyworm",
+      "Turcicum Leaf Blight",
+      "Stem Borer"
+    ],
+    "break_crop_compatibility": [
+      "Groundnut",
+      "Cowpea",
+      "Green Gram"
+    ],
     "image_url": "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=600&q=80",
     "description": "High yield potential commercial grain crop used extensively for poultry feed, starch and food products.",
     "description_tamil": "கோழி தீவனத்திற்கும் தொழிற்சாலை பயன்பாட்டிற்கும் தேவைப்படும் தானியப் பயிர். நல்ல லாபம் தரும்."
@@ -179,13 +281,21 @@
     "tamil_name": "கம்பு (Bajra)",
     "botanical_name": "Pennisetum glaucum",
     "category": "Millet",
-    "growing_seasons": ["Adipattam (Jun-Sep)", "Purattasipattam (Sep-Dec)", "Summer (Jan-Apr)"],
+    "growing_seasons": [
+      "Adipattam (Jun-Sep)",
+      "Purattasipattam (Sep-Dec)",
+      "Summer (Jan-Apr)"
+    ],
     "duration_days_min": 75,
     "duration_days_max": 90,
     "duration_days_avg": 80,
     "water_req_mm": 300,
     "drought_tolerance": "High",
-    "suitable_soils": ["Sandy Loam", "Red Soil", "Light Alluvial"],
+    "suitable_soils": [
+      "Sandy Loam",
+      "Red Soil",
+      "Light Alluvial"
+    ],
     "temp_min_c": 22.0,
     "temp_max_c": 42.0,
     "ph_min": 5.5,
@@ -196,9 +306,17 @@
     "soil_health_impact": "Neutral",
     "market_demand": "High",
     "avg_yield_kg_acre": "1000 - 1500 kg",
-    "pests_diseases_susceptibility": ["Downy Mildew", "Ergot", "Rust"],
-    "break_crop_compatibility": ["Cowpea", "Horse Gram", "Groundnut"],
-    "image_url": "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Downy Mildew",
+      "Ergot",
+      "Rust"
+    ],
+    "break_crop_compatibility": [
+      "Cowpea",
+      "Horse Gram",
+      "Groundnut"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/43/Pearl_millet_after_combine_harvesting.jpg",
     "description": "Champion drought-tolerant nutrient-dense millet suited for arid pockets and rainfed farming in Tamil Nadu.",
     "description_tamil": "வறட்சியை தாங்கும் சத்து நிறைந்த சிறுதானியம். இரும்புச்சத்து மற்றும் கால்சியம் நிறைந்தது."
   },
@@ -208,13 +326,21 @@
     "tamil_name": "கேழ்வரகு / ராகி (Ragi)",
     "botanical_name": "Eleusine coracana",
     "category": "Millet",
-    "growing_seasons": ["Adipattam (Jul-Sep)", "Purattasipattam (Sep-Dec)", "Thai Pattam (Dec-Mar)"],
+    "growing_seasons": [
+      "Adipattam (Jul-Sep)",
+      "Purattasipattam (Sep-Dec)",
+      "Thai Pattam (Dec-Mar)"
+    ],
     "duration_days_min": 100,
     "duration_days_max": 120,
     "duration_days_avg": 110,
     "water_req_mm": 350,
     "drought_tolerance": "High",
-    "suitable_soils": ["Red Sandy Loam", "Alluvial Soil", "Laterite"],
+    "suitable_soils": [
+      "Red Sandy Loam",
+      "Alluvial Soil",
+      "Laterite"
+    ],
     "temp_min_c": 18.0,
     "temp_max_c": 35.0,
     "ph_min": 5.0,
@@ -225,9 +351,17 @@
     "soil_health_impact": "Neutral",
     "market_demand": "Very High",
     "avg_yield_kg_acre": "1200 - 1600 kg",
-    "pests_diseases_susceptibility": ["Blast", "Brown Leaf Spot", "Stem Borer"],
-    "break_crop_compatibility": ["Black Gram", "Cowpea", "Groundnut"],
-    "image_url": "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Blast",
+      "Brown Leaf Spot",
+      "Stem Borer"
+    ],
+    "break_crop_compatibility": [
+      "Black Gram",
+      "Cowpea",
+      "Groundnut"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/2/25/Finger_millet_3_11-21-02.jpg",
     "description": "Superfood millet rich in calcium and dietary fiber with strong and growing urban market demand.",
     "description_tamil": "அதிக கால்சியம் கொண்ட பாரம்பரிய சிறுதானியம். சர்க்கரை நோயாளிகளுக்கு உகந்த சத்தான உணவு."
   },
@@ -237,13 +371,21 @@
     "tamil_name": "சோளம் (Sorghum)",
     "botanical_name": "Sorghum bicolor",
     "category": "Millet",
-    "growing_seasons": ["Adipattam (Jul-Oct)", "Purattasipattam (Sep-Dec)", "Summer (Jan-Apr)"],
+    "growing_seasons": [
+      "Adipattam (Jul-Oct)",
+      "Purattasipattam (Sep-Dec)",
+      "Summer (Jan-Apr)"
+    ],
     "duration_days_min": 90,
     "duration_days_max": 110,
     "duration_days_avg": 100,
     "water_req_mm": 400,
     "drought_tolerance": "High",
-    "suitable_soils": ["Black Soil", "Clay Loam", "Red Soil"],
+    "suitable_soils": [
+      "Black Soil",
+      "Clay Loam",
+      "Red Soil"
+    ],
     "temp_min_c": 20.0,
     "temp_max_c": 38.0,
     "ph_min": 5.5,
@@ -254,9 +396,17 @@
     "soil_health_impact": "Neutral",
     "market_demand": "Moderate",
     "avg_yield_kg_acre": "1000 - 1400 kg",
-    "pests_diseases_susceptibility": ["Shoot Fly", "Stem Borer", "Grain Mold"],
-    "break_crop_compatibility": ["Red Gram", "Cowpea", "Black Gram"],
-    "image_url": "https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Shoot Fly",
+      "Stem Borer",
+      "Grain Mold"
+    ],
+    "break_crop_compatibility": [
+      "Red Gram",
+      "Cowpea",
+      "Black Gram"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Sorghum_bicolor.JPG",
     "description": "Dual-purpose grain and nutritious cattle fodder, well-adapted to black cotton soils of central and southern Tamil Nadu.",
     "description_tamil": "தானியம் மற்றும் கால்நடை தீவனத்திற்கு உகந்த பயிர். வறண்ட நிலங்களிலும் சிறப்பான விளைச்சல் தரும்."
   },
@@ -266,13 +416,20 @@
     "tamil_name": "பருத்தி (Cotton)",
     "botanical_name": "Gossypium hirsutum",
     "category": "Cash Crop",
-    "growing_seasons": ["Adipattam (Aug-Feb)", "Rice Fallow (Feb-Jul)"],
+    "growing_seasons": [
+      "Adipattam (Aug-Feb)",
+      "Rice Fallow (Feb-Jul)"
+    ],
     "duration_days_min": 140,
     "duration_days_max": 165,
     "duration_days_avg": 150,
     "water_req_mm": 650,
     "drought_tolerance": "Moderate",
-    "suitable_soils": ["Black Cotton Soil", "Deep Alluvial", "Clay Loam"],
+    "suitable_soils": [
+      "Black Cotton Soil",
+      "Deep Alluvial",
+      "Clay Loam"
+    ],
     "temp_min_c": 21.0,
     "temp_max_c": 37.0,
     "ph_min": 6.5,
@@ -283,8 +440,17 @@
     "soil_health_impact": "Depletive",
     "market_demand": "High",
     "avg_yield_kg_acre": "800 - 1200 kg seed cotton",
-    "pests_diseases_susceptibility": ["Bollworm", "Whitefly", "Aphids", "Root Rot"],
-    "break_crop_compatibility": ["Black Gram", "Green Gram", "Cowpea"],
+    "pests_diseases_susceptibility": [
+      "Bollworm",
+      "Whitefly",
+      "Aphids",
+      "Root Rot"
+    ],
+    "break_crop_compatibility": [
+      "Black Gram",
+      "Green Gram",
+      "Cowpea"
+    ],
     "image_url": "https://images.unsplash.com/photo-1606041008023-472dfb5e530f?auto=format&fit=crop&w=600&q=80",
     "description": "Major commercial cash crop in Tamil Nadu black soil tracts (Virudhunagar, Salem, Coimbatore).",
     "description_tamil": "முக்கிய பணப்பயிர். ஜவுளி தொழிலுக்கு தேவையான பஞ்சு உற்பத்திக்கு ஆதாரமான பயிர்."
@@ -295,13 +461,20 @@
     "tamil_name": "துவரை (Pigeon Pea)",
     "botanical_name": "Cajanus cajan",
     "category": "Pulse",
-    "growing_seasons": ["Adipattam (Jul-Dec)", "Purattasipattam (Sep-Feb)"],
+    "growing_seasons": [
+      "Adipattam (Jul-Dec)",
+      "Purattasipattam (Sep-Feb)"
+    ],
     "duration_days_min": 130,
     "duration_days_max": 180,
     "duration_days_avg": 150,
     "water_req_mm": 500,
     "drought_tolerance": "High",
-    "suitable_soils": ["Red Soil", "Black Soil", "Loam"],
+    "suitable_soils": [
+      "Red Soil",
+      "Black Soil",
+      "Loam"
+    ],
     "temp_min_c": 18.0,
     "temp_max_c": 36.0,
     "ph_min": 5.5,
@@ -312,9 +485,17 @@
     "soil_health_impact": "Restorative",
     "market_demand": "Very High",
     "avg_yield_kg_acre": "600 - 900 kg",
-    "pests_diseases_susceptibility": ["Helicoverpa Pod Borer", "Fusarium Wilt", "Sterility Mosaic Virus"],
-    "break_crop_compatibility": ["Rice / Paddy", "Sorghum", "Cotton"],
-    "image_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Helicoverpa Pod Borer",
+      "Fusarium Wilt",
+      "Sterility Mosaic Virus"
+    ],
+    "break_crop_compatibility": [
+      "Rice / Paddy",
+      "Sorghum",
+      "Cotton"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Cajanus_cajan.jpg",
     "description": "Indispensable protein pulse for sambar; unmatched soil rejuvenation and organic leaf drop.",
     "description_tamil": "சாம்பார் செய்வதற்கு அத்தியாவசியமான பருப்பு. இதன் வேர்கள் மண்ணை ஆழமாக துளைத்து வளம் சேர்க்கும்."
   },
@@ -324,13 +505,20 @@
     "tamil_name": "கரும்பு (Sugarcane)",
     "botanical_name": "Saccharum officinarum",
     "category": "Commercial",
-    "growing_seasons": ["Special Season (Jun-Jul)", "Main Season (Dec-Jan)"],
+    "growing_seasons": [
+      "Special Season (Jun-Jul)",
+      "Main Season (Dec-Jan)"
+    ],
     "duration_days_min": 300,
     "duration_days_max": 360,
     "duration_days_avg": 330,
     "water_req_mm": 1800,
     "drought_tolerance": "Low",
-    "suitable_soils": ["Alluvial Soil", "Clay Loam", "Black Soil"],
+    "suitable_soils": [
+      "Alluvial Soil",
+      "Clay Loam",
+      "Black Soil"
+    ],
     "temp_min_c": 20.0,
     "temp_max_c": 38.0,
     "ph_min": 6.5,
@@ -341,9 +529,17 @@
     "soil_health_impact": "Depletive",
     "market_demand": "High",
     "avg_yield_kg_acre": "40 - 55 tonnes",
-    "pests_diseases_susceptibility": ["Early Shoot Borer", "Red Rot", "Woolly Aphid"],
-    "break_crop_compatibility": ["Sunn Hemp", "Cowpea", "Black Gram"],
-    "image_url": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Early Shoot Borer",
+      "Red Rot",
+      "Woolly Aphid"
+    ],
+    "break_crop_compatibility": [
+      "Sunn Hemp",
+      "Cowpea",
+      "Black Gram"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Sugarcane_Field_in_Evening.jpg",
     "description": "Long-duration perennial grass crop supporting sugar mills and jaggery manufacturing across Tamil Nadu.",
     "description_tamil": "நீண்ட கால பணப்பயிர். சர்க்கரை ஆலைகளுக்கு மூலப்பொருள், அதிக நீர் மற்றும் சத்துக்களை எடுத்துக்கொள்ளும்."
   },
@@ -353,13 +549,21 @@
     "tamil_name": "வாழை (Banana)",
     "botanical_name": "Musa acuminata",
     "category": "Horticultural",
-    "growing_seasons": ["Year-round", "Thai Pattam (Jan-Feb)", "Adipattam (Jul-Aug)"],
+    "growing_seasons": [
+      "Year-round",
+      "Thai Pattam (Jan-Feb)",
+      "Adipattam (Jul-Aug)"
+    ],
     "duration_days_min": 300,
     "duration_days_max": 365,
     "duration_days_avg": 330,
     "water_req_mm": 1600,
     "drought_tolerance": "Low",
-    "suitable_soils": ["Alluvial Soil", "Deep Loam", "Well-drained Clay Loam"],
+    "suitable_soils": [
+      "Alluvial Soil",
+      "Deep Loam",
+      "Well-drained Clay Loam"
+    ],
     "temp_min_c": 15.0,
     "temp_max_c": 38.0,
     "ph_min": 6.0,
@@ -370,8 +574,16 @@
     "soil_health_impact": "Neutral",
     "market_demand": "Very High",
     "avg_yield_kg_acre": "20 - 30 tonnes",
-    "pests_diseases_susceptibility": ["Panama Wilt", "Sigatoka Leaf Spot", "Banana Pseudostem Weevil"],
-    "break_crop_compatibility": ["Sunn Hemp", "Black Gram", "Green Manure"],
+    "pests_diseases_susceptibility": [
+      "Panama Wilt",
+      "Sigatoka Leaf Spot",
+      "Banana Pseudostem Weevil"
+    ],
+    "break_crop_compatibility": [
+      "Sunn Hemp",
+      "Black Gram",
+      "Green Manure"
+    ],
     "image_url": "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=600&q=80",
     "description": "Prized fruit and foliage cash crop in the Cauvery river basin (Tiruchirappalli, Thanjavur, Karur).",
     "description_tamil": "காவிரி படுகையின் மதிப்புமிக்க தோட்டக்கலைப் பயிர். பழம், இலை, தண்டு என அனைத்தும் வருமானம் தரும்."
@@ -382,13 +594,21 @@
     "tamil_name": "சூரியகாந்தி (Sunflower)",
     "botanical_name": "Helianthus annuus",
     "category": "Oilseed",
-    "growing_seasons": ["Karthigai (Oct-Nov)", "Thai (Dec-Jan)", "Chithirai (Apr-May)"],
+    "growing_seasons": [
+      "Karthigai (Oct-Nov)",
+      "Thai (Dec-Jan)",
+      "Chithirai (Apr-May)"
+    ],
     "duration_days_min": 85,
     "duration_days_max": 95,
     "duration_days_avg": 90,
     "water_req_mm": 350,
     "drought_tolerance": "Moderate",
-    "suitable_soils": ["Black Soil", "Sandy Loam", "Alluvial Soil"],
+    "suitable_soils": [
+      "Black Soil",
+      "Sandy Loam",
+      "Alluvial Soil"
+    ],
     "temp_min_c": 20.0,
     "temp_max_c": 35.0,
     "ph_min": 6.5,
@@ -399,8 +619,16 @@
     "soil_health_impact": "Neutral",
     "market_demand": "High",
     "avg_yield_kg_acre": "600 - 850 kg seeds",
-    "pests_diseases_susceptibility": ["Head Borer", "Alternaria Blight", "Rust"],
-    "break_crop_compatibility": ["Rice / Paddy", "Black Gram", "Maize"],
+    "pests_diseases_susceptibility": [
+      "Head Borer",
+      "Alternaria Blight",
+      "Rust"
+    ],
+    "break_crop_compatibility": [
+      "Rice / Paddy",
+      "Black Gram",
+      "Maize"
+    ],
     "image_url": "https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=600&q=80",
     "description": "Short duration oilseed with great photo-insensitivity, adaptable to varied crop rotations.",
     "description_tamil": "எண்ணெய் வித்து பயிர். எந்த பருவத்திலும் பயிரிடக்கூடிய நெகிழ்வுத்தன்மை கொண்டது."
@@ -411,13 +639,20 @@
     "tamil_name": "குதிரைவாலி (Barnyard Millet)",
     "botanical_name": "Echinochloa esculenta",
     "category": "Millet",
-    "growing_seasons": ["Purattasipattam (Sep-Nov)", "Summer (Feb-Apr)"],
+    "growing_seasons": [
+      "Purattasipattam (Sep-Nov)",
+      "Summer (Feb-Apr)"
+    ],
     "duration_days_min": 70,
     "duration_days_max": 85,
     "duration_days_avg": 75,
     "water_req_mm": 220,
     "drought_tolerance": "High",
-    "suitable_soils": ["Sandy Loam", "Gravelly Red Soil", "Clay Loam"],
+    "suitable_soils": [
+      "Sandy Loam",
+      "Gravelly Red Soil",
+      "Clay Loam"
+    ],
     "temp_min_c": 18.0,
     "temp_max_c": 38.0,
     "ph_min": 5.5,
@@ -428,9 +663,15 @@
     "soil_health_impact": "Restorative",
     "market_demand": "High",
     "avg_yield_kg_acre": "700 - 950 kg",
-    "pests_diseases_susceptibility": ["Smut", "Rust"],
-    "break_crop_compatibility": ["Green Gram", "Groundnut"],
-    "image_url": "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Smut",
+      "Rust"
+    ],
+    "break_crop_compatibility": [
+      "Green Gram",
+      "Groundnut"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/58/Echinochloa_crus-galli.jpg",
     "description": "Fastest growing millet with lowest water consumption. Outstanding fiber content.",
     "description_tamil": "மிகக் குறுகிய காலத்தில் விளையும் பாரம்பரிய சிறுதானியம். அதிக நார்ச்சத்து கொண்டது."
   },
@@ -440,13 +681,20 @@
     "tamil_name": "தினை (Foxtail Millet)",
     "botanical_name": "Setaria italica",
     "category": "Millet",
-    "growing_seasons": ["Adipattam (Jul-Aug)", "Purattasipattam (Sep-Oct)"],
+    "growing_seasons": [
+      "Adipattam (Jul-Aug)",
+      "Purattasipattam (Sep-Oct)"
+    ],
     "duration_days_min": 80,
     "duration_days_max": 95,
     "duration_days_avg": 85,
     "water_req_mm": 250,
     "drought_tolerance": "High",
-    "suitable_soils": ["Red Soil", "Sandy Loam", "Light Black Soil"],
+    "suitable_soils": [
+      "Red Soil",
+      "Sandy Loam",
+      "Light Black Soil"
+    ],
     "temp_min_c": 18.0,
     "temp_max_c": 36.0,
     "ph_min": 5.5,
@@ -457,9 +705,15 @@
     "soil_health_impact": "Neutral",
     "market_demand": "High",
     "avg_yield_kg_acre": "750 - 1000 kg",
-    "pests_diseases_susceptibility": ["Blast", "Rust"],
-    "break_crop_compatibility": ["Cowpea", "Horse Gram"],
-    "image_url": "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Blast",
+      "Rust"
+    ],
+    "break_crop_compatibility": [
+      "Cowpea",
+      "Horse Gram"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/98/Setaria_italica_plant_%2801%29.jpg",
     "description": "Ancient Sangam-era grain mentioned in Tamil classical literature. High protein and low glycemic index.",
     "description_tamil": "சங்க காலம் தொட்டே பயிரிடப்படும் பாரம்பரிய தானியம். ஊட்டச்சத்து நிறைந்தது."
   },
@@ -469,13 +723,21 @@
     "tamil_name": "காராமணி (Cowpea)",
     "botanical_name": "Vigna unguiculata",
     "category": "Pulse",
-    "growing_seasons": ["Adipattam (Jul-Sep)", "Purattasipattam (Sep-Nov)", "Summer (Feb-Apr)"],
+    "growing_seasons": [
+      "Adipattam (Jul-Sep)",
+      "Purattasipattam (Sep-Nov)",
+      "Summer (Feb-Apr)"
+    ],
     "duration_days_min": 70,
     "duration_days_max": 85,
     "duration_days_avg": 75,
     "water_req_mm": 300,
     "drought_tolerance": "High",
-    "suitable_soils": ["Red Sandy Loam", "Alluvial", "Clay Loam"],
+    "suitable_soils": [
+      "Red Sandy Loam",
+      "Alluvial",
+      "Clay Loam"
+    ],
     "temp_min_c": 20.0,
     "temp_max_c": 38.0,
     "ph_min": 5.5,
@@ -486,9 +748,16 @@
     "soil_health_impact": "Restorative",
     "market_demand": "High",
     "avg_yield_kg_acre": "450 - 650 kg",
-    "pests_diseases_susceptibility": ["Pod Borer", "Aphids"],
-    "break_crop_compatibility": ["Maize", "Sorghum", "Pearl Millet"],
-    "image_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Pod Borer",
+      "Aphids"
+    ],
+    "break_crop_compatibility": [
+      "Maize",
+      "Sorghum",
+      "Pearl Millet"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Vigna_unguiculata_02.jpg",
     "description": "Resilient legume ideal for intercropping or rotational green cover in drylands.",
     "description_tamil": "வறட்சியைத் தாங்கி விளையும் பயறு வகை. நிலத்திற்கு தழைச்சத்தும் நிழலும் தந்து களைகளை கட்டுப்படுத்தும்."
   },
@@ -498,13 +767,21 @@
     "tamil_name": "சணப்பை (Sunn Hemp)",
     "botanical_name": "Crotalaria juncea",
     "category": "Green Manure",
-    "growing_seasons": ["Summer (Apr-May)", "Pre-Samba (Jul-Aug)"],
+    "growing_seasons": [
+      "Summer (Apr-May)",
+      "Pre-Samba (Jul-Aug)"
+    ],
     "duration_days_min": 45,
     "duration_days_max": 60,
     "duration_days_avg": 50,
     "water_req_mm": 200,
     "drought_tolerance": "High",
-    "suitable_soils": ["Alluvial Soil", "Red Soil", "Clay Loam", "Sandy Loam"],
+    "suitable_soils": [
+      "Alluvial Soil",
+      "Red Soil",
+      "Clay Loam",
+      "Sandy Loam"
+    ],
     "temp_min_c": 20.0,
     "temp_max_c": 40.0,
     "ph_min": 5.0,
@@ -515,11 +792,17 @@
     "soil_health_impact": "Restorative",
     "market_demand": "High",
     "avg_yield_kg_acre": "10 - 15 tonnes biomass",
-    "pests_diseases_susceptibility": ["Flea Beetle", "Sunn Hemp Moth"],
-    "break_crop_compatibility": ["Rice / Paddy", "Sugarcane", "Banana"],
-    "image_url": "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&w=600&q=80",
+    "pests_diseases_susceptibility": [
+      "Flea Beetle",
+      "Sunn Hemp Moth"
+    ],
+    "break_crop_compatibility": [
+      "Rice / Paddy",
+      "Sugarcane",
+      "Banana"
+    ],
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Crotalaria_juncea.jpg",
     "description": "Fast-growing green manure that revitalizes worn-out soils and dramatically improves microbial biodiversity.",
     "description_tamil": "மண்ணிற்கு உரம் சேர்க்கும் சிறந்த பசுந்தாள் உரப்பயிர். 45 நாட்களில் மடக்கி உழும்போது மண் வளம் பல மடங்கு கூடும்."
   }
 ]
-

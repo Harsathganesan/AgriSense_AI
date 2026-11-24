@@ -45,6 +45,7 @@ async def register(user_data: UserRegister):
             "market_profitability": 0.30,
             "risk_tolerance": "medium"
         },
+        # pyrefly: ignore[deprecated]
         "created_at": datetime.utcnow().isoformat()
     }
     users_col.insert_one(user_doc)
@@ -94,6 +95,7 @@ async def register(user_data: UserRegister):
 
     # Auto-provision user's default farm matching their registered district
     farms_col = get_collection("farms")
+    # pyrefly: ignore[deprecated]
     now_iso = datetime.utcnow().isoformat()
     farm_doc = {
         "_id": str(uuid.uuid4()),
@@ -222,15 +224,19 @@ async def update_profile(updates: UserProfileUpdate, current_user: dict = Depend
     if updates.district is not None:
         set_fields["district"] = updates.district
     if updates.registered_location is not None:
+        # pyrefly: ignore[unsupported-operation]
         set_fields["registered_location"] = updates.registered_location
     elif updates.country is not None or updates.state is not None or updates.district is not None:
         c = updates.country or current_user.get("country", "India")
         s = updates.state or current_user.get("state", "Tamil Nadu")
         d = updates.district or current_user.get("district", "Thanjavur")
+        # pyrefly: ignore[unsupported-operation]
         set_fields["registered_location"] = {"country": c, "state": s, "district": d}
     if updates.current_gps_location is not None:
+        # pyrefly: ignore[unsupported-operation]
         set_fields["current_gps_location"] = updates.current_gps_location
     if updates.priorities is not None:
+        # pyrefly: ignore[deprecated, unsupported-operation]
         set_fields["priorities"] = updates.priorities.dict()
 
     if set_fields:
