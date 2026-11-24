@@ -118,9 +118,9 @@ export const assistantApi = {
 };
 
 export const reportsApi = {
-  generate: (farmId = 'default_farm', district = 'Pudukkottai') =>
+  generate: (farmId = 'default_farm', district = 'Thanjavur') =>
     axios.post('/api/reports/generate', { farm_id: farmId, district }),
-  exportDirect: (district = 'Pudukkottai', farmId = 'default_farm') =>
+  exportDirect: (district = 'Thanjavur', farmId = 'default_farm') =>
     axios.get(`/api/reports/export?district=${encodeURIComponent(district)}&farm_id=${encodeURIComponent(farmId)}`, {
       responseType: 'blob'
     }),

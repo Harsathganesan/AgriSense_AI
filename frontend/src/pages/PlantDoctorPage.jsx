@@ -28,11 +28,14 @@ import {
 import { diseaseApi } from '../services/api';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useFarm } from '../contexts/FarmContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function PlantDoctorPage() {
   const { lang } = useLanguage();
   const { currentDistrict } = useFarm();
+  const { user } = useAuth();
   const isTamil = lang === 'ta';
+  const activeDistrict = currentDistrict || user?.registered_location?.district || user?.district || 'Thanjavur';
 
   // Scanner State
   const [selectedImage, setSelectedImage] = useState(null);
@@ -146,7 +149,7 @@ export default function PlantDoctorPage() {
 
     const formData = new FormData();
     formData.append('file', selectedImage);
-    formData.append('district', currentDistrict || 'Pudukkottai');
+    formData.append('district', activeDistrict);
     if (selectedCrop !== 'All') {
       formData.append('crop_hint', selectedCrop);
     }
@@ -272,7 +275,7 @@ export default function PlantDoctorPage() {
                 <span>{isTamil ? 'மாவட்ட வானிலை' : 'District Telemetry'}</span>
               </div>
               <div className="text-xs sm:text-sm font-extrabold text-white sm:mt-0.5">
-                {currentDistrict || 'Pudukkottai'}, Tamil Nadu
+                {activeDistrict}, Tamil Nadu
               </div>
             </div>
           </div>

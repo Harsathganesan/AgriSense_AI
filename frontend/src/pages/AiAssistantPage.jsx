@@ -21,7 +21,7 @@ export default function AiAssistantPage() {
   const { user } = useAuth();
   const { currentDistrict } = useFarm();
 
-  const district = currentDistrict || user?.registered_location?.district || user?.district || 'Pudukkottai';
+  const district = currentDistrict || user?.registered_location?.district || user?.district || 'Thanjavur';
 
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');

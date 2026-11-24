@@ -20,10 +20,13 @@ export const FarmProvider = ({ children }) => {
       if (Array.isArray(data)) {
         setFarms(data);
         if (data.length > 0) {
-          // Restore saved farm ID or select first
+          const userDist = user?.registered_location?.district || user?.district;
           const savedId = localStorage.getItem('agrisense_active_farm_id');
-          const found = data.find(f => f.id === savedId) || data[0];
-          setActiveFarm(found);
+          // Prefer active farm matching user's registered district or savedId
+          const savedFarm = savedId ? data.find(f => f.id === savedId) : null;
+          const matchedDistrictFarm = userDist ? data.find(f => f.district?.toLowerCase() === userDist?.toLowerCase()) : null;
+          const targetFarm = savedFarm || matchedDistrictFarm || data[0];
+          setActiveFarm(targetFarm);
         } else {
           setActiveFarm(null);
         }
@@ -78,7 +81,7 @@ export const FarmProvider = ({ children }) => {
     await fetchFarms();
   };
 
-  const currentDistrict = activeFarm?.district || user?.registered_location?.district || user?.district || 'Pudukkottai';
+  const currentDistrict = activeFarm?.district || user?.registered_location?.district || user?.district || 'Thanjavur';
 
   return (
     <FarmContext.Provider value={{

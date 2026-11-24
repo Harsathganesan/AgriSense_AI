@@ -127,6 +127,8 @@ export default function DashboardPage() {
   const registeredState = user?.registered_location?.state || user?.state || "Tamil Nadu";
 
   const [activeDistrict, setActiveDistrict] = useState(() => {
+    const userDist = user?.registered_location?.district || user?.district;
+    if (userDist) return userDist;
     try {
       const stored = localStorage.getItem('agrisense_tracked_crop');
       if (stored) {
@@ -134,8 +136,16 @@ export default function DashboardPage() {
         if (parsed.district) return parsed.district;
       }
     } catch (e) {}
-    return user?.registered_location?.district || user?.district || "Pudukkottai";
+    return "Thanjavur";
   });
+
+  // Ensure active district dynamically synchronizes with the logged-in user's registered district
+  useEffect(() => {
+    const userDist = user?.registered_location?.district || user?.district;
+    if (userDist && userDist !== activeDistrict) {
+      setActiveDistrict(userDist);
+    }
+  }, [user]);
 
   // Tracked Crop from Crop Explorer & Agri Tracker
   const [trackedCropData, setTrackedCropData] = useState(() => {

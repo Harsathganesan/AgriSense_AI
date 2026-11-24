@@ -42,7 +42,17 @@ export const AuthProvider = ({ children }) => {
     fetchMe();
   }, [token]);
 
+  const purgeStaleCache = () => {
+    try {
+      localStorage.removeItem('agrisense_tracked_crop');
+      localStorage.removeItem('agrisense_tracked_crops_list');
+      localStorage.removeItem('agrisense_active_farm_id');
+      localStorage.removeItem('agrisense_gps_configured');
+    } catch (e) {}
+  };
+
   const login = async (email, password) => {
+    purgeStaleCache();
     const res = await axios.post('/api/auth/login', { email, password });
     if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE')) {
       throw new Error("Backend API unreachable: Received HTML instead of JSON. Please verify backend URL.");
@@ -55,6 +65,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (userData) => {
+    purgeStaleCache();
     const res = await axios.post('/api/auth/register', userData);
     if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE')) {
       throw new Error("Backend API unreachable: Received HTML instead of JSON. Please verify backend URL.");
@@ -67,6 +78,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    purgeStaleCache();
     setToken(null);
     setUser(null);
     localStorage.removeItem('agrisense_token');

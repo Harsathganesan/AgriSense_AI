@@ -16,6 +16,9 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useFarm } from '../contexts/FarmContext';
+import { getDistrictCoords } from '../data/locationHierarchy';
 import { analysisApi } from '../services/api';
 
 // Custom Map Marker Icon
@@ -52,14 +55,18 @@ function MapClickSetter({ onMapClick }) {
 
 export default function MyFarmPage() {
   const { lang } = useLanguage();
+  const { user } = useAuth();
+  const { activeFarm, currentDistrict } = useFarm();
 
-  // Pudukkottai default coordinates
-  const DEFAULT_LAT = 10.3833;
-  const DEFAULT_LON = 78.8000;
+  const userDistrict = activeFarm?.district || user?.registered_location?.district || user?.district || currentDistrict || 'Thanjavur';
+  const defaultDistrictCoords = getDistrictCoords(userDistrict);
 
-  const [inputLat, setInputLat] = useState('10.3833');
-  const [inputLon, setInputLon] = useState('78.8000');
-  const [activeCoords, setActiveCoords] = useState({ lat: DEFAULT_LAT, lon: DEFAULT_LON });
+  const initialLat = activeFarm?.latitude || defaultDistrictCoords.lat;
+  const initialLon = activeFarm?.longitude || defaultDistrictCoords.lon;
+
+  const [inputLat, setInputLat] = useState(String(initialLat));
+  const [inputLon, setInputLon] = useState(String(initialLon));
+  const [activeCoords, setActiveCoords] = useState({ lat: initialLat, lon: initialLon });
   
   const [mapLayer, setMapLayer] = useState('standard'); // 'standard', 'satellite'
   const [analysisData, setAnalysisData] = useState(null);
@@ -87,10 +94,21 @@ export default function MyFarmPage() {
     }
   };
 
-  // Initial load with Pudukkottai
+  // Initial load and sync with registered user / farm coordinates
   useEffect(() => {
-    fetchAnalysis(DEFAULT_LAT, DEFAULT_LON);
-  }, []);
+    const dist = activeFarm?.district || user?.registered_location?.district || user?.district;
+    if (dist) {
+      const coords = (activeFarm?.latitude && activeFarm?.longitude)
+        ? { lat: activeFarm.latitude, lon: activeFarm.longitude }
+        : getDistrictCoords(dist);
+      setInputLat(String(coords.lat));
+      setInputLon(String(coords.lon));
+      setActiveCoords(coords);
+      fetchAnalysis(coords.lat, coords.lon);
+    } else {
+      fetchAnalysis(initialLat, initialLon);
+    }
+  }, [user, activeFarm]);
 
   // Get Current GPS Location from Mobile / Device
   const handleGetCurrentLocation = () => {
@@ -223,8 +241,8 @@ export default function MyFarmPage() {
             </h1>
             <p className="text-xs md:text-sm text-slate-500 font-medium">
               {lang === 'ta'
-                ? 'புதுக்கோட்டை & பண்ணை இருப்பிடம், மண்-மணல் கட்டமைப்பு மற்றும் நாசா வானிலை ஆய்வு'
-                : 'Pudukkottai farm coordinates, sand-soil composition & NASA weather telemetry'}
+                ? `${loc?.district || userDistrict} பண்ணை இருப்பிடம், மண் கட்டமைப்பு மற்றும் நாசா வானிலை ஆய்வு`
+                : `${loc?.district || userDistrict} farm coordinates, soil composition & NASA weather telemetry`}
             </p>
           </div>
         </div>
@@ -237,7 +255,7 @@ export default function MyFarmPage() {
               {lang === 'ta' ? 'தேர்ந்தெடுக்கப்பட்ட இடம்' : 'Active Farm Location'}
             </span>
             <span className="font-extrabold text-slate-900">
-              {loc?.village || 'Pudukkottai'}, {loc?.district || 'Pudukkottai'}
+              {loc?.village || `${userDistrict} Farm`}, {loc?.district || userDistrict}
             </span>
             <span className="text-slate-500 text-[11px] ml-1.5 font-mono">
               ({activeCoords.lat.toFixed(4)}°N, {activeCoords.lon.toFixed(4)}°E)
@@ -395,7 +413,7 @@ export default function MyFarmPage() {
               <Popup>
                 <div className="p-1 min-w-[210px] text-slate-800">
                   <p className="font-extrabold text-sm text-[#238636] flex items-center gap-1">
-                    <MapPin className="w-4 h-4 inline" /> {loc?.village || 'Pudukkottai Farm'}
+                    <MapPin className="w-4 h-4 inline" /> {loc?.village || `${userDistrict} Farm`}
                   </p>
                   <p className="text-xs text-slate-500 font-medium">
                     {loc?.taluk}, {loc?.district}
@@ -587,8 +605,8 @@ export default function MyFarmPage() {
             </h2>
             <p className="text-xs text-slate-500 font-medium">
               {lang === 'ta'
-                ? 'வட்டார மண் பரிசோதனை கூடம் (TNAU Vamban, Pudukkottai) மற்றும் நாசா SMAP செயற்கைக்கோள் தரவு'
-                : 'Laboratory Soil Benchmark (TNAU Vamban, Pudukkottai) & NASA SMAP Satellite Moisture'}
+                ? `வட்டார மண் பரிசோதனை கூடம் (${userDistrict}) மற்றும் நாசா SMAP செயற்கைக்கோள் தரவு`
+                : `Laboratory Soil Benchmark (${userDistrict}) & NASA SMAP Satellite Moisture`}
             </p>
           </div>
           <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
@@ -658,10 +676,10 @@ export default function MyFarmPage() {
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
               <FileSpreadsheet className="w-4 h-4 text-[#238636]" />
-              {lang === 'ta' ? 'மண் வேதியியல் பரிசோதனை அளவுகள் (TNAU Vamban, Pudukkottai)' : 'Certified Soil Nutrient Chemistry (TNAU Vamban, Pudukkottai)'}
+              {lang === 'ta' ? `மண் வேதியியல் பரிசோதனை அளவுகள் (${userDistrict})` : `Certified Soil Nutrient Chemistry (${userDistrict})`}
             </span>
             <span className="text-[11px] text-slate-400 font-medium">
-              {baselineLab?.lab_name || 'TNAU Regional Research Station, Vamban, Pudukkottai'}
+              {baselineLab?.lab_name || `ICAR / TNAU Regional Soil Research Station, ${userDistrict}`}
             </span>
           </div>
 

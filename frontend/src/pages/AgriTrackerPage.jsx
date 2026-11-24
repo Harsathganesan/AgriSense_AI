@@ -309,9 +309,17 @@ export default function AgriTrackerPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const initialDistrict = user?.registered_location?.district || user?.district || 'Pudukkottai';
+  const initialDistrict = user?.registered_location?.district || user?.district || 'Thanjavur';
 
   const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict);
+
+  // Sync if user in AuthContext updates or logs in
+  useEffect(() => {
+    const userDist = user?.registered_location?.district || user?.district;
+    if (userDist && userDist !== selectedDistrict) {
+      setSelectedDistrict(userDist);
+    }
+  }, [user]);
   const [currentDay, setCurrentDay] = useState(18);
   const [rainfallAmountMm, setRainfallAmountMm] = useState(0.0); // Default clear/dry (0 mm)
   const [speaking, setSpeaking] = useState(false);

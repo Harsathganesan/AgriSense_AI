@@ -42,7 +42,7 @@ export default function CropExplorerPage() {
 
   const state = user?.registered_location?.state || user?.state || 'Tamil Nadu';
   const country = user?.registered_location?.country || user?.country || 'India';
-  const initialDistrict = user?.registered_location?.district || user?.district || 'Pudukkottai';
+  const initialDistrict = user?.registered_location?.district || user?.district || 'Thanjavur';
 
   const { activeFarm } = useFarm();
   const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict);

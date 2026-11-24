@@ -68,12 +68,78 @@ def _serialize_farm(f: Dict[str, Any]) -> Dict[str, Any]:
 async def list_farms(current_user: dict = Depends(get_current_user)):
     """
     List all farms belonging strictly to the authenticated user.
-    Returns an empty array [] if no farms exist for the user.
+    If no farm exists for this user, automatically create a default farm
+    matching their registered district and location.
     """
     user_id = str(current_user.get("_id", ""))
     farms_col = get_collection("farms")
     cursor = farms_col.find({"user_id": user_id})
     farms = [_serialize_farm(doc) for doc in cursor]
+    if not farms:
+        dist_coords = {
+            "thanjavur": (10.7870, 79.1378),
+            "tiruvarur": (10.7719, 79.6358),
+            "nagapattinam": (10.7656, 79.8424),
+            "mayiladuthurai": (11.1075, 79.6523),
+            "tiruchirappalli": (10.7905, 78.7047),
+            "pudukkottai": (10.3833, 78.8001),
+            "madurai": (9.9252, 78.1198),
+            "dindigul": (10.3673, 77.9803),
+            "theni": (10.0104, 77.4768),
+            "ramanathapuram": (9.3639, 78.8395),
+            "sivaganga": (9.8433, 78.4809),
+            "virudhunagar": (9.5872, 77.9514),
+            "tirunelveli": (8.7139, 77.7567),
+            "tenkasi": (8.9594, 77.3150),
+            "thoothukudi": (8.7642, 78.1348),
+            "kanyakumari": (8.0883, 77.5385),
+            "salem": (11.6643, 78.1460),
+            "namakkal": (11.2189, 78.1674),
+            "dharmapuri": (12.1211, 78.1582),
+            "krishnagiri": (12.5186, 78.2137),
+            "erode": (11.3410, 77.7172),
+            "tiruppur": (11.1085, 77.3411),
+            "coimbatore": (11.0168, 76.9558),
+            "nilgiris": (11.4102, 76.6950),
+            "cuddalore": (11.7480, 79.7714),
+            "villupuram": (11.9401, 79.4861),
+            "kallakurichi": (11.7384, 78.9639),
+            "vellore": (12.9165, 79.1325),
+            "ranipet": (12.9224, 79.3327),
+            "tirupathur": (12.4925, 78.5678),
+            "tiruvannamalai": (12.2253, 79.0747),
+            "kanchipuram": (12.8342, 79.7036),
+            "chengalpattu": (12.6841, 79.9836),
+            "tiruvallur": (13.1432, 79.9083),
+            "chennai": (13.0827, 80.2707),
+            "ariyalur": (11.1401, 79.0786),
+            "perambalur": (11.2342, 78.8820),
+            "karur": (10.9601, 78.0766),
+        }
+        district = current_user.get("district") or current_user.get("registered_location", {}).get("district") or "Thanjavur"
+        state = current_user.get("state") or current_user.get("registered_location", {}).get("state") or "Tamil Nadu"
+        coords = dist_coords.get(district.lower().strip(), (10.7870, 79.1378))
+        now_iso = datetime.utcnow().isoformat()
+        farm_doc = {
+            "_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "name": f"{current_user.get('name', 'Farmer')}'s Farm",
+            "district": district,
+            "state": state,
+            "latitude": coords[0],
+            "longitude": coords[1],
+            "area_acres": 2.0,
+            "soil_type": "Alluvial Soil",
+            "irrigation_type": "Canal & Borewell",
+            "current_crops": [],
+            "previous_crops": [],
+            "boundary_geojson": None,
+            "is_active": True,
+            "created_at": now_iso,
+            "updated_at": now_iso
+        }
+        farms_col.insert_one(farm_doc)
+        farms = [_serialize_farm(farm_doc)]
     return farms
 
 @router.post("", response_model=FarmResponse, status_code=status.HTTP_201_CREATED)
