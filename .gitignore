@@ -33,6 +33,9 @@ Thumbs.db
 
 # ML Training & Datasets
 ml-training/dataset/
+ml-training/extracted/
+ml-training/data/
+*.zip
 frontend/public/ml-train/
 *.keras
 *.h5
