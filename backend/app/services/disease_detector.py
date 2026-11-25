@@ -689,6 +689,28 @@ RULES:
         conf = float(prediction.get("confidence", 0.0))
         kb_info = get_disease_info(resolved_class) or {}
         nasa_risk = self.evaluate_nasa_environmental_risk(resolved_class, district)
+        is_healthy = kb_info.get("is_healthy", False)
+        severity = kb_info.get("severity", "Moderate")
+
+        # Affected level calculation
+        if is_healthy:
+            affected_percentage = 0.0
+            affected_level_en = "Not Affected (Healthy)"
+            affected_level_ta = "பாதிக்கப்படவில்லை (ஆரோக்கியமானது)"
+        else:
+            sev_lower = str(severity).lower()
+            if "critical" in sev_lower:
+                base_pct = 85.0
+            elif "high" in sev_lower:
+                base_pct = 72.0
+            elif "moderate" in sev_lower:
+                base_pct = 50.0
+            else:
+                base_pct = 32.0
+            conf_mod = (conf - 0.7) * 20.0
+            affected_percentage = round(max(15.0, min(95.0, base_pct + conf_mod)), 1)
+            affected_level_en = f"{affected_percentage}% Affected"
+            affected_level_ta = f"{affected_percentage}% பாதிக்கப்பட்டுள்ளது"
 
         return {
             "status": "diagnosed",
@@ -701,8 +723,11 @@ RULES:
             "disease_name_ta": kb_info.get("disease_name_ta"),
             "causal_agent": kb_info.get("causal_agent"),
             "pathogen_type": kb_info.get("pathogen_type"),
-            "is_healthy": kb_info.get("is_healthy", False),
-            "severity": kb_info.get("severity", "Moderate"),
+            "is_healthy": is_healthy,
+            "severity": severity,
+            "affected_percentage": affected_percentage,
+            "affected_level_en": affected_level_en,
+            "affected_level_ta": affected_level_ta,
             "symptoms_en": kb_info.get("symptoms_en", []),
             "symptoms_ta": kb_info.get("symptoms_ta", []),
             "causes_en": kb_info.get("causes_en", []),

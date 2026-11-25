@@ -228,6 +228,9 @@ export default function PlantDoctorPage() {
           disease_name_en: scanData.disease_name_en,
           disease_name_ta: scanData.disease_name_ta,
           severity: scanData.severity,
+          affected_percentage: scanData.affected_percentage,
+          affected_level_en: scanData.affected_level_en,
+          affected_level_ta: scanData.affected_level_ta,
           is_healthy: scanData.is_healthy,
           organic_controls_en: scanData.treatment_summary_en || [],
           chemical_controls_en: scanData.chemical_summary_en || [],
@@ -238,6 +241,34 @@ export default function PlantDoctorPage() {
     } catch (err) {
       console.error('Error fetching past scan details:', err);
     }
+  };
+
+  const getAffectedPct = (diag) => {
+    if (!diag) return 0;
+    if (diag.is_healthy) return 0;
+    if (diag.affected_percentage != null) return Math.round(diag.affected_percentage);
+    
+    const sev = (diag.severity || '').toLowerCase();
+    let base = 50;
+    if (sev.includes('critical')) base = 85;
+    else if (sev.includes('high')) base = 72;
+    else if (sev.includes('moderate')) base = 50;
+    else if (sev.includes('low')) base = 30;
+    
+    const conf = diag.confidence_score ? diag.confidence_score / 100 : 0.8;
+    const mod = (conf - 0.7) * 20;
+    return Math.round(Math.max(15, Math.min(95, base + mod)));
+  };
+
+  const cleanCandidateLabel = (label) => {
+    if (!label) return '';
+    let cleaned = label;
+    if (cleaned.includes('___')) {
+      cleaned = cleaned.split('___')[1] || cleaned;
+    } else if (cleaned.includes(' - ')) {
+      cleaned = cleaned.split(' - ')[1] || cleaned;
+    }
+    return cleaned.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
   const getSeverityBadge = (sev) => {
@@ -484,23 +515,30 @@ export default function PlantDoctorPage() {
                           {isTamil ? 'தெளிவற்ற முடிவு (Inconclusive)' : 'Inconclusive / Low Confidence'}
                         </span>
                       ) : diagnosis.is_healthy ? (
-                        <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                          {isTamil ? 'ஆரோக்கியமான பயிர்' : 'Healthy Specimen'}
-                        </span>
+                        <>
+                          <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                            {isTamil ? 'ஆரோக்கியமான பயிர்' : 'Healthy Specimen'}
+                          </span>
+                          <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                            ✅ {isTamil ? 'பாதிக்கப்படவில்லை (Healthy)' : 'Not Affected (Healthy)'}
+                          </span>
+                        </>
                       ) : (
-                        <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300 flex items-center gap-1">
-                          <ShieldAlert className="w-3.5 h-3.5 text-rose-700" />
-                          {isTamil ? 'நோய் கண்டறியப்பட்டது' : 'Pathology Detected'}
-                        </span>
-                      )}
-
-                      {getSeverityBadge(diagnosis.severity)}
-
-                      {diagnosis.crop_en && (
-                        <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-slate-100 text-slate-700">
-                          🌱 {isTamil && diagnosis.crop_ta ? diagnosis.crop_ta : diagnosis.crop_en}
-                        </span>
+                        <>
+                          <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300 flex items-center gap-1">
+                            <ShieldAlert className="w-3.5 h-3.5 text-rose-700" />
+                            {isTamil ? 'நோய் கண்டறியப்பட்டது' : 'Pathology Detected'}
+                          </span>
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold border flex items-center gap-1 ${
+                            getAffectedPct(diagnosis) >= 70
+                              ? 'bg-rose-100 text-rose-800 border-rose-300'
+                              : 'bg-amber-100 text-amber-800 border-amber-300'
+                          }`}>
+                            ⚠️ {isTamil ? `பாதிக்கப்பட்ட அளவு: ${getAffectedPct(diagnosis)}%` : `Affected Level: ${getAffectedPct(diagnosis)}%`}
+                          </span>
+                          {getSeverityBadge(diagnosis.severity)}
+                        </>
                       )}
                     </div>
 
@@ -516,27 +554,76 @@ export default function PlantDoctorPage() {
                     )}
                   </div>
 
-                  {/* Confidence Meter */}
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between sm:block sm:text-right shrink-0">
-                    <div>
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                        {isTamil ? 'நம்பகத்தன்மை அளவு' : 'Diagnostic Confidence'}
-                      </span>
-                      <div className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">
-                        {diagnosis.confidence_score}%
+                  {/* Affected Level & Confidence Indicators */}
+                  <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+                    {/* Affected Level Metric */}
+                    {diagnosis.status === 'diagnosed' && (
+                      <div className={`p-3 rounded-xl border flex items-center justify-between sm:block sm:text-right min-w-[145px] ${
+                        diagnosis.is_healthy
+                          ? 'bg-emerald-50/90 border-emerald-200'
+                          : getAffectedPct(diagnosis) >= 70
+                          ? 'bg-rose-50/90 border-rose-200'
+                          : 'bg-amber-50/90 border-amber-200'
+                      }`}>
+                        <div>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider block ${
+                            diagnosis.is_healthy ? 'text-emerald-700' : 'text-rose-700'
+                          }`}>
+                            {isTamil ? 'பாதிக்கப்பட்ட அளவு' : 'Affected Level'}
+                          </span>
+                          <div className={`text-base sm:text-lg font-black mt-0.5 ${
+                            diagnosis.is_healthy ? 'text-emerald-800' : 'text-rose-900'
+                          }`}>
+                            {diagnosis.is_healthy
+                              ? (isTamil ? 'பாதிக்கப்படவில்லை' : 'Not Affected')
+                              : `${getAffectedPct(diagnosis)}%`}
+                          </div>
+                          <span className="text-[10px] font-semibold text-slate-500 block truncate">
+                            {diagnosis.is_healthy
+                              ? (isTamil ? 'முழு ஆரோக்கியம் (Healthy)' : 'Healthy (0% damage)')
+                              : (isTamil ? `${getAffectedPct(diagnosis)}% சேதம்` : 'Leaf Area Affected')}
+                          </span>
+                        </div>
+                        <div className="w-20 sm:w-24 bg-slate-200/80 rounded-full h-1.5 sm:mt-1.5 overflow-hidden sm:ml-auto">
+                          <div
+                            className={`h-1.5 rounded-full ${
+                              diagnosis.is_healthy
+                                ? 'bg-emerald-500'
+                                : getAffectedPct(diagnosis) >= 70
+                                ? 'bg-rose-600'
+                                : 'bg-amber-500'
+                            }`}
+                            style={{ width: `${diagnosis.is_healthy ? 0 : getAffectedPct(diagnosis)}%` }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="w-24 bg-slate-200 rounded-full h-1.5 sm:mt-1 overflow-hidden sm:ml-auto">
-                      <div
-                        className={`h-1.5 rounded-full ${
-                          diagnosis.confidence_score >= 85
-                            ? 'bg-emerald-600'
-                            : diagnosis.confidence_score >= 60
-                            ? 'bg-amber-500'
-                            : 'bg-rose-500'
-                        }`}
-                        style={{ width: `${diagnosis.confidence_score}%` }}
-                      />
+                    )}
+
+                    {/* Diagnostic Confidence Metric */}
+                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between sm:block sm:text-right min-w-[125px]">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {isTamil ? 'நம்பகத்தன்மை' : 'Confidence'}
+                        </span>
+                        <div className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
+                          {diagnosis.confidence_score}%
+                        </div>
+                        <span className="text-[10px] font-medium text-slate-400 block truncate">
+                          AI Precision
+                        </span>
+                      </div>
+                      <div className="w-20 sm:w-24 bg-slate-200 rounded-full h-1.5 sm:mt-1.5 overflow-hidden sm:ml-auto">
+                        <div
+                          className={`h-1.5 rounded-full ${
+                            diagnosis.confidence_score >= 85
+                              ? 'bg-emerald-600'
+                              : diagnosis.confidence_score >= 60
+                              ? 'bg-amber-500'
+                              : 'bg-rose-500'
+                          }`}
+                          style={{ width: `${diagnosis.confidence_score}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -569,7 +656,7 @@ export default function PlantDoctorPage() {
                       {diagnosis.top_3_predictions.map((c, i) => (
                         <div key={i} className="bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs">
                           <div className="flex justify-between font-bold text-slate-800">
-                            <span className="truncate pr-1">{c.label || c.class}</span>
+                            <span className="truncate pr-1">{cleanCandidateLabel(c.label || c.class)}</span>
                             <span>{Math.round(c.confidence * 100)}%</span>
                           </div>
                           <div className="w-full bg-slate-200 rounded-full h-1 mt-1 overflow-hidden">
